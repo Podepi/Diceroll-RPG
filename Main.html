@@ -1,0 +1,83 @@
+<!DOCTYPE>
+<html>
+<head>
+<style>
+.pixel{width:64px; height:64px;}
+div {height:500px}
+p {font-family:Tahoma, Calibri, sans-serif}
+</style>
+<script>
+    var playerhp;
+    var enemyhp;
+    var pdamage;
+    var edamage;
+	var score = 0;
+	var highscore = 0;
+    var deathmessage = ["The generic enemy attacks and you fail to block. This causes your hitpoints to drop below 0 and you die.",
+	"Your armour fails to relect the weapon aimed at your face.",
+	"Your armour is less effective than the enemy's weapon.",
+	"Blocking that attack is basic knowledge at the Warrior Training School..."];
+
+    function reset()
+    {
+		if (playerhp <= 0) {
+				if(score > highscore) {
+					highscore = score;
+				}
+			score = 0;
+		}
+        playerhp = 20;
+        enemyhp = 20;
+		document.getElementById("fightbutton").innerHTML = "<img class='pixel' src='sword_ability.png'><br>Fight";
+        document.getElementById("info").innerHTML = "You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.";
+        document.getElementById("readout").innerHTML = "Player: " + playerhp + "<br>Enemy: " + enemyhp;
+    }
+    function roll()
+    {
+        if (playerhp <= 0 || enemyhp <= 0) {
+            reset();
+			update();
+        } else {
+            pdamage = Math.floor(Math.random() * 5);
+            edamage = Math.floor(Math.random() * 5);
+            playerhp -= edamage;
+            enemyhp -= pdamage;
+            update();
+        }
+    }
+    function update()
+    {
+        document.getElementById("info").innerHTML = "You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.";
+        if (playerhp <= 0) {
+            playerhp = 0;
+            if (enemyhp <= 0) {
+                enemyhp = 0;
+            }
+            document.getElementById("info").innerHTML = deathmessage[Math.floor(Math.random() * deathmessage.length)];
+            document.getElementById("fightbutton").innerHTML = "Retry";
+        } else { if (enemyhp <= 0) {
+            if (playerhp <= 0) {
+                playerhp = 0;
+            }
+            enemyhp = 0;
+			score++;
+            document.getElementById("info").innerHTML = "You have won!";
+            document.getElementById("fightbutton").innerHTML = "Venture forth!";
+        }}
+        document.getElementById("readout").innerHTML = "Player: " + playerhp + "<br>Enemy: " + enemyhp;
+		document.getElementById("points").innerHTML = "Enemies defeated this run: " + score + "<br>Previous high score: " + highscore;
+    }
+</script>
+    <body  onload="reset()">
+        <div style="text-align:center; border-style:solid; border-width:1px; border-color:#000; width:50%; float:left">
+            <p id="info">You have ventured into a dungeon and stumbled upon it's unfriendly inhabitants! Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.<br></p>
+            <button id="fightbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</button>
+            <p id="readout">Player: 20<br> Enemy: 20</p>
+        </div>
+		<div style="text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left"><p>Items:</p></div>
+    </body>
+	<footer>
+		<p id="points">Enemies defeated this run: 0<br>Previous high score: 0</p>
+	</footer>
+</head>
+</html>
