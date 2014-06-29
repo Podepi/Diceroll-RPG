@@ -3,16 +3,20 @@
 <head>
 <style>
 .pixel{width:64px; height:64px;}
+.itemdiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
+.itemslot{}
 div {height:500px}
 p {font-family:Tahoma, Calibri, sans-serif}
 </style>
+<script src="jquery-2.1.1.min.js"></script>
 <script>
     var playerhp;
     var enemyhp;
     var pdamage;
     var edamage;
-	var score = 0;
-	var highscore = 0;
+    var score = 0;
+    var highscore = 0;
+    var 
     var deathmessage = ["The generic enemy attacks and you fail to block. This causes your hitpoints to drop below 0 and you die.",
 	"Your armour fails to relect the weapon aimed at your face.",
 	"Your armour is less effective than the enemy's weapon.",
@@ -28,15 +32,18 @@ p {font-family:Tahoma, Calibri, sans-serif}
 		}
         playerhp = 20;
         enemyhp = 20;
-		document.getElementById("fightbutton").innerHTML = "<img class='pixel' src='sword_ability.png'><br>Fight";
-        document.getElementById("info").innerHTML = "You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.";
-        document.getElementById("readout").innerHTML = "Player: " + playerhp + "<br>Enemy: " + enemyhp;
+        $("#fightbutton").html("<img class='pixel' src='sword_ability.png'><br>Fight");
+        $("#info").html("You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.");
+        if(score > 0) {
+            $("#info").html("The next generic monster rushes forward, eager to battle.");
+        }
+        $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
     }
     function roll()
     {
         if (playerhp <= 0 || enemyhp <= 0) {
+            update();
             reset();
-			update();
         } else {
             pdamage = Math.floor(Math.random() * 5);
             edamage = Math.floor(Math.random() * 5);
@@ -47,25 +54,25 @@ p {font-family:Tahoma, Calibri, sans-serif}
     }
     function update()
     {
-        document.getElementById("info").innerHTML = "You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.";
+        $("#info").html("You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.");
         if (playerhp <= 0) {
             playerhp = 0;
             if (enemyhp <= 0) {
                 enemyhp = 0;
             }
-            document.getElementById("info").innerHTML = deathmessage[Math.floor(Math.random() * deathmessage.length)];
-            document.getElementById("fightbutton").innerHTML = "Retry";
+            $("#info").html(deathmessage[Math.floor(Math.random() * deathmessage.length)]);
+            $("#fightbutton").html("Retry");
         } else { if (enemyhp <= 0) {
             if (playerhp <= 0) {
                 playerhp = 0;
             }
             enemyhp = 0;
-			score++;
-            document.getElementById("info").innerHTML = "You have won!";
-            document.getElementById("fightbutton").innerHTML = "Venture forth!";
+            score++;
+            $("#info").html("You have won!");
+            $("#fightbutton").html("Venture forth!");
         }}
-        document.getElementById("readout").innerHTML = "Player: " + playerhp + "<br>Enemy: " + enemyhp;
-		document.getElementById("points").innerHTML = "Enemies defeated this run: " + score + "<br>Previous high score: " + highscore;
+        $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
+		$("#points").html("Enemies defeated this run: " + score + "<br>Previous high score: " + highscore);
     }
 </script>
     <body  onload="reset()">
@@ -74,7 +81,46 @@ p {font-family:Tahoma, Calibri, sans-serif}
             <button id="fightbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</button>
             <p id="readout">Player: 20<br> Enemy: 20</p>
         </div>
-		<div style="text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left"><p>Items:</p></div>
+		<div class="itemdiv"><p>Items:</p>
+		<p style="text-align:left">Equipped: </p><img style="text-align:left" src="item_empty.png">
+		<table>
+		<tr>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+		</tr>A
+		<tr>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+		</tr>
+		<tr>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+		</tr>
+		<tr>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+		</tr>
+		<tr>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
+		</tr>
+		</table>
+		</div>
     </body>
 	<footer>
 		<p id="points">Enemies defeated this run: 0<br>Previous high score: 0</p>
