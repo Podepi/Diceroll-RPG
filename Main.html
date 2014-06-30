@@ -4,11 +4,15 @@
 <style>
 .pixel{width:64px; height:64px;}
 .itemdiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
-.itemslot{}
+.itemdiv_i{height:447px; text-align:left; border-style:solid; border-color:#000; border-width:1px; width:49.75%; float:left; overflow:Scroll}
 div {height:500px}
-p {font-family:Tahoma, Calibri, sans-serif}
+div.btndiv {margin: 0 auto; width:64; height:88; border-style:solid; border-color:#000; border-width:1px; cursor:pointer;}
+ul {list-style-type: none}
+p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
+
 </style>
 <script src="jquery-2.1.1.min.js"></script>
+<script src="external.js"></script>
 <script>
     var playerhp;
     var enemyhp;
@@ -16,13 +20,30 @@ p {font-family:Tahoma, Calibri, sans-serif}
     var edamage;
     var score = 0;
     var highscore = 0;
-    var 
+    var attack = 5;
     var deathmessage = ["The generic enemy attacks and you fail to block. This causes your hitpoints to drop below 0 and you die.",
 	"Your armour fails to relect the weapon aimed at your face.",
 	"Your armour is less effective than the enemy's weapon.",
 	"Blocking that attack is basic knowledge at the Warrior Training School..."];
+    var inventory = ['001', '002', '003'];
+    var wep_e = 0;
+    var armour_e = 0;
+    var item_room;
+    
+    function init()
+    {
+        $(".btndiv").hover(
+          function() {
+            $(this).css({"border-style":"solid", "border-color":"#FFFF00", "border-width":"1px"});
+          }, function() {
+            $(this).css("border-color", "#000");
+          }
+        );
+        battle();
+        updateitems();
+    }
 
-    function reset()
+    function battle()
     {
 		if (playerhp <= 0) {
 				if(score > highscore) {
@@ -41,11 +62,12 @@ p {font-family:Tahoma, Calibri, sans-serif}
     }
     function roll()
     {
+        weapontype(wep_e);
         if (playerhp <= 0 || enemyhp <= 0) {
             update();
-            reset();
+            battle();
         } else {
-            pdamage = Math.floor(Math.random() * 5);
+            pdamage = Math.floor(Math.random() * attack);
             edamage = Math.floor(Math.random() * 5);
             playerhp -= edamage;
             enemyhp -= pdamage;
@@ -72,55 +94,39 @@ p {font-family:Tahoma, Calibri, sans-serif}
             $("#fightbutton").html("Venture forth!");
         }}
         $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
-		$("#points").html("Enemies defeated this run: " + score + "<br>Previous high score: " + highscore);
+        $("#points").html("Enemies defeated this run: " + score + "<br>Previous high score: " + highscore);
+    }
+    function updateitems()
+    {
+        var t = "<li>" + "<img src='" + link + "'" + inventory[a] + "</li>";
+        var link;
+        for(a = 1; a < inventory.length; a++) {
+          t += "<li>" + "<img src='" + link + "'>" + inventory[a] + "</li>";
+        }
+        $("#inv_list").html(t);
     }
 </script>
-    <body  onload="reset()">
+    <body  onload="init()">
         <div style="text-align:center; border-style:solid; border-width:1px; border-color:#000; width:50%; float:left">
-            <p id="info">You have ventured into a dungeon and stumbled upon it's unfriendly inhabitants! Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.<br></p>
-            <button id="fightbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</button>
+            <p id="info">You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.<br></p>
+            <table style="margin:0 auto;"><tr>
+              <td><div class="btndiv" id="fightbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</div>
+              <td><div class="btndiv" id="castbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</div>
+              <td><div class="btndiv" id="healbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</div>
+            </tr></table>
             <p id="readout">Player: 20<br> Enemy: 20</p>
         </div>
 		<div class="itemdiv"><p>Items:</p>
-		<p style="text-align:left">Equipped: </p><img style="text-align:left" src="item_empty.png">
-		<table>
-		<tr>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-		</tr>A
-		<tr>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-		</tr>
-		<tr>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-		</tr>
-		<tr>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-		</tr>
-		<tr>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-      <td class="itemslot" data-item="none"><img src="item_empty.png"></td>
-		</tr>
-		</table>
-		</div>
+      <div class="itemdiv_i">
+        <p style="text-align:left">Inventory: </p>
+        <ul id="inv_list">
+        </ul>
+      </div>
+      <div class="itemdiv_i">
+        <p style="text-align:left">Items on ground:  </p>
+        <ul id="itm_list"></ul>
+      </div>
+    </div>
     </body>
 	<footer>
 		<p id="points">Enemies defeated this run: 0<br>Previous high score: 0</p>
