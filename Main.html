@@ -2,58 +2,79 @@
 <html>
 <head>
 <style>
-.pixel{width:64px; height:64px;}
-.itemdiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
-.itemdiv_i{height:447px; text-align:left; border-style:solid; border-color:#000; border-width:1px; width:49.75%; float:left; overflow:Scroll}
+.pixel{width:64px; height:64px; background-repeat:no-repeat;}
+.inv_icon{width:16px; height:16px; background-repeat:no-repeat; background-image:url(icon_list_16.png); float:left; margin-right:2px; margin-top:2px}
+div.itemdiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
+div.itemdiv_i{height:447px; text-align:left; border-style:solid; border-color:#000; border-width:1px; width:49.75%; float:left; overflow:Scroll}
 div {height:500px}
-div.btndiv {margin: 0 auto; width:64; height:88; border-style:solid; border-color:#000; border-width:1px; cursor:pointer;}
+div.btndiv {text-align:center; margin: 0 auto; width:64px; height:88px;
+  border-style:solid; border-color:#000; border-width:1px;
+  cursor:pointer; font-family:Tahoma, Calibri, sans-serif; font-size:11px}
 ul {list-style-type: none}
 p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
+li.inv {cursor:default}
+h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:italic; color:#AAA; font-size:15px}
 
 </style>
 <script src="jquery-2.1.1.min.js"></script>
-<script src="external.js"></script>
 <script>
+    //images (64x64)
+    var img_artifacts = "iconlist_artifacts.png";
+    var img_magic = "iconlist_magic.png";
+    var img_physical = "iconlist_physical.png";
+    var img_ui = "iconlist_ui.png";
+    //icons (16x16)
+    var ico_list = "icon_list_16.png";
+    //Arrays
+    var deathmessage = ["The generic enemy attacks and you fail to block. This causes your hitpoints to drop below 0 and you die.",
+	"Your armour fails to relect the weapon aimed at your face.",
+	"Your armour is less effective than the enemy's weapon.",
+	"Blocking that attack is basic knowledge at the Warrior Training School..."];
+    var inventory = [];
+    //Game variables
     var playerhp;
     var enemyhp;
     var pdamage;
     var edamage;
     var score = 0;
     var highscore = 0;
-    var attack = 5;
-    var deathmessage = ["The generic enemy attacks and you fail to block. This causes your hitpoints to drop below 0 and you die.",
-	"Your armour fails to relect the weapon aimed at your face.",
-	"Your armour is less effective than the enemy's weapon.",
-	"Blocking that attack is basic knowledge at the Warrior Training School..."];
-    var inventory = ['001', '002', '003'];
-    var wep_e = 0;
-    var armour_e = 0;
+    //Stats
+    var stat_attack = 0;
+    var stat_maxhp = 20;
+    var stat_gold = 10;
+    var stat_defense = 0;
+    var wep_e;
+    var armour_e;
     var item_room;
     
     function init()
     {
+        inventory.pop();
         $(".btndiv").hover(
           function() {
-            $(this).css({"border-style":"solid", "border-color":"#FFFF00", "border-width":"1px"});
+            $(this).css("border-color", "#00CCCC");
           }, function() {
             $(this).css("border-color", "#000");
           }
         );
+        $("#fightbuttonimg").css({"background-position":"0px 0px", "background-image":"url(" + img_physical + ")"});
+        $("#runbuttonimg").css({"background-position":"0px 0px", "background-image":"url(" + img_ui + ")"});
         battle();
-        updateitems();
+        createitem(-16, 0, "Iron dagger", "A short iron blade with a small hilt", 12, 3);
+        createitem(-0, -48, "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        viewstats();
     }
 
     function battle()
     {
-		if (playerhp <= 0) {
-				if(score > highscore) {
-					highscore = score;
-				}
-			score = 0;
-		}
+        //if (playerhp <= 0) {
+        //    if(score > highscore) {
+        //      highscore = score;
+        //    }
+        //  score = 0;
+        //}
         playerhp = 20;
         enemyhp = 20;
-        $("#fightbutton").html("<img class='pixel' src='sword_ability.png'><br>Fight");
         $("#info").html("You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.");
         if(score > 0) {
             $("#info").html("The next generic monster rushes forward, eager to battle.");
@@ -98,38 +119,94 @@ p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
     }
     function updateitems()
     {
-        var t = "<li>" + "<img src='" + link + "'" + inventory[a] + "</li>";
-        var link;
+        var iconx;
+        var icony;
+        iconx = inventory[0].listx;
+        icony = inventory[0].listy;
+        var t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[0].name+"</li>";
         for(a = 1; a < inventory.length; a++) {
-          t += "<li>" + "<img src='" + link + "'>" + inventory[a] + "</li>";
+          iconx = inventory[a].listx;
+          icony = inventory[a].listy;
+          t += "<li id='"+a+"' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[a].name+"</li>";
         }
         $("#inv_list").html(t);
+        
+        //Mouseover stats
+        $("li.inv").hover(
+          function() {
+            $(this).css("background-color", "#DDD");
+            var item = inventory[this.id];
+            viewitem(item.desc, item.gold, item.defense, item.damage);
+            
+          }, function() {
+            $(this).css("background-color", "#FFF");
+            viewstats();
+          }
+        );
+    }
+    function createitem(x, y, n, d, g, dmg, def)
+    {
+        var newitem = new Object();
+        
+        //Essential values
+        newitem.listx = x;
+        newitem.listy = y;
+        newitem.name = n;
+        newitem.desc = d;
+        newitem.gold = g;
+        
+        //Non-essential values
+        if(def != 0) {
+          newitem.defense = def;
+        } if(dmg != 0) {
+          newitem.damage = dmg;
+        }
+        inventory.push(newitem);
+        updateitems();
+    }
+    function viewitem(desc, gold, def, dmg)
+    {
+        var list_text;
+        $("#item_desc").text(desc);
+        list_text = "<li><div class='inv_icon' style='background-position:0px 0x'></div>: "+gold+" gold</li>";
+        if(dmg != undefined) {
+          list_text += "<li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+dmg+" damage</li>";
+        } if(def != undefined) {
+          list_text += "<li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+def+" armour</li>";
+        }
+        $("#item_list").html(list_text);
+    }
+    function viewstats()
+    {
+            $("#item_desc").html("Your stats:");
+            $("#item_list").html("<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+stat_maxhp+
+            " max health<li><div class='inv_icon' style='background-position:0px 0px'></div>: "+stat_gold+
+            " gold</li><li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+stat_attack+
+            " damage</li><li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+stat_defense+
+            " armour</li>");
     }
 </script>
-    <body  onload="init()">
-        <div style="text-align:center; border-style:solid; border-width:1px; border-color:#000; width:50%; float:left">
-            <p id="info">You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.<br></p>
-            <table style="margin:0 auto;"><tr>
-              <td><div class="btndiv" id="fightbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</div>
-              <td><div class="btndiv" id="castbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</div>
-              <td><div class="btndiv" id="healbutton" onclick="roll()"><img src="sword_ability.png"><br>Fight</div>
-            </tr></table>
-            <p id="readout">Player: 20<br> Enemy: 20</p>
-        </div>
-		<div class="itemdiv"><p>Items:</p>
+  <body  onload="init()">
+      <div style="text-align:center; border-style:solid; border-width:1px; border-color:#000; width:50%; float:left">
+          <p id="info">You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.<br></p>
+          <table style="margin:0 auto;"><tr>
+            <td><div class="btndiv" id="fightbutton" onclick="roll()"><div id="fightbuttonimg" class="pixel"></div>Fight</div>
+            <td><div class="btndiv" id="runbutton" onclick="escape()"><div id="runbuttonimg" class="pixel"></div>Run away</div>
+            
+          </tr></table>
+          <p id="readout">Player: 20<br> Enemy: 20</p>
+      </div>
+    <div class="itemdiv"><p>Items and stats</p>
       <div class="itemdiv_i">
-        <p style="text-align:left">Inventory: </p>
+        <p style="text-align:left">Inventory <i>(Click to use)</i> </p>
         <ul id="inv_list">
         </ul>
       </div>
       <div class="itemdiv_i">
-        <p style="text-align:left">Items on ground:  </p>
-        <ul id="itm_list"></ul>
+        <p id="item_desc">Mouse over an item</p>
+        <ul id="item_list"></ul>
       </div>
     </div>
     </body>
-	<footer>
-		<p id="points">Enemies defeated this run: 0<br>Previous high score: 0</p>
-	</footer>
 </head>
 </html>
