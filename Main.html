@@ -43,9 +43,9 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
     var stat_maxhp = 20;
     var stat_gold = 10;
     var stat_defense = 0;
+    var hpot = 5;
     var wep_e;
     var armour_e;
-    var item_room;
     
     function init()
     {
@@ -60,8 +60,10 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
         $("#fightbuttonimg").css({"background-position":"0px 0px", "background-image":"url(" + img_physical + ")"});
         $("#runbuttonimg").css({"background-position":"0px 0px", "background-image":"url(" + img_ui + ")"});
         battle();
-        createitem(-16, 0, "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-        createitem(-0, -48, "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        createitem(-16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
+        createitem(0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        createitem(0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
+        createitem(-16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
         viewstats();
     }
 
@@ -73,27 +75,30 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
         //    }
         //  score = 0;
         //}
-        playerhp = 20;
+        playerhp = stat_maxhp;
         enemyhp = 20;
         $("#info").html("You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.");
         if(score > 0) {
             $("#info").html("The next generic monster rushes forward, eager to battle.");
         }
-        $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
+        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
     }
     function roll()
     {
-        weapontype(wep_e);
-        if (playerhp <= 0 || enemyhp <= 0) {
-            update();
-            battle();
-        } else {
-            pdamage = Math.floor(Math.random() * attack);
-            edamage = Math.floor(Math.random() * 5);
-            playerhp -= edamage;
-            enemyhp -= pdamage;
-            update();
-        }
+      if (playerhp <= 0 || enemyhp <= 0) {
+          update();
+          battle();
+      } else {
+          pdamage = Math.floor(Math.random() * stat_attack);
+          edamage = Math.floor(Math.random() * 5);
+          playerhp -= edamage - stat_defense;
+          enemyhp -= pdamage;
+          update();
+      }
+    }
+    function escape()
+    {
+        
     }
     function update()
     {
@@ -114,8 +119,7 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
             $("#info").html("You have won!");
             $("#fightbutton").html("Venture forth!");
         }}
-        $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
-        $("#points").html("Enemies defeated this run: " + score + "<br>Previous high score: " + highscore);
+        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
     }
     function updateitems()
     {
@@ -123,11 +127,19 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
         var icony;
         iconx = inventory[0].listx;
         icony = inventory[0].listy;
-        var t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[0].name+"</li>";
+        var t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[0].name;
+        if(wep_e === inventory[0] || armour_e === inventory[0]) {
+           t += "<i> - Equipped</i>";
+        }
+        t += "</li>"
         for(a = 1; a < inventory.length; a++) {
           iconx = inventory[a].listx;
           icony = inventory[a].listy;
-          t += "<li id='"+a+"' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[a].name+"</li>";
+          t += "<li id='"+a+"' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[a].name;
+          if(wep_e === inventory[a] || armour_e === inventory[a]) {
+            t += "<i> - Equipped</i>";
+          }
+          t += "</li>"
         }
         $("#inv_list").html(t);
         
@@ -136,21 +148,50 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
           function() {
             $(this).css("background-color", "#DDD");
             var item = inventory[this.id];
-            viewitem(item.desc, item.gold, item.defense, item.damage);
-            
+            viewitem(item.type, item.desc, item.gold, item.defense, item.damage, item.heal);
           }, function() {
             $(this).css("background-color", "#FFF");
             viewstats();
           }
         );
+        $("li.inv").click(
+          function() {
+            var item = inventory[this.id];
+            var info = $("#this.id").html();
+            switch(item.type) {
+              case "Weapon":
+                if(wep_e === item) {
+                  wep_e = "none";
+                } else {
+                  wep_e = item;
+                }
+                break;
+              case "Armour":
+                if(armour_e === item) {
+                  armour_e = "none";
+                } else {
+                  armour_e = item;
+                }
+                break;
+              case "Consumable":
+                playerhp += item.heal;
+                $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
+                $("#info").html("You healed for "+item.heal+" health.");
+                inventory.splice(this.id, 1);
+                break;
+            }
+            updateitems();
+          }
+        );
     }
-    function createitem(x, y, n, d, g, dmg, def)
+    function createitem(x, y, t, n, d, g, dmg, def, heal)
     {
         var newitem = new Object();
         
         //Essential values
         newitem.listx = x;
         newitem.listy = y;
+        newitem.type = t;
         newitem.name = n;
         newitem.desc = d;
         newitem.gold = g;
@@ -160,30 +201,40 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
           newitem.defense = def;
         } if(dmg != 0) {
           newitem.damage = dmg;
+        } if(heal != 0) {
+          newitem.heal = heal;
         }
         inventory.push(newitem);
         updateitems();
     }
-    function viewitem(desc, gold, def, dmg)
+    function viewitem(type, desc, gold, def, dmg, heal)
     {
         var list_text;
         $("#item_desc").text(desc);
-        list_text = "<li><div class='inv_icon' style='background-position:0px 0x'></div>: "+gold+" gold</li>";
+        list_text = "<li><b>"+type+"</b></li><li><br><div class='inv_icon' style='background-position:0px 0x'></div>: "+gold+" gold</li>";
         if(dmg != undefined) {
           list_text += "<li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+dmg+" damage</li>";
         } if(def != undefined) {
           list_text += "<li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+def+" armour</li>";
+        } if(heal != undefined) {
+          list_text += "<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+heal+" HP restored</li>";
         }
         $("#item_list").html(list_text);
-    }
+    }   
     function viewstats()
     {
-            $("#item_desc").html("Your stats:");
-            $("#item_list").html("<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+stat_maxhp+
-            " max health<li><div class='inv_icon' style='background-position:0px 0px'></div>: "+stat_gold+
-            " gold</li><li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+stat_attack+
-            " damage</li><li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+stat_defense+
-            " armour</li>");
+        if(wep_e.damage == undefined) {
+          stat_attack = wep_e.damage;
+        } else {stat_attack = 0;}
+        if(armour_e.defense != undefined) {
+          stat_defense = armour_e.defense;
+        } else {stat_defense = 0;}
+        $("#item_desc").html("Your stats:");
+        $("#item_list").html("<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+stat_maxhp+
+        " max health<li><div class='inv_icon' style='background-position:0px 0px'></div>: "+stat_gold+
+        " gold</li><li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+stat_attack+
+        " damage</li><li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+stat_defense+
+        " armour</li>");
     }
 </script>
   <body  onload="init()">
@@ -194,7 +245,7 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
             <td><div class="btndiv" id="runbutton" onclick="escape()"><div id="runbuttonimg" class="pixel"></div>Run away</div>
             
           </tr></table>
-          <p id="readout">Player: 20<br> Enemy: 20</p>
+          <p id="readout">Your health: 20<br> Enemy health: 20</p>
       </div>
     <div class="itemdiv"><p>Items and stats</p>
       <div class="itemdiv_i">
@@ -203,7 +254,7 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
         </ul>
       </div>
       <div class="itemdiv_i">
-        <p id="item_desc">Mouse over an item</p>
+        <p id="item_desc">javascript error</p>
         <ul id="item_list"></ul>
       </div>
     </div>
