@@ -2,18 +2,56 @@
 <html>
 <head>
 <style>
-.pixel{width:64px; height:64px; background-repeat:no-repeat;}
+.btn_icon{width:64px; height:64px; background-repeat:no-repeat; background-image:url(default_64.png)}
+.menu_icon{width:100px; display:inline-block; border:1px solid #000; cursor:pointer}
 .inv_icon{width:16px; height:16px; background-repeat:no-repeat; background-image:url(icon_list_16.png); float:left; margin-right:2px; margin-top:2px}
-div.itemdiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
-div.itemdiv_i{height:447px; text-align:left; border-style:solid; border-color:#000; border-width:1px; width:49.75%; float:left; overflow:Scroll}
+.no_margin {margin:0}
 div {height:500px}
+div.menudiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
+div.menudiv_i{height:447px; text-align:left; border-top:1px solid #000; overflow-y:Scroll}
 div.btndiv {text-align:center; margin: 0 auto; width:64px; height:88px;
   border-style:solid; border-color:#000; border-width:1px;
-  cursor:pointer; font-family:Tahoma, Calibri, sans-serif; font-size:11px}
+  cursor:pointer; font-family:Tahoma, Calibri, sans-serif; font-size:11px
+}
+div.btndiv:hover {border-color:#00CCCC}
 ul {list-style-type: none}
+ul.menubar {
+  width:90%;
+  display: inline-block;
+}
 p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
-li.inv {cursor:default}
-h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:italic; color:#AAA; font-size:15px}
+p.menuheading {display:inline-block; margin:auto; padding-bottom: 5px}
+li.inv {cursor:pointer}
+
+/* CSS Effects */
+
+.float {
+  display: inline-block;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.float:hover, .float:focus, .float:active {
+  -webkit-transform: translateY(5px);
+  transform: translateY(5px);
+}
+.glow {
+  display: inline-block;
+  -webkit-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+  -webkit-transition-property: box-shadow;
+  transition-property: box-shadow;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.glow:hover, .glow:focus, .glow:active {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
 
 </style>
 <script src="jquery-2.1.1.min.js"></script>
@@ -23,14 +61,22 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
     var img_magic = "iconlist_magic.png";
     var img_physical = "iconlist_physical.png";
     var img_ui = "iconlist_ui.png";
+    var img_def64 = "default_64.png";
     //icons (16x16)
     var ico_list = "icon_list_16.png";
     //Arrays
-    var deathmessage = ["The generic enemy attacks and you fail to block. This causes your hitpoints to drop below 0 and you die.",
+    var deathmessage = ["The generic enemy attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
 	"Your armour fails to relect the weapon aimed at your face.",
 	"Your armour is less effective than the enemy's weapon.",
 	"Blocking that attack is basic knowledge at the Warrior Training School..."];
     var inventory = [];
+    var shoplist = [];
+    var enemy_list = ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
+    var adjective_list = ["smelly", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly-disguised", "annoying", "loud", "armed"]
+    var shopkeeper = ["tells you about all the various bargains.", 
+    "complains about shoplifters.",
+    "tells tales of mysterious dungeons and treasures.",
+    "tells a tale of a strange and powerful artifact in the northern mountains."];
     //Game variables
     var playerhp;
     var enemyhp;
@@ -38,153 +84,105 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
     var edamage;
     var score = 0;
     var highscore = 0;
+    var menuscreen = "inventory";
     //Stats
-    var stat_attack = 0;
     var stat_maxhp = 20;
     var stat_gold = 10;
+    var stat_attack = 0;
     var stat_defense = 0;
-    var hpot = 5;
-    var wep_e;
+    var stat_magicdef = 0;
+    var stat_magicatk = 0;
+    var weapon_e;
     var armour_e;
+    var amulet_e;
     
     function init()
     {
-        inventory.pop();
-        $(".btndiv").hover(
-          function() {
-            $(this).css("border-color", "#00CCCC");
-          }, function() {
-            $(this).css("border-color", "#000");
-          }
-        );
-        $("#fightbuttonimg").css({"background-position":"0px 0px", "background-image":"url(" + img_physical + ")"});
-        $("#runbuttonimg").css({"background-position":"0px 0px", "background-image":"url(" + img_ui + ")"});
-        battle();
-        createitem(-16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-        createitem(0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
-        createitem(0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
-        createitem(-16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
-        viewstats();
-    }
-
-    function battle()
-    {
-        //if (playerhp <= 0) {
-        //    if(score > highscore) {
-        //      highscore = score;
-        //    }
-        //  score = 0;
-        //}
+        $("#menubar").html('<li id="menubar_inv" class="menu_icon no_margin glow">Inventory</li>');
+        $("#menubar_inv").on("click", function() {
+            viewMenu("inventory");
+        });
         playerhp = stat_maxhp;
-        enemyhp = 20;
-        $("#info").html("You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.");
-        if(score > 0) {
-            $("#info").html("The next generic monster rushes forward, eager to battle.");
-        }
-        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
+        inventory.pop();
+        shoplist.pop();
+        event_town();
+        createItem(-16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
+        createItem(0, -16, "Weapon", "Smite sword", "A sword so powerful it looks like a boulder", 102, 30);
+        createItem(0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        createItem(0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
+        createItem(-16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
+        createItem(-16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
+        viewStats();
+        init_shop();
+        event_shop("hide");
     }
-    function roll()
-    {
-      if (playerhp <= 0 || enemyhp <= 0) {
-          update();
-          battle();
-      } else {
-          pdamage = Math.floor(Math.random() * stat_attack);
-          edamage = Math.floor(Math.random() * 5);
-          playerhp -= edamage - stat_defense;
-          enemyhp -= pdamage;
-          update();
-      }
+    function event_explore_start() {
+        window.setTimeout("event_explore_end()", 1000);
+        $("#info").html("Exploring...");
+        var btn1 = $("#eventbutton01");
+        var btn2 = $("#eventbutton02");
+        var btn3 = $("#eventbutton03");
+        btn1.hide();
+        btn2.hide();
+        btn3.hide();
     }
-    function escape()
-    {
-        
-    }
-    function update()
-    {
-        $("#info").html("You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.");
-        if (playerhp <= 0) {
-            playerhp = 0;
-            if (enemyhp <= 0) {
-                enemyhp = 0;
-            }
-            $("#info").html(deathmessage[Math.floor(Math.random() * deathmessage.length)]);
-            $("#fightbutton").html("Retry");
-        } else { if (enemyhp <= 0) {
-            if (playerhp <= 0) {
-                playerhp = 0;
-            }
-            enemyhp = 0;
-            score++;
-            $("#info").html("You have won!");
-            $("#fightbutton").html("Venture forth!");
-        }}
-        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
-    }
-    function updateitems()
-    {
-        var iconx;
-        var icony;
-        iconx = inventory[0].listx;
-        icony = inventory[0].listy;
-        var t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[0].name;
-        if(wep_e === inventory[0] || armour_e === inventory[0]) {
-           t += "<i> - Equipped</i>";
-        }
-        t += "</li>"
-        for(a = 1; a < inventory.length; a++) {
-          iconx = inventory[a].listx;
-          icony = inventory[a].listy;
-          t += "<li id='"+a+"' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[a].name;
-          if(wep_e === inventory[a] || armour_e === inventory[a]) {
-            t += "<i> - Equipped</i>";
-          }
-          t += "</li>"
-        }
-        $("#inv_list").html(t);
-        
-        //Mouseover stats
-        $("li.inv").hover(
-          function() {
-            $(this).css("background-color", "#DDD");
-            var item = inventory[this.id];
-            viewitem(item.type, item.desc, item.gold, item.defense, item.damage, item.heal);
-          }, function() {
-            $(this).css("background-color", "#FFF");
-            viewstats();
-          }
-        );
-        $("li.inv").click(
-          function() {
-            var item = inventory[this.id];
-            var info = $("#this.id").html();
-            switch(item.type) {
-              case "Weapon":
-                if(wep_e === item) {
-                  wep_e = "none";
-                } else {
-                  wep_e = item;
-                }
+    function event_explore_end(rand) {
+        //var rand = Math.floor(Math.random() * 4);
+        var btn1 = $("#eventbutton01");
+        var btn2 = $("#eventbutton02");
+        var btn3 = $("#eventbutton03");
+        var info = $("#info");
+        switch(rand) {
+            case 1:
+                $("#info").html("All of a sudden a "+ desc() + " jumps out of nowhere!");
+                btn1.show();
+                event_battle("nodesc");
                 break;
-              case "Armour":
-                if(armour_e === item) {
-                  armour_e = "none";
-                } else {
-                  armour_e = item;
-                }
+            case 2:
+                
                 break;
-              case "Consumable":
-                playerhp += item.heal;
-                $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
-                $("#info").html("You healed for "+item.heal+" health.");
-                inventory.splice(this.id, 1);
+            case 3:
+                
                 break;
-            }
-            updateitems();
-          }
-        );
+            case 4:
+                
+                break;
+        }
     }
-    function createitem(x, y, t, n, d, g, dmg, def, heal)
+    function event_town()
+    {
+        event_shop("hide");
+        var btn1 = $("#eventbutton01");
+        var btn2 = $("#eventbutton02");
+        var btn3 = $("#eventbutton03");
+        btn1.html('<div class="btn_icon"></div>Shop');
+        btn1.off('click').on("click", function() {
+            event_shop("show");
+        });
+        btn2.show();
+        btn2.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url("+img_ui+")'></div>Explore");
+        btn2.off('click').on("click", function() {
+            event_battle();
+        });
+        btn3.hide();
+        $("#readout").html("Your health: " + playerhp);
+        $("#info").html("Welcome to the Town");
+    }
+    function init_shop()
+    {
+        var t;
+        itemShop(-16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
+        itemShop(-16, 0, "Weapon", "Steel dagger", "A short steel blade with a small hilt", 20, 5);
+        itemShop(0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        itemShop(0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
+        itemShop(-16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
+        itemShop(-16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
+        for (a = 0; a > shoplist.length; a++) {
+            t = "<td>" + shoplist[a].name + "<br></td>";
+        }
+        $("#shop_list").html(t);
+    }
+    function itemShop(x, y, t, n, d, g, dmg, def, h)
     {
         var newitem = new Object();
         
@@ -201,16 +199,225 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
           newitem.defense = def;
         } if(dmg != 0) {
           newitem.damage = dmg;
-        } if(heal != 0) {
-          newitem.heal = heal;
+        } if(h != 0) {
+          newitem.heal = h;
+        }
+        shoplist.push(newitem);
+        if (menuscreen == "inventory") {
+            updateItems();
+        }
+    }
+    function event_shop(visible)
+    {
+        switch(visible) {
+            case "show":
+                var btn1 = $("#eventbutton01");
+                var btn2 = $("#eventbutton02");
+                var btn3 = $("#eventbutton03");
+                $("#shop").show();
+                btn1.html('<div class="btn_icon"></div>Exit to Town');
+                btn1.off('click').on("click", function(){
+                    event_town();
+                });
+                btn2.hide();
+                btn3.hide();
+                $("#info").html('The shopkeeper ' + shopkeeper[Math.floor(Math.random() * shopkeeper.length)]);
+                break;
+            case "hide":
+                $("#shop").hide();
+                break;
+        }
+    }
+    function event_battle(t)
+    {
+        /*if (playerhp <= 0) {
+            if(score > highscore) {
+              highscore = score;
+            }
+          score = 0;
+          }
+        */
+        var btn1 = $("#eventbutton01");
+        var btn2 = $("#eventbutton02");
+        var btn3 = $("#eventbutton03");
+        btn1.off('click').on('click', function() {
+            roll();
+        });
+        btn1.html('<div class="btn_icon" style="background-position:0px 0px; background-image:url('+img_physical+')"></div>Fight');
+        btn2.hide();
+        btn3.hide();
+        playerhp = stat_maxhp;
+        enemyhp = 20;
+        if (t != "nodesc") {
+            $("#info").html("You have ventured into a dungeon!<br>Suddenly, "+ desc() + " jumps out of nowhere and challenges you to a fight.");
+        }
+        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
+    }
+    function event_escape()
+    {
+        var escapechance = Math.random();
+        if(escapechance >= 0.2) {
+            $("#info").html("You have successfully escaped!");
+            var btn1 = $("#eventbutton01");
+            var btn2 = $("#eventbutton02");
+            var btn3 = $("#eventbutton03");
+            btn1.off('click').on('click', function() {
+                event_town();
+            });
+            btn2.hide();
+            btn3.hide();
+        } else {
+            $("#info").html("You are unable to turn and run!");
+        }
+    }
+    function desc()
+    {
+        var enemy = enemy_list[Math.floor(Math.random() * enemy_list.length)];
+        var adjective = adjective_list[Math.floor(Math.random() * adjective_list.length)];
+        var vowel = /[aeiou]/i;
+        var aa = "a ";
+        if(adjective.search(vowel) == 0) {aa="an ";}
+        return(aa + adjective + " " + enemy);
+    }
+    function roll()
+    {
+      if (playerhp <= 0 || enemyhp <= 0) {
+          updateFight();
+          event_battle();
+      } else {
+          pdamage = Math.floor(Math.random() * stat_attack);
+          edamage = Math.floor(Math.random() * 5);
+          playerhp -= edamage - stat_defense;
+          enemyhp -= pdamage;
+          updateFight();
+      }
+    }
+    function updateFight()
+    {
+        $("#info").html("You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.");
+        if (playerhp <= 0) {
+            playerhp = 0;
+            if (enemyhp <= 0) {
+                enemyhp = 0;
+            }
+            $("#info").html(deathmessage[Math.floor(Math.random() * deathmessage.length)]);
+            $("#fightbutton").hide();
+            $("#retrybutton").show();
+        } else { if (enemyhp <= 0) {
+            if (playerhp <= 0) {
+                playerhp = 0;
+            }
+            enemyhp = 0;
+            score++;
+            $("#info").html("You have won!");
+            $("#fightbutton").hide();
+            $("#retrybutton").show();
+        }}
+        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
+    }
+    function updateItems()
+    {
+        var iconx;
+        var icony;
+        try {
+        iconx = inventory[0].listx;
+        icony = inventory[0].listy;
+        } catch(err){return("itemupdate failed")};
+        var t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[0].name;
+        if(weapon_e === inventory[0] || armour_e === inventory[0]) {
+           t += "<i> - Equipped</i>";
+        }
+        t += "</li>"
+        for(a = 1; a < inventory.length; a++) {
+          iconx = inventory[a].listx;
+          icony = inventory[a].listy;
+          t += "<li id='"+a+"' class='inv'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+inventory[a].name;
+          if(weapon_e === inventory[a] || armour_e === inventory[a] || amulet_e === inventory[a]) {
+            t += "<i> - Equipped</i>";
+          }
+          t += "</li>"
+        }
+        $("#menu_list_left").html(t);
+        
+        //Mouseover stats
+        $("li.inv").hover(
+          function() {
+            $(this).css("background-color", "#DDD");
+            var item = inventory[this.id];
+            viewItem(item.type, item.desc, item.gold, item.defense, item.damage, item.heal);
+          }, function() {
+            $(this).css("background-color", "#FFF");
+            viewStats();
+          }
+        );
+        $("li.inv").off("click").on( "click",
+          function() {
+            var item = inventory[this.id];
+            var info = $("#this.id").html();
+            switch(item.type) {
+              case "Weapon":
+                if(weapon_e === item) {
+                  weapon_e = "none";
+                } else {
+                  weapon_e = item;
+                }
+                break;
+              case "Armour":
+                if(armour_e === item) {
+                  armour_e = "none";
+                } else {
+                  armour_e = item;
+                }
+                break;
+              case "Consumable":
+                playerhp += item.heal;
+                $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
+                $("#info").html("You were healed for "+item.heal+" health.");
+                inventory.splice(this.id, 1);
+                break;
+              case "Amulet":
+                if(amulet_e === item) {
+                  amulet_e = "none";
+                } else {
+                  amulet_e = item;
+                }
+                break;
+            }
+            if (menuscreen == "inventory") {
+                updateItems();
+            }
+          }
+        );
+    }
+    function createItem(x, y, t, n, d, g, dmg, def, h)
+    {
+        var newitem = new Object();
+        
+        //Essential values
+        newitem.listx = x;
+        newitem.listy = y;
+        newitem.type = t;
+        newitem.name = n;
+        newitem.desc = d;
+        newitem.gold = g;
+        
+        //Non-essential values
+        if(def != 0) {
+          newitem.defense = def;
+        } if(dmg != 0) {
+          newitem.damage = dmg;
+        } if(h != 0) {
+          newitem.heal = h;
         }
         inventory.push(newitem);
-        updateitems();
+        if (menuscreen == "inventory") {
+            updateItems();
+        }
     }
-    function viewitem(type, desc, gold, def, dmg, heal)
+    function viewItem(type, desc, gold, def, dmg, heal)
     {
         var list_text;
-        $("#item_desc").text(desc);
+        $("#menu_readout_top").text(desc);
         list_text = "<li><b>"+type+"</b></li><li><br><div class='inv_icon' style='background-position:0px 0x'></div>: "+gold+" gold</li>";
         if(dmg != undefined) {
           list_text += "<li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+dmg+" damage</li>";
@@ -221,42 +428,77 @@ h2 {font-family:Tahoma, Calibri, sans-serif; text-align:center; font-style:itali
         }
         $("#item_list").html(list_text);
     }   
-    function viewstats()
+    function viewStats()
     {
-        if(wep_e.damage == undefined) {
-          stat_attack = wep_e.damage;
-        } else {stat_attack = 0;}
-        if(armour_e.defense != undefined) {
-          stat_defense = armour_e.defense;
-        } else {stat_defense = 0;}
-        $("#item_desc").html("Your stats:");
-        $("#item_list").html("<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+stat_maxhp+
+        try {
+          if (weapon_e.damage != undefined) {
+            stat_attack = weapon_e.damage;
+          } else {throw "undefined value";}
+        } catch(err) {stat_attack = 0;}
+        try {
+            if (armour_e.defense != undefined) {
+              stat_defense = armour_e.defense;
+            } else {throw "undefined value";}
+        } catch(err) {stat_defense = 0;}
+        try {
+            if (amulet_e.defense != undefined) {
+              stat_defense += amulet_e.defense;
+            } else {throw "undefined value";}
+            if (amulet_e.damage != undefined) {
+              stat_attack += amulet_e.damage;
+            } else {throw "undefined value";}
+        } catch(err) {}
+        $("#menu_readout_top").html("Your stats:");
+        $("#menu_list_right").html("<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+stat_maxhp+
         " max health<li><div class='inv_icon' style='background-position:0px 0px'></div>: "+stat_gold+
         " gold</li><li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+stat_attack+
         " damage</li><li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+stat_defense+
-        " armour</li>");
+        " armour</li><li><div class='inv_icon' style='background-position:-64px 0px'></div>: "+stat_magicdef+
+        " magic resistance</li><li><div class='inv_icon' style='background-position:-80px 0px'></div>: "+stat_magicatk+
+        " magic damage</li>");
+    }
+    function viewMenu(screen)
+    {
+        switch(screen)
+        {
+            case "inventory":
+                viewStats();
+                $("#menuheading").html("Items and stats");
+                $("#list_heading").html("Inventory <i>(Click to use)</i>");
+        }
     }
 </script>
   <body  onload="init()">
       <div style="text-align:center; border-style:solid; border-width:1px; border-color:#000; width:50%; float:left">
-          <p id="info">You have ventured into a dungeon!<br>Suddenly, a generic monster jumps out of nowhere and challenges you to a fight.<br></p>
+          <div style="text-align:center; overflow:hidden; height:50%">
+          <p id="info" style="margin-left:0">info</p>
           <table style="margin:0 auto;"><tr>
-            <td><div class="btndiv" id="fightbutton" onclick="roll()"><div id="fightbuttonimg" class="pixel"></div>Fight</div>
-            <td><div class="btndiv" id="runbutton" onclick="escape()"><div id="runbuttonimg" class="pixel"></div>Run away</div>
-            
+            <td><div class="btndiv float" id="eventbutton01"><div class="btn_icon"></div></div>
+            <td><div class="btndiv float" id="eventbutton02"><div class="btn_icon"></div></div>
+            <td><div class="btndiv float" id="eventbutton03"><div class="btn_icon"></div></div>
           </tr></table>
-          <p id="readout">Your health: 20<br> Enemy health: 20</p>
+          <p id="readout">readout</p>
+          </div>
+          <div id="shop" style="text-align:center; overflow-y:Scroll; height:50%; border-top:1px solid #000">
+              <p>Shop</p>
+              <ul id="shop_list"></ul>
+          </div>
       </div>
-    <div class="itemdiv"><p>Items and stats</p>
-      <div class="itemdiv_i">
-        <p style="text-align:left">Inventory <i>(Click to use)</i> </p>
-        <ul id="inv_list">
-        </ul>
-      </div>
-      <div class="itemdiv_i">
-        <p id="item_desc">javascript error</p>
-        <ul id="item_list"></ul>
-      </div>
+    <div class="menudiv">
+        <ul id="menubar" class="menubar">
+        </ul><p class="menuheading">Items and stats</p>
+        <div>
+            <div class="menudiv_i" style="width:49.7%; float:left;">
+                <p id="list_heading" style="text-align:left">Inventory <i>(Click to use)</i> </p>
+                <ul id="menu_list_left"></ul>
+            </div>
+            <div class="menudiv_i">
+                <p id="menu_readout_top">javascript error</p>
+                <ul id="menu_list_right"></ul>
+                <p id="menu_extended">extended menu</p>
+                <ul id="menu_list_ext"></ul>
+            </div>
+        </div>
     </div>
     </body>
 </head>
