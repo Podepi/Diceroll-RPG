@@ -8,20 +8,28 @@
 .no_margin {margin:0}
 div {height:500px}
 div.menudiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
-div.menudiv_i{height:447px; text-align:left; border-top:1px solid #000; overflow-y:Scroll}
+div.menudiv_i{height:427px; text-align:left; border-top:1px solid #000; overflow-y:Scroll}
 div.btndiv {text-align:center; margin: 0 auto; width:64px; height:88px;
   border-style:solid; border-color:#000; border-width:1px;
   cursor:pointer; font-family:Tahoma, Calibri, sans-serif; font-size:11px
 }
 div.btndiv:hover {border-color:#00CCCC}
-ul {list-style-type: none}
+ul {list-style-type: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;}
 ul.menubar {
   width:90%;
   display: inline-block;
+  height:15px;
 }
 p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
-p.menuheading {display:inline-block; margin:auto; padding-bottom: 5px}
-li.inv {cursor:pointer}
+p.menuheading {display:inline-block; margin:auto; padding-bottom: 5px; height:20px}
+li.inv{cursor:pointer}
+li.shop{cursor:pointer; text-align:left; margin-left: 0}
 
 /* CSS Effects */
 
@@ -57,44 +65,49 @@ li.inv {cursor:pointer}
 <script src="jquery-2.1.1.min.js"></script>
 <script>
     //images (64x64)
-    var img_artifacts = "iconlist_artifacts.png";
-    var img_magic = "iconlist_magic.png";
-    var img_physical = "iconlist_physical.png";
-    var img_ui = "iconlist_ui.png";
-    var img_def64 = "default_64.png";
+    var img_artifacts = "iconlist_artifacts.png"; // 64x64 misc. object  spritesheet
+    var img_magic = "iconlist_magic.png"; // 64x64 magic spritesheet
+    var img_physical = "iconlist_physical.png"; //64x64 physical attack spritesheet
+    var img_ui = "iconlist_ui.png"; //64x64 ui spritesheet
+    var img_def64 = "default_64.png"; //default 64x64 image
     //icons (16x16)
-    var ico_list = "icon_list_16.png";
+    var ico_list = "icon_list_16.png"; //16x16 icon spritesheet
     //Arrays
-    var deathmessage = ["The generic enemy attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
+    var deathmessage = /* This array contains all the phrases which show up when you die */
+    ["The generic enemy attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
 	"Your armour fails to relect the weapon aimed at your face.",
 	"Your armour is less effective than the enemy's weapon.",
-	"Blocking that attack is basic knowledge at the Warrior Training School..."];
-    var inventory = [];
-    var shoplist = [];
-    var enemy_list = ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
-    var adjective_list = ["smelly", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly-disguised", "annoying", "loud", "armed"]
-    var shopkeeper = ["tells you about all the various bargains.", 
+	"Blocking that attack is basic knowledge at the Warrior Training School...",
+    "You are sent to The Place Where All Beings Are Eternally Blessed."];
+    var inventory = []; // This array contains the items the inventory has - all array work is done in the createItem() function
+    var shoplist = []; // This array contains the items the shop has - all array work is done in the shop functions 
+    var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future */
+    ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
+    var adjective_list = /* This array contains all the adjectives an enemy can have - purely cosmetic */
+    ["smelly", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly-disguised", "annoying", "loud", "armed", "stereotyped"]
+    var shopkeeper = /* This array contains all the various phrases and actions the shopkeeper does */
+    ["tells you about all the various bargains.", 
     "complains about shoplifters.",
     "tells tales of mysterious dungeons and treasures.",
-    "tells a tale of a strange and powerful artifact in the northern mountains."];
+    "tells of strange and powerful artifacts."];
     //Game variables
-    var playerhp;
-    var enemyhp;
-    var pdamage;
-    var edamage;
-    var score = 0;
-    var highscore = 0;
-    var menuscreen = "inventory";
+    var playerhp; // Amount of health you have at the present
+    var enemyhp; // Amount of health enemy has - dealt with during battle - eventBattle() function
+    var pdamage; // Amount of damage you deal - dealt with at runtime in the roll() function
+    var edamage; // Amount of damage enemy deals - dealt with at runtime in the roll() function
+    var score = 0; // Number of enemies defeated this run for previously in-place score system
+    var highscore = 0; // High score for previously in-place score system
+    var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
     //Stats
-    var stat_maxhp = 20;
-    var stat_gold = 10;
-    var stat_attack = 0;
-    var stat_defense = 0;
-    var stat_magicdef = 0;
-    var stat_magicatk = 0;
-    var weapon_e;
-    var armour_e;
-    var amulet_e;
+    var stat_maxhp = 20; // Maximum amount of hitpoints player has
+    var stat_gold = 10; // Amount of gold player has
+    var stat_attack = 0; // Damage dealt by player on physical attack
+    var stat_defense = 0; // Reduces damage taken by player from harm; 25% effective against magic
+    var stat_magicdef = 0; // Reduces damage taken by player from magic
+    var stat_magicatk = 0; // Damage dealt with magic by player
+    var weapon_e; // Equipped weapon
+    var armour_e; // Equipped armour
+    var amulet_e; // Equipped amulet
     
     function init()
     {
@@ -105,16 +118,15 @@ li.inv {cursor:pointer}
         playerhp = stat_maxhp;
         inventory.pop();
         shoplist.pop();
-        event_town();
-        createItem(-16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-        createItem(0, -16, "Weapon", "Smite sword", "A sword so powerful it looks like a boulder", 102, 30);
-        createItem(0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
-        createItem(0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
-        createItem(-16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
-        createItem(-16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
-        viewStats();
         init_shop();
-        event_shop("hide");
+        event_town();
+        createItem("inv", -16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
+        createItem("inv", 0, -16, "Weapon", "Smite sword", "A sword so powerful it looks like a boulder", 102, 30);
+        createItem("inv", 0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        createItem("inv", 0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
+        createItem("inv", -16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
+        createItem("inv", -16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
+        viewStats();
     }
     function event_explore_start() {
         window.setTimeout("event_explore_end()", 1000);
@@ -170,42 +182,35 @@ li.inv {cursor:pointer}
     }
     function init_shop()
     {
-        var t;
-        itemShop(-16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-        itemShop(-16, 0, "Weapon", "Steel dagger", "A short steel blade with a small hilt", 20, 5);
-        itemShop(0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
-        itemShop(0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
-        itemShop(-16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
-        itemShop(-16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
-        for (a = 0; a > shoplist.length; a++) {
-            t = "<td>" + shoplist[a].name + "<br></td>";
-        }
+        createItem("shop", -16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
+        createItem("shop", -16, 0, "Weapon", "Steel dagger", "A short steel blade with a small hilt", 20, 5);
+        createItem("shop", 0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        createItem("shop", 0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
+        createItem("shop", -16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
+        createItem("shop", -16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
+        
+        var t = updateShop();
+        $("#menu_list_left").html(t);
         $("#shop_list").html(t);
     }
-    function itemShop(x, y, t, n, d, g, dmg, def, h)
+    function updateShop()
     {
-        var newitem = new Object();
-        
-        //Essential values
-        newitem.listx = x;
-        newitem.listy = y;
-        newitem.type = t;
-        newitem.name = n;
-        newitem.desc = d;
-        newitem.gold = g;
-        
-        //Non-essential values
-        if(def != 0) {
-          newitem.defense = def;
-        } if(dmg != 0) {
-          newitem.damage = dmg;
-        } if(h != 0) {
-          newitem.heal = h;
+        var iconx;
+        var icony;
+        iconx = shoplist[0].listx;
+        icony = shoplist[0].listy;
+        var t = "<li id='0' class='shop'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+shoplist[0].name;
+        t += "</li>"
+        for(a = 1; a < shoplist.length; a++) {
+          iconx = shoplist[a].listx;
+          icony = shoplist[a].listy;
+          t += "<li id='"+a+"' class='shop'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+shoplist[a].name;
+          if(stat_gold < shoplist[a].gold) {
+            t += "<i style='color:#FF0000'> - Not enough gold</i>";
+          }
+          t += "</li>"
         }
-        shoplist.push(newitem);
-        if (menuscreen == "inventory") {
-            updateItems();
-        }
+        return(t);
     }
     function event_shop(visible)
     {
@@ -222,6 +227,26 @@ li.inv {cursor:pointer}
                 btn2.hide();
                 btn3.hide();
                 $("#info").html('The shopkeeper ' + shopkeeper[Math.floor(Math.random() * shopkeeper.length)]);
+                $("li.shop").hover(
+                    function() {
+                        $(this).css("background-color", "#DDD");
+                        console.log("testing");
+                        var item = shoplist[this.id];
+                        viewItem(item);
+                    }, function() {
+                        $(this).css("background-color", "#FFF");
+                        viewStats();
+                    }
+                );
+                $("li.shop").off("click").on("click",
+                    function() {
+                        var item = shoplist[this.id];
+                        //var info = $("#this.id").html();
+                        if(stat_gold >= item.gold) {
+                            inventory.push(item);
+                            updateItems();
+                        }
+                });
                 break;
             case "hide":
                 $("#shop").hide();
@@ -244,7 +269,11 @@ li.inv {cursor:pointer}
             roll();
         });
         btn1.html('<div class="btn_icon" style="background-position:0px 0px; background-image:url('+img_physical+')"></div>Fight');
-        btn2.hide();
+        btn2.show();
+        btn2.off('click').on('click', function() {
+            event_town();
+        });
+        btn2.html('<div class="btn_icon" style="background-position:0px 0px; background-image:url('+img_def64+')"></div>Town');
         btn3.hide();
         playerhp = stat_maxhp;
         enemyhp = 20;
@@ -344,7 +373,7 @@ li.inv {cursor:pointer}
           function() {
             $(this).css("background-color", "#DDD");
             var item = inventory[this.id];
-            viewItem(item.type, item.desc, item.gold, item.defense, item.damage, item.heal);
+            viewItem(item);
           }, function() {
             $(this).css("background-color", "#FFF");
             viewStats();
@@ -389,7 +418,7 @@ li.inv {cursor:pointer}
           }
         );
     }
-    function createItem(x, y, t, n, d, g, dmg, def, h)
+    function createItem(a, x, y, t, n, d, g, dmg, def, h)
     {
         var newitem = new Object();
         
@@ -409,24 +438,33 @@ li.inv {cursor:pointer}
         } if(h != 0) {
           newitem.heal = h;
         }
-        inventory.push(newitem);
+        switch(a) {
+        case "inv":
+            inventory.push(newitem);
+            break;
+        case "shop":
+            shoplist.push(newitem);
+            break;
+        }
         if (menuscreen == "inventory") {
             updateItems();
         }
     }
-    function viewItem(type, desc, gold, def, dmg, heal)
+    function viewItem(item)
     {
         var list_text;
-        $("#menu_readout_top").text(desc);
-        list_text = "<li><b>"+type+"</b></li><li><br><div class='inv_icon' style='background-position:0px 0x'></div>: "+gold+" gold</li>";
-        if(dmg != undefined) {
-          list_text += "<li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+dmg+" damage</li>";
-        } if(def != undefined) {
-          list_text += "<li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+def+" armour</li>";
-        } if(heal != undefined) {
-          list_text += "<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+heal+" HP restored</li>";
+        $("#menu_readout_top").text(item.desc);
+        list_text = "<li><b>"+item.type+"</b></li><li><br><div class='inv_icon' style='background-position:0px 0x'></div>: "+item.gold+" gold</li>";
+        if(item.damage != undefined) {
+          list_text += "<li><div class='inv_icon' style='background-position:-16px 0px'></div>: "+item.damage+" damage</li>";
+        } if(item.defense != undefined) {
+          list_text += "<li><div class='inv_icon' style='background-position:-32px 0px'></div>: "+item.defense+" armour</li>";
+        } if(item.heal != undefined) {
+          list_text += "<li><div class='inv_icon' style='background-position:-48px 0px'></div>: "+item.heal+" HP restored</li>";
         }
-        $("#item_list").html(list_text);
+        $("#menu_list_right").html(list_text);
+        $("#menu_extended").hide();
+        $("#menu_list_ext").hide();
     }   
     function viewStats()
     {
@@ -456,6 +494,8 @@ li.inv {cursor:pointer}
         " armour</li><li><div class='inv_icon' style='background-position:-64px 0px'></div>: "+stat_magicdef+
         " magic resistance</li><li><div class='inv_icon' style='background-position:-80px 0px'></div>: "+stat_magicatk+
         " magic damage</li>");
+        $("#menu_extended").hide();
+        $("#menu_list_ext").hide();
     }
     function viewMenu(screen)
     {
