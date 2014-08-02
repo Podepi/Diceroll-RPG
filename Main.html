@@ -9,7 +9,7 @@
 .no_margin_left {margin-left: 0;}
 div {height:500px}
 div.menudiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
-div.menudiv_i{height:427px; text-align:left; border-top:1px solid #000; overflow-y:Scroll}
+div.menudiv_i{height:427px; text-align:left; border-top:1px solid #000; overflow-y:auto}
 div.btndiv {text-align:center; margin: 0 auto; width:64px; height:88px;
   border-style:solid; border-color:#000; border-width:1px;
   cursor:pointer; font-family:Tahoma, Calibri, sans-serif; font-size:11px
@@ -30,6 +30,7 @@ ul.menubar {
 p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
 p.menuheading {display:inline-block; margin:auto; padding-bottom: 5px; height:20px}
 li.inv{cursor:pointer}
+li.sort{cursor:pointer; text-align:left; display:inline-block;}
 li.shop{cursor:pointer; text-align:left; margin-left: 0}
 
 /* CSS Effects */
@@ -91,6 +92,7 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
     "complains about shoplifters.",
     "tells tales of mysterious dungeons and treasures.",
     "tells of strange and powerful artifacts."];
+	
     //Game variables
     var playerhp; // Amount of health you have at the present
     var enemyhp; // Amount of health enemy has - dealt with during battle - eventBattle() function
@@ -99,7 +101,9 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
     var score = 0; // Number of enemies defeated this run for previously in-place score system
     var highscore = 0; // High score for previously in-place score system
     var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
-    //Stats
+    var battle = false; //Boolean defines whether hp potions display enemy health on readout
+	
+	//Stats
     var stat_maxhp = 20; // Maximum amount of hitpoints player has
     var stat_gold = 10; // Amount of gold player has
     var stat_attack = 0; // Damage dealt by player on physical attack
@@ -120,17 +124,24 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         $("#menubar_qst").on("click", function() {
             viewMenu("quests");
         });
+		$("#list_sort").html('<li id="sort_weapon" class="sort">W</li>' +
+							 '<li id="sort_armour" class="sort">A</li>');
+		$("li.sort").hover(
+          function() {
+            $(this).css("background-color", "#DDD");
+          }, function() {
+            $(this).css("background-color", "#FFF");
+          }
+        );
         playerhp = stat_maxhp;
         inventory.pop();
         shoplist.pop();
         init_shop();
         event_town();
         createItem("inv", -16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-        createItem("inv", 0, -16, "Weapon", "Smite sword", "A sword so powerful it looks like a boulder", 102, 30);
-        createItem("inv", 0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+        createItem("inv", 0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 1);
         createItem("inv", 0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
         createItem("inv", -16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
-        createItem("inv", -16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
         viewStats();
     }
     function event_explore_start() {
@@ -144,33 +155,42 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         btn3.hide();
     }
     function event_explore_end() {
-        var rand = Math.floor(Math.random() * 4);
         var btn1 = $("#eventbutton01");
         var btn2 = $("#eventbutton02");
         var btn3 = $("#eventbutton03");
         var info = $("#info");
+        var rand = Math.floor(Math.random() * 2);
         switch(rand) {
-            case 0:
-                $("#info").html("You find a penny!<br>+1 gold");
-                stat_gold +=1 ;
-                btn1.show();
-                btn1.html();
-                btn2.show();
-                btn2.html();
-                break;
+			case 0:
+				$("#info").html("You found a penny!");
+				stat_gold += 1;
+				btn1.show();
+				btn1.html('<div class="btn_icon"></div>Return to Town');
+				btn1.off('click').on("click", function() {
+					event_town();
+				});
+				btn2.show();
+				btn2.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url("+img_ui+")'></div>Onward!");
+				viewStats();
+				break;
             case 1:
-                $("#info").html("All of a sudden a "+ desc() + " jumps out of nowhere!");
+                $("#info").html("All of a sudden "+ desc() + " jumps out of nowhere!");
                 btn1.show();
+				btn2.show();
                 event_battle("nodesc");
                 break;
             case 2:
-                
+                $("#info").html("You walk for hours but find nothing");
+				btn1.show();
+				btn1.html('<div class="btn_icon"></div>Return to Town');
+				btn2.show();
+				btn2.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url("+img_ui+")'></div>Onward!");
                 break;
             case 3:
-                
+				
                 break;
             case 4:
-                
+				
                 break;
         }
     }
@@ -180,6 +200,7 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         var btn1 = $("#eventbutton01");
         var btn2 = $("#eventbutton02");
         var btn3 = $("#eventbutton03");
+		btn1.show();
         btn1.html('<div class="btn_icon"></div>Shop');
         btn1.off('click').on("click", function() {
             event_shop("show");
@@ -187,7 +208,7 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         btn2.show();
         btn2.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url("+img_ui+")'></div>Explore");
         btn2.off('click').on("click", function() {
-            event_battle();
+            event_explore_start();
         });
         btn3.hide();
         $("#readout").html("Your health: " + playerhp);
@@ -198,13 +219,12 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         createItem("shop", -16, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
         createItem("shop", -16, 0, "Weapon", "Steel dagger", "A short steel blade with a small hilt", 20, 5);
         createItem("shop", 0, -48, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 2);
+		createItem("shop", 0, -64, "Armour", "Iron armour", "An iron armour set which protects from moderate damage", 20, 0, 5);
         createItem("shop", 0, -64, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
         createItem("shop", -16, -64,"Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
         createItem("shop", -16, -80, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
         
-        var t = updateShop();
-        $("#menu_list_left").html(t);
-        $("#shop_list").html(t);
+        updateShop();
     }
     function updateShop()
     {
@@ -213,6 +233,9 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         iconx = shoplist[0].listx;
         icony = shoplist[0].listy;
         var t = "<li id='0' class='shop'> <div class='inv_icon' style='background-position:"+iconx+"px "+icony+"px'></div>"+shoplist[0].name;
+		if(stat_gold < shoplist[0].gold) {
+			t += "<i style='color:#FF0000'> - Not enough gold</i>";
+        }
         t += "</li>"
         for(a = 1; a < shoplist.length; a++) {
           iconx = shoplist[a].listx;
@@ -223,12 +246,35 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
           }
           t += "</li>"
         }
-        return(t);
+        $("#shop_list").html(t);
+		$("#shop_heading").html("Shop<br><div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold);
+		$("li.shop").hover(
+			function() {
+				$(this).css("background-color", "#DDD");
+				var item = shoplist[this.id];
+				viewItem(item);
+			}, function() {
+				$(this).css("background-color", "#FFF");
+				viewStats();
+			}
+		);
+		$("li.shop").off("click").on("click",
+		function() {
+			var item = shoplist[this.id];
+			//var info = $("#this.id").html();
+			if(stat_gold >= item.gold) {
+				inventory.push(item);
+				stat_gold -= item.gold;
+				updateItems();
+				$("#shop_list").html(updateShop());
+			}
+		});
     }
     function event_shop(visible)
     {
         switch(visible) {
             case "show":
+				updateShop()
                 var btn1 = $("#eventbutton01");
                 var btn2 = $("#eventbutton02");
                 var btn3 = $("#eventbutton03");
@@ -240,26 +286,7 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
                 btn2.hide();
                 btn3.hide();
                 $("#info").html('The shopkeeper ' + shopkeeper[Math.floor(Math.random() * shopkeeper.length)]);
-                $("li.shop").hover(
-                    function() {
-                        $(this).css("background-color", "#DDD");
-                        console.log("testing");
-                        var item = shoplist[this.id];
-                        viewItem(item);
-                    }, function() {
-                        $(this).css("background-color", "#FFF");
-                        viewStats();
-                    }
-                );
-                $("li.shop").off("click").on("click",
-                    function() {
-                        var item = shoplist[this.id];
-                        //var info = $("#this.id").html();
-                        if(stat_gold >= item.gold) {
-                            inventory.push(item);
-                            updateItems();
-                        }
-                });
+				
                 break;
             case "hide":
                 $("#shop").hide();
@@ -290,9 +317,36 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         btn3.hide();
         playerhp = stat_maxhp;
         enemyhp = 20;
+		battle = true;
         if (t != "nodesc") {
             $("#info").html("You have ventured into a dungeon!<br>Suddenly, "+ desc() + " jumps out of nowhere and challenges you to a fight.");
         }
+        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
+    }
+	function updateFight()
+    {
+        $("#info").html("You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.");
+        if (playerhp <= 0) {
+            playerhp = 0;
+            if (enemyhp <= 0) {
+                enemyhp = 0;
+            }
+            $("#info").html(deathmessage[Math.floor(Math.random() * deathmessage.length)]);
+            $("#eventbutton01").hide();
+            $("#eventbutton02").show();
+        } else { if (enemyhp <= 0) {
+            if (playerhp <= 0) {
+                playerhp = 0;
+            }
+            enemyhp = 0;
+			var gold_inc = Math.ceil(Math.random()*10);
+			stat_gold += gold_inc;
+			battle = false;
+            //score++;
+            $("#info").html("You have won!<br>You gained " + gold_inc + " gold!");
+            $("#eventbutton01").hide();
+            $("#eventbutton02").show();
+        }}
         $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
     }
     function event_escape()
@@ -333,29 +387,6 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
           enemyhp -= pdamage;
           updateFight();
       }
-    }
-    function updateFight()
-    {
-        $("#info").html("You hit the enemy for " + pdamage + " damage.<br>You were hit for " + edamage + " damage.");
-        if (playerhp <= 0) {
-            playerhp = 0;
-            if (enemyhp <= 0) {
-                enemyhp = 0;
-            }
-            $("#info").html(deathmessage[Math.floor(Math.random() * deathmessage.length)]);
-            $("#fightbutton").hide();
-            $("#retrybutton").show();
-        } else { if (enemyhp <= 0) {
-            if (playerhp <= 0) {
-                playerhp = 0;
-            }
-            enemyhp = 0;
-            score++;
-            $("#info").html("You have won!");
-            $("#fightbutton").hide();
-            $("#retrybutton").show();
-        }}
-        $("#readout").html("Your health: " + playerhp + "<br>Enemy health: " + enemyhp);
     }
     function updateItems()
     {
@@ -413,7 +444,11 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
                 break;
               case "Consumable":
                 playerhp += item.heal;
-                $("#readout").html("Player: " + playerhp + "<br>Enemy: " + enemyhp);
+				var hpText = "Your health: " + playerhp;
+				if (battle == true) {
+					 hpText += "<br>Enemy health: " + enemyhp;
+				}
+                $("#readout").html(hpText);
                 $("#info").html("You were healed for "+item.heal+" health.");
                 inventory.splice(this.id, 1);
                 break;
@@ -532,8 +567,8 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
           </tr></table>
           <p id="readout">readout</p>
           </div>
-          <div id="shop" style="text-align:center; overflow-y:Scroll; height:50%; border-top:1px solid #000">
-              <p>Shop</p>
+          <div id="shop" style="text-align:center; overflow-y:auto; height:50%; border-top:1px solid #000">
+              <p id="shop_heading">Shop</p>
               <ul id="shop_list"></ul>
           </div>
       </div>
@@ -544,6 +579,7 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         <div>
             <div class="menudiv_i" style="width:49.7%; float:left;">
                 <p id="list_heading" style="text-align:left">Inventory <i>(Click to use)</i> </p>
+				<ul id="list_sort"></ul>
                 <ul id="menu_list_left"></ul>
             </div>
             <div class="menudiv_i">
