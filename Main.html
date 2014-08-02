@@ -6,6 +6,7 @@
 .menu_icon{width:100px; display:inline-block; border:1px solid #000; cursor:pointer}
 .inv_icon{width:16px; height:16px; background-repeat:no-repeat; background-image:url(icon_list_16.png); float:left; margin-right:2px; margin-top:2px}
 .no_margin {margin:0}
+.no_margin_left {margin-left: 0;}
 div {height:500px}
 div.menudiv{text-align:center; border-style:solid; border-color:#000; border-width:1px; width:49%; float:left}
 div.menudiv_i{height:427px; text-align:left; border-top:1px solid #000; overflow-y:Scroll}
@@ -23,7 +24,7 @@ ul {list-style-type: none;
   user-select: none;}
 ul.menubar {
   width:90%;
-  display: inline-block;
+  display: block;
   height:15px;
 }
 p, li {font-family:Tahoma, Calibri, sans-serif; margin-left:5px}
@@ -84,7 +85,7 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
     var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future */
     ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
     var adjective_list = /* This array contains all the adjectives an enemy can have - purely cosmetic */
-    ["smelly", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly-disguised", "annoying", "loud", "armed", "stereotyped"]
+    ["smelly", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly-disguised", "annoying", "loud", "armed", "armoured", "stereotyped", "ghostly", "orcish", "wraith-like", "trollish", "spidery", "golem-like"]
     var shopkeeper = /* This array contains all the various phrases and actions the shopkeeper does */
     ["tells you about all the various bargains.", 
     "complains about shoplifters.",
@@ -111,9 +112,13 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
     
     function init()
     {
-        $("#menubar").html('<li id="menubar_inv" class="menu_icon no_margin glow">Inventory</li>');
+        $("#menubar").html('<li id="menubar_inv" class="menu_icon no_margin_left glow">Inventory</li>' + 
+                           '<li id="menubar_qst" class="menu_icon no_margin_left glow">Errands</li>');
         $("#menubar_inv").on("click", function() {
             viewMenu("inventory");
+        });
+        $("#menubar_qst").on("click", function() {
+            viewMenu("quests");
         });
         playerhp = stat_maxhp;
         inventory.pop();
@@ -138,13 +143,21 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
         btn2.hide();
         btn3.hide();
     }
-    function event_explore_end(rand) {
-        //var rand = Math.floor(Math.random() * 4);
+    function event_explore_end() {
+        var rand = Math.floor(Math.random() * 4);
         var btn1 = $("#eventbutton01");
         var btn2 = $("#eventbutton02");
         var btn3 = $("#eventbutton03");
         var info = $("#info");
         switch(rand) {
+            case 0:
+                $("#info").html("You find a penny!<br>+1 gold");
+                stat_gold +=1 ;
+                btn1.show();
+                btn1.html();
+                btn2.show();
+                btn2.html();
+                break;
             case 1:
                 $("#info").html("All of a sudden a "+ desc() + " jumps out of nowhere!");
                 btn1.show();
@@ -526,7 +539,8 @@ li.shop{cursor:pointer; text-align:left; margin-left: 0}
       </div>
     <div class="menudiv">
         <ul id="menubar" class="menubar">
-        </ul><p class="menuheading">Items and stats</p>
+        </ul>
+        <p class="menuheading">Items and stats</p>
         <div>
             <div class="menudiv_i" style="width:49.7%; float:left;">
                 <p id="list_heading" style="text-align:left">Inventory <i>(Click to use)</i> </p>
