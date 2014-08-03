@@ -1,0 +1,127 @@
+.btn_icon{
+    width:64px;
+    height:64px;
+    background-repeat:no-repeat;
+    background-image:url(default_64.png);
+}
+.menu_icon{
+    width:100px;
+    display:inline-block;
+    border:1px solid #000;
+    cursor:pointer;
+}
+.inv_icon{
+    width:16px;
+    height:16px;
+    background-repeat:no-repeat;
+    background-image:url(icon_list_16.png);
+    float:left;
+    margin-right:2px;
+    margin-top:2px;
+}
+.no_margin {
+    margin:0;
+}
+.lm {
+    margin-left:5px;
+}
+.no_margin_left {
+    margin-left: 0;
+}
+div {
+    height:500px;
+}
+div.menudiv{
+    text-align:center;
+    border-style:solid;
+    border-color:#000;
+    border-width:1px;
+    width:49%;
+    float:left;
+}
+div.menudiv_i{
+    height:427px;
+    text-align:left;
+    border-top:1px solid #000;
+    overflow-y:auto;
+}
+div.btndiv {
+    text-align:center;
+    margin: 0 auto;
+    width:64px;
+    height:88px;
+    border-style:solid;
+    border-color:#000;
+    border-width:1px;
+    cursor:pointer;
+    font-family:Tahoma, Calibri, sans-serif;
+    font-size:11px;
+}
+div.btndiv:hover {border-color:#00CCCC}
+ul {list-style-type: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+ul.menubar {
+    width:90%;
+    display: block;
+    height:15px;
+}
+p, li {
+    font-family:Tahoma, Calibri, sans-serif;
+}
+p.menuheading {
+    display:inline-block;
+    margin:auto;
+    padding-bottom: 5px;
+    height:20px;
+}
+li.inv {
+    cursor:pointer
+}
+li.sort {
+    cursor:pointer;
+    display:inline-block;
+    border-style:solid;
+    border-width:1px;
+    border-color:#FFF;
+}
+li.shop {
+    cursor:pointer;
+    text-align:left;
+    margin-left: 0;
+}
+
+/* CSS Effects */
+
+.float {
+    display: inline-block;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.float:hover, .float:focus, .float:active {
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);
+}
+.glow {
+    display: inline-block;
+    -webkit-transition-duration: 0.1s;
+    transition-duration: 0.1s;
+    -webkit-transition-property: box-shadow;
+    transition-property: box-shadow;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.glow:hover, .glow:focus, .glow:active {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
