@@ -15,7 +15,8 @@ var deathmessage = /* This array contains all the phrases which show up when you
             "You are sent to The Place Where All Beings Are Eternally Blessed."];
 var inventory = []; // This array contains the items the inventory has - all array work is done in the createItem() function
 var shoplist = []; // This array contains the items the shop has - all array work is done in the shop functions 
-var maplist = []; // This array contains the locations known by the player
+var locations = []; // This array contains the locations known by the player
+var errands = []; // This array contains the errands accepted by the player
 var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future */
         ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
 var adjective_list = /* This array contains all the adjectives an enemy can have - purely cosmetic */
@@ -36,6 +37,9 @@ var highscore = 0; // High score for previously in-place score system
 var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
 var battle = false; //Boolean defines whether hp potions display enemy health on readout
 var explore_location;
+var btn1;
+var btn2;
+var btn3;
 
 //Sorting
 var show_weapons = true;
@@ -93,7 +97,7 @@ function init() {
             }
             updateItems();
         }
-        );
+    );
     $("#sort_armour").hover(
         function () {
             $("#sort_desc").html("Show/hide armour");
@@ -113,8 +117,11 @@ function init() {
             }
             updateItems();
         }
-        );
+    );
     playerhp = stat_maxhp;
+    btn1 = $("#eventbutton01");
+    btn2 = $("#eventbutton02");
+    btn3 = $("#eventbutton03");
     inventory.pop();
     shoplist.pop();
     init_shop();
@@ -127,7 +134,6 @@ function init() {
 }
 function event_explore_start() {
     'use strict';
-    var btn1 = $("#eventbutton01"), btn2 = $("#eventbutton02"), btn3 = $("#eventbutton03");
 
     if (location === "explore") {
         window.setTimeout("event_explore_end()", 1000);
@@ -139,7 +145,7 @@ function event_explore_start() {
 }
 function event_explore_end() {
     'use strict';
-    var btn1 = $("#eventbutton01"), btn2 = $("#eventbutton02"), btn3 = $("#eventbutton03"), info = $("#info");
+    var info = $("#info");
     //Later, this switch statement should check the location you are exploring and throw a random number for encounters
     //Pressing explore brings up menu to select location - buttons for switching between searching for locations and going to found ones
     switch (explore_location) {
@@ -179,7 +185,6 @@ function event_explore_end() {
 function event_town() {
     'use strict';
     event_shop("hide");
-    var btn1 = $("#eventbutton01"), btn2 = $("#eventbutton02"), btn3 = $("#eventbutton03");
     btn1.show();
     btn1.html('<div class="btn_icon"></div>Shop');
     btn1.off('click').on("click", function () {
@@ -243,7 +248,7 @@ function updateShop() {
     $("li.shop").off("click").on("click",
         function () {
             var item = shoplist[this.id];
-    //var info = $("#this.id").html();
+            //var info = $("#this.id").html();
             if (stat_gold >= item.gold) {
                 inventory.push(item);
                 stat_gold -= item.gold;
@@ -257,7 +262,6 @@ function event_shop(visible) {
     switch (visible) {
     case "show":
         updateShop();
-        var btn1 = $("#eventbutton01"), btn2 = $("#eventbutton02"), btn3 = $("#eventbutton03");
         $("#shop").show();
         btn1.html('<div class="btn_icon"></div>Exit to Town');
         btn1.off('click').on("click", function () {
@@ -273,15 +277,14 @@ function event_shop(visible) {
     }
 }
 function event_battle(t) {
-/*if (playerhp <= 0) {
-    if(score > highscore) {
-      highscore = score;
-    }
-  score = 0;
-  }
-*/
+    /*if (playerhp <= 0) {
+        if(score > highscore) {
+          highscore = score;
+        }
+      score = 0;
+      }
+    */
     'use strict';
-    var btn1 = $("#eventbutton01"), btn2 = $("#eventbutton02"), btn3 = $("#eventbutton03");
     btn1.off('click').on('click', function () {
         roll();
     });
@@ -328,7 +331,7 @@ function updateFight() {
 }
 function event_escape() {
     'use strict';
-    var escapechance = Math.random(), btn1 = $("#eventbutton01"), btn2 = $("#eventbutton02"), btn3 = $("#eventbutton03");
+    var escapechance = Math.random();
     if (escapechance >= 0.2) {
         $("#info").html("You have successfully escaped!");
         btn1.off('click').on('click', function () {
@@ -539,4 +542,85 @@ function viewMenu(screen) {
         $("#list_heading").html("Locations <i>(Click to travel)</i>");
         break;
     }
+}
+function updateErrands() {
+    'use strict';
+    var iconx, icony, a, t;
+    try {
+        iconx = errands[0].listx;
+        icony = errands[0].listy;
+    } catch (err) { return ("quest update failed"); }
+    t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + errands[0].name;
+    if (weapon_e === errands[0] || armour_e === errands[0]) {
+        t += "<i> - Equipped</i>";
+    }
+    t += "</li>";
+    for (a = 1; a < errands.length; a += 1) {
+        iconx = errands[a].listx;
+        icony = errands[a].listy;
+        t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + errands[a].name;
+        if (weapon_e === errands[a] || armour_e === errands[a] || amulet_e === errands[a]) {
+            t += "<i> - Equipped</i>";
+        }
+        t += "</li>";
+    }
+    $("#menu_list_left").html(t);
+
+    //Mouseover stats
+    $("li.inv").hover(
+        function () {
+            $(this).css("background-color", "#DDD");
+            var item = errands[this.id];
+            viewItem(item);
+        },
+        function () {
+            $(this).css("background-color", "#FFF");
+            viewStats();
+        }
+    );
+    $("li.inv").off("click").on("click",
+        function () {
+            var item = errands[this.id], info = $("#this.id").html(), hpText;
+            switch (item.type) {
+            case "Weapon":
+                if (weapon_e === item) {
+                    weapon_e = "none";
+                } else {
+                    weapon_e = item;
+                }
+                break;
+            case "Armour":
+                if (armour_e === item) {
+                    armour_e = "none";
+                } else {
+                    armour_e = item;
+                }
+                break;
+            case "Consumable":
+                playerhp += item.heal;
+                hpText = "Your health: " + playerhp;
+                if (battle === true) {
+                    hpText += "<br>Enemy health: " + enemyhp;
+                }
+                $("#readout").html(hpText);
+                $("#info").html("You were healed for " + item.heal + " health.");
+                errands.splice(this.id, 1);
+                break;
+            case "Amulet":
+                if (amulet_e === item) {
+                    amulet_e = "none";
+                } else {
+                    amulet_e = item;
+                }
+                break;
+            }
+            if (menuscreen === "errands") {
+                updateItems();
+            }
+        }
+        );
+}
+function updateLocations() {
+    'use strict';
+    
 }
