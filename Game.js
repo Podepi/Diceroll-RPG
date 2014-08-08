@@ -578,46 +578,10 @@ function updateErrands() {
             viewStats();
         }
     );
-    $("li.inv").off("click").on("click",
-        function () {
-            var item = errands[this.id], info = $("#this.id").html(), hpText;
-            switch (item.type) {
-            case "Weapon":
-                if (weapon_e === item) {
-                    weapon_e = "none";
-                } else {
-                    weapon_e = item;
-                }
-                break;
-            case "Armour":
-                if (armour_e === item) {
-                    armour_e = "none";
-                } else {
-                    armour_e = item;
-                }
-                break;
-            case "Consumable":
-                playerhp += item.heal;
-                hpText = "Your health: " + playerhp;
-                if (battle === true) {
-                    hpText += "<br>Enemy health: " + enemyhp;
-                }
-                $("#readout").html(hpText);
-                $("#info").html("You were healed for " + item.heal + " health.");
-                errands.splice(this.id, 1);
-                break;
-            case "Amulet":
-                if (amulet_e === item) {
-                    amulet_e = "none";
-                } else {
-                    amulet_e = item;
-                }
-                break;
-            }
-            if (menuscreen === "errands") {
-                updateItems();
-            }
+        if (menuscreen === "errands") {
+            updateItems();
         }
+    }
         );
 }
 function updateLocations() {
