@@ -1,15 +1,17 @@
 <!DOCTYPE>
 <html>
     <head>
+        <meta charset="utf-8" />
         <link rel="stylesheet" type="text/css" href="stylesheet.css">
         <script src="jquery-2.1.1.min.js"></script>
         <script src="Game.js"></script>
+        <script src="itemlist.js"></script>
         <title>Diceroll RPG - The Game With The Text-based GUI</title>
     </head>
     <body onload="init()">
         <div style="text-align:center; border-style:solid; border-width:1px; border-color:#000; width:50%; float:left">
             <div style="text-align:center; overflow:hidden; height:50%">
-                <p id="info" style="margin-left:0">info</p>
+                <p id="info" style="margin-left:0"></p>
                 <table style="margin:0 auto;"><tr>
                     <td>
                         <div class="btndiv float" id="eventbutton01">
@@ -25,7 +27,7 @@
                         </div>
                     </tr>
                 </table>
-                <p id="readout">readout</p>
+                <p id="readout">Javascript doesn't appear to be working - make sure it is enabled</p>
             </div>
             <div id="shop" style="text-align:center; overflow-y:auto; height:50%; border-top:1px solid #000">
                 <p id="shop_heading">Shop</p>
@@ -42,15 +44,15 @@
                     <ul id="menu_list_left"></ul>
                 </div>
                 <div class="menudiv_i">
-                    <p id="menu_readout_top">javascript error</p>
+                    <p id="menu_readout_top"></p>
                     <ul id="menu_list_right"></ul>
-                    <p id="menu_extended">extended menu</p>
+                    <p id="menu_extended"></p>
                     <ul id="menu_list_ext"></ul>
                 </div>
             </div>
         </div>
     </body>
     <footer>
-        <p style="text-align:right">Version 0.12</p>
+        <p style="text-align:right">Version 0.13</p>
     </footer>
 </html>

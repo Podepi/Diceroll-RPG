@@ -35,11 +35,12 @@ var edamage; // Amount of damage enemy deals - dealt with at runtime in the roll
 var score = 0; // Number of enemies defeated this run for previously in-place score system
 var highscore = 0; // High score for previously in-place score system
 var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
-var battle = false; //Boolean defines whether hp potions display enemy health on readout
+var battle = false; // Boolean defines whether hp potions display enemy health on readout
 var explore_location;
 var btn1;
 var btn2;
 var btn3;
+var invsell = false; // Boolean defines whether you are selling items or not
 
 //Sorting
 var show_weapons = true;
@@ -48,14 +49,9 @@ var show_consumables = true;
 
 //Stats
 var stat_maxhp = 20; // Maximum amount of hitpoints player has
-var stat_gold = 10; // Amount of gold player has
-var stat_attack = 0; // Damage dealt by player on physical attack
-var stat_defense = 0; // Reduces damage taken by player from harm; 25% effective against magic
-var stat_magicdef = 0; // Reduces damage taken by player from magic
-var stat_magicatk = 0; // Damage dealt with magic by player
-var weapon_e; // Equipped weapon
-var armour_e; // Equipped armour
-var amulet_e; // Equipped amulet
+var stat_gold = 50; // Amount of gold player has
+var stats = [0, 0, 0, 0]; // Battle stats (attack, defense, magic attack, magic defnse)
+var equipped = ["none", "none", "none", "none"]; // Array containing equipped items
 
 function init() {
     'use strict';
@@ -69,7 +65,8 @@ function init() {
     });
     $("#list_sort").html('<li id="sort_desc" style="font-size:8pt">Sort items:</li>' +
                          '<li id="sort_weapon" class="sort inv_icon" style="background-position:-32px 0px"></li>' +
-                         '<li id="sort_armour" class="sort inv_icon" style="background-position:-64px 0px"></li><br>');
+                         '<li id="sort_armour" class="sort inv_icon" style="background-position:-64px 0px"></li>' +
+                         '<li id="sort_consumables" class="sort inv_icon" style="background-position:0px -128px"></li><br>');
     $("li.sort").hover(
         function () {
             $(this).css("border-color", "#000");
@@ -87,7 +84,7 @@ function init() {
         }
     );
     $("#sort_weapon").on("click",
-                         function () {
+         function () {
             if (show_weapons === true) {
                 show_weapons = false;
                 $(this).css("opacity", "0.3");
@@ -107,12 +104,32 @@ function init() {
         }
     );
     $("#sort_armour").on("click",
-                         function () {
+         function () {
             if (show_armour === true) {
                 show_armour = false;
                 $(this).css("opacity", "0.3");
             } else {
                 show_armour = true;
+                $(this).css("opacity", "1");
+            }
+            updateItems();
+        }
+    );
+    $("#sort_consumables").hover(
+        function () {
+            $("#sort_desc").html("Show/hide consumables");
+        },
+        function () {
+            $("#sort_desc").html("Sort items:");
+        }
+    );
+    $("#sort_consumables").on("click",
+         function () {
+            if (show_consumables === true) {
+                show_consumables = false;
+                $(this).css("opacity", "0.3");
+            } else {
+                show_consumables = true;
                 $(this).css("opacity", "1");
             }
             updateItems();
@@ -126,10 +143,6 @@ function init() {
     shoplist.pop();
     init_shop();
     event_town();
-    createItem("inv", 0, -224, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-    createItem("inv", -32, -96, "Armour", "Leather armour", "A leather armour set which protects from light damage", 20, 0, 1);
-    createItem("inv", 0, -128, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
-    createItem("inv", -32, -128, "Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
     viewStats();
 }
 function event_explore_start() {
@@ -199,18 +212,27 @@ function event_town() {
     $("#readout").html("Your health: " + playerhp);
     $("#info").html("Welcome to the Town");
 }
+                                        //shop functions
 function init_shop() {
     'use strict';
-    createItem("shop", -32, 0, "Weapon", "Iron dagger", "A short iron blade with a small hilt", 12, 3);
-    createItem("shop", -32, 0, "Weapon", "Steel dagger", "A short steel blade with a small hilt", 20, 5);
-    createItem("shop", 0, -96, "Armour", "Cloth armour", "Clothes which hardly protect from damage at all", 20, 0, 1);
-    createItem("shop", -32, -96, "Armour", "Leather armour", "A leather armour set", 60, 0, 3);
-    createItem("shop", -32, -96, "Armour", "Iron armour", "An iron plate armour set", 100, 0, 5);
-    createItem("shop", -32, -96, "Armour", "Steel armour", "A steel plate armour set", 140, 0, 7);
-    createItem("shop", -32, -96, "Armour", "Steel armour", "A steel plate armour set", 140, 0, 7);
-    createItem("shop", 0, -128, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
+    /*createItem("shop", 0, -128, "Consumable", "Health potion", "A glass bottle containing some sort of red healing liquid", 18, 0, 0, 20);
     createItem("shop", -32, -128, "Consumable", "Health vial", "A glass vial containing some sort of red healing liquid", 9, 0, 0, 10);
-    createItem("shop", -32, -160, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);
+    createItem("shop", -32, -160, "Amulet", "Amulet of enhancement", "An amulet with magical powers", 122, 15, 5);*/
+    var newitem = {};
+    for (var m in data.materials) {
+        for (var i in data.items) {
+            newitem.listy   = data.items[i].y;
+            newitem.type    = data.items[i].type;
+            newitem.listx   = data.materials[m].x;
+            newitem.damage  = data.items[i].damage   * data.materials[m].damage_mult;
+            newitem.defense = data.items[i].defense  * data.materials[m].defense_mult;
+            newitem.gold    = data.items[i].gold     * data.materials[m].gold_mult;
+            newitem.name    = data.materials[m].name + " " + data.items[i].name;
+            newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase());
+            shoplist.push(newitem);
+            newitem = {};
+        }
+    }
     updateShop();
 }
 function updateShop() {
@@ -249,6 +271,7 @@ function updateShop() {
             var item = shoplist[this.id];
             //var info = $("#this.id").html();
             if (stat_gold >= item.gold) {
+                item.tag = Math.random() + Math.random();
                 inventory.push(item);
                 stat_gold -= item.gold;
                 updateItems();
@@ -261,12 +284,17 @@ function event_shop(visible) {
     switch (visible) {
     case "show":
         updateShop();
+        invsell = false;
         $("#shop").show();
         btn1.html('<div class="btn_icon"></div>Exit to Town');
         btn1.off('click').on("click", function () {
             event_town();
         });
-        btn2.hide();
+        btn2.show();
+        btn2.html('<div class="btn_icon"></div>Sell Items');
+        btn2.off('click').on("click", function () {
+            shop_sell();
+        });
         btn3.hide();
         $("#info").html('The shopkeeper ' + shopkeeper[Math.floor(Math.random() * shopkeeper.length)]);
         break;
@@ -275,6 +303,33 @@ function event_shop(visible) {
         break;
     }
 }
+function shop_sell() {
+    "use strict";
+    menuscreen = "inventory";
+    if(invsell === false) {
+        btn2.html('<div class="btn_icon"></div>Stop selling items');
+        $("#info").html("Click on items to sell them.");
+        invsell = true;
+        $("li.inv").off("click").on("click",
+            function () {
+                var item = inventory[this.id], info = $("#this.id").html(), i;
+                stat_gold += item.gold;
+                for (i = 0; i < equipped.length; i += 1) {
+                    if (equipped[i] === item.tag) {
+                        equipped[i] = "none";
+                    }
+                }
+                inventory.splice(this.id, 1);
+                $("#readout").html("<div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold);
+                viewStats();
+                updateItems();
+            }
+        );
+    } else {
+        event_shop("show");
+    }
+}
+                                        //battle functions
 function event_battle(t) {
     /*if (playerhp <= 0) {
         if(score > highscore) {
@@ -354,33 +409,26 @@ function roll() {
         updateFight();
         event_battle();
     } else {
-        pdamage = Math.floor(Math.random() * stat_attack);
+        pdamage = Math.floor(Math.random() * stats[0]);
         edamage = Math.floor(Math.random() * 5);
-        playerhp -= edamage - stat_defense;
+        playerhp -= edamage - stats[1];
         enemyhp -= pdamage;
         updateFight();
     }
 }
 function updateItems() {
     'use strict';
-    var iconx, icony, a, t;
-    try {
-        iconx = inventory[0].listx;
-        icony = inventory[0].listy;
-    } catch (err) { return ("itemupdate failed"); }
-    t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + inventory[0].name;
-    if (weapon_e === inventory[0] || armour_e === inventory[0]) {
-        t += "<i> - Equipped</i>";
-    }
-    t += "</li>";
-    for (a = 1; a < inventory.length; a += 1) {
-        iconx = inventory[a].listx;
-        icony = inventory[a].listy;
-        t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + inventory[a].name;
-        if (weapon_e === inventory[a] || armour_e === inventory[a] || amulet_e === inventory[a]) {
-            t += "<i> - Equipped</i>";
+    var iconx, icony, a, t = " ";
+    if (inventory.length > 0) {
+        for (a = 0; a < inventory.length; a += 1) {
+            iconx = inventory[a].listx;
+            icony = inventory[a].listy;
+            t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + inventory[a].name;
+            if (equipped[0] === inventory[a] || equipped[1] === inventory[a] || equipped[2] === inventory[a]) {
+                t += "<i> - Equipped</i>";
+            }
+            t += "</li>";
         }
-        t += "</li>";
     }
     $("#menu_list_left").html(t);
 
@@ -401,17 +449,24 @@ function updateItems() {
             var item = inventory[this.id], info = $("#this.id").html(), hpText;
             switch (item.type) {
             case "Weapon":
-                if (weapon_e === item) {
-                    weapon_e = "none";
+                if (equipped[0] === item.tag) {
+                    equipped[0] = "none";
                 } else {
-                    weapon_e = item;
+                    equipped[0] = item.tag;
                 }
                 break;
             case "Armour":
-                if (armour_e === item) {
-                    armour_e = "none";
+                if (equipped[1] === item.tag) {
+                    equipped[1] = "none";
                 } else {
-                    armour_e = item;
+                    equipped[1] = item.tag;
+                }
+                break;
+            case "Amulet":
+                if (equipped[2] === item.tag) {
+                    equipped[2] = "none";
+                } else {
+                    equipped[2] = item.tag;
                 }
                 break;
             case "Consumable":
@@ -424,21 +479,30 @@ function updateItems() {
                 $("#info").html("You were healed for " + item.heal + " health.");
                 inventory.splice(this.id, 1);
                 break;
-            case "Amulet":
-                if (amulet_e === item) {
-                    amulet_e = "none";
-                } else {
-                    amulet_e = item;
-                }
-                break;
             }
             if (menuscreen === "inventory") {
                 updateItems();
             }
-        }
+        });
+    if (invsell === true) {
+        $("li.inv").off("click").on("click",
+            function () {
+                var item = inventory[this.id], info = $("#this.id").html(), i;
+                stat_gold += item.gold;
+                for (i = 0; i < equipped.length; i += 1) {
+                    if (equipped[i] === item.tag) {
+                        equipped[i] = "none";
+                    }
+                }
+                inventory.splice(this.id, 1);
+                $("#readout").html("<div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold);
+                viewStats();
+                updateItems();
+            }
         );
+    }
 }
-function createItem(a, x, y, t, n, d, g, dmg, def, h) {
+function createItem(x, y, t, n, d, g, dmg, def, h) {
     'use strict';
     var newitem = {};
 
@@ -476,14 +540,14 @@ function viewItem(item) {
     'use strict';
     var list_text;
     $("#menu_readout_top").text(item.desc);
-    list_text = "<li class='stats'><b>" + item.type + "</b></li><li><br><div class='inv_icon' style='background-position:0px 0px'></div>: " + item.gold + " gold</li>";
-    if (item.damage !== undefined) {
+    list_text = "<li class='stats'><b>" + item.type + "</b></li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + item.gold + " gold</li>";
+    if (typeof item.damage === 'number' && item.damage > 0) {
         list_text += "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + item.damage + " damage</li>";
     }
-    if (item.defense !== undefined) {
+    if (typeof item.defense === 'number' && item.defense > 0) {
         list_text += "<li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + item.defense + " armour</li>";
     }
-    if (item.heal !== undefined) {
+    if (typeof item.heal === 'number' && item.heal > 0) {
         list_text += "<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + item.heal + " HP restored</li>";
     }
     $("#menu_list_right").html(list_text);
@@ -492,31 +556,37 @@ function viewItem(item) {
 }
 function viewStats() {
     'use strict';
-    try {
-        if (weapon_e.damage !== undefined) {
-            stat_attack = weapon_e.damage;
-        } else {throw "undefined value"; }
-    } catch (err) {stat_attack = 0; }
-    try {
-        if (armour_e.defense !== undefined) {
-            stat_defense = armour_e.defense;
-        } else {throw "undefined value"; }
-    } catch (err) {stat_defense = 0; }
-    try {
-        if (amulet_e.defense !== undefined) {
-            stat_defense += amulet_e.defense;
-        } else {throw "undefined value"; }
-        if (amulet_e.damage !== undefined) {
-            stat_attack += amulet_e.damage;
-        } else {throw "undefined value"; }
-    } catch (err) {}
+    var i, a;
+    for (a = 0; a < stats.length; a += 1) {
+        stats[a] = 0;
+    }
+    stat_maxhp = 20;
+    for (i = 0; i < equipped.length; i += 1) {
+        for (a = 0; a < inventory.length; a += 1) {
+            if (inventory[a].tag === equipped[i].tag) {
+                if (equipped[i] !== "none") {
+                    if (typeof inventory[a].damage === 'number' && inventory[a].damage > 0) {
+                        stats[0] += inventory[a].damage;
+                    } if (typeof inventory[a].defense === 'number' && inventory[a].defense > 0) {
+                        stats[1] += equipped[i].defense;
+                    } if (typeof inventory[a].magicatk === 'number' && inventory[a].magicatk > 0) {
+                        stats[2] += inventory[a].magicatk;
+                    } if (typeof inventory[a].magicdef === 'number' && inventory[a].magicdef > 0) {
+                        stats[3] += inventory[a].magicdef;
+                    } if (typeof inventory[a].health === 'number' && inventory[a].magicdef > 0) {
+                        stat_maxhp += inventory[a].health;
+                    }
+                }
+            }
+        }
+    }
     $("#menu_readout_top").html("Your stats:");
     $("#menu_list_right").html("<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + stat_maxhp +
-        " max health<li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + stat_gold +
-        " gold</li><li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + stat_attack +
-        " damage</li><li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + stat_defense +
-        " armour</li><li class='stats'><div class='inv_icon' style='background-position:-128px 0px'></div>: " + stat_magicdef +
-        " magic resistance</li><li class='stats'><div class='inv_icon' style='background-position:-160px 0px'></div>: " + stat_magicatk +
+        " max health</li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + stat_gold +
+        " gold</li><li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + stats[0] +
+        " damage</li><li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + stats[1] +
+        " armour</li><li class='stats'><div class='inv_icon' style='background-position:-128px 0px'></div>: " + stats[3] +
+        " magic resistance</li><li class='stats'><div class='inv_icon' style='background-position:-160px 0px'></div>: " + stats[2] +
         " magic damage</li>");
     $("#menu_extended").hide();
     $("#menu_list_ext").hide();

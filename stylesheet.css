@@ -49,7 +49,7 @@ div.btndiv {
     text-align: center;
     margin: 0 auto;
     width: 64px;
-    height: 88px;
+    height: 91px;
     border-style: solid;
     border-color: #000;
     border-width: 1px;
@@ -88,7 +88,7 @@ li.inv {
     cursor: pointer;
     height: 35px;
     padding: 5px;
-    border: 1px solid black;
+    border-bottom: 1px solid black;
 }
 li.stats {
     height: 35px;
@@ -106,6 +106,7 @@ li.shop {
     margin-left: 0;
     height: 35px;
     padding: 5px;
+    border-bottom: 1px solid black;
 }
 
 /* CSS Effects */
