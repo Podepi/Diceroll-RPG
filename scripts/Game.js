@@ -77,9 +77,9 @@ function init() {
     $("#menubar_inv").on("click", function () {
         viewMenu("inventory");
     });
-	/*$("#menubar_tvl").on("click", function () {
+	$("#menubar_tvl").on("click", function () {
         viewMenu("locations");
-    });*/
+    });
     $("#menubar_ecp").on("click", function () {
         viewMenu("encyclopedia");
     });
