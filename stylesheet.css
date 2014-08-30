@@ -2,19 +2,20 @@
     width: 64px;
     height: 64px;
     background-repeat: no-repeat;
-    background-image: url(default_64.png);
+    background-image: url(images/default_64.png);
 }
 .menu_icon{
     width: 100px;
+	padding: 5px;
     display: inline-block;
-    border:1px solid #000;
+    border: 1px solid #000;
     cursor: pointer;
 }
 .inv_icon{
     width: 32px;
     height: 32px;
     background-repeat: no-repeat;
-    background-image: url(icon_list_16.png);
+    background-image: url(images/icon_list_16.png);
     float: left;
     margin-right: 2px;
     vertical-align: middle;
@@ -29,21 +30,22 @@
     margin-left: 0;
 }
 div {
-    height: 700px;
+    height: 93%;
 }
 div.menudiv{
     text-align: center;
     border-style: solid;
     border-color: #000;
     border-width: 1px;
-    width: 49%;
+    width: 49.5%;
     float: left;
 }
 div.menudiv_i{
-    height: 427px;
+    height: 100%;
     text-align: left;
     border-top:1px solid #000;
     overflow-y: auto;
+	overflow-x: hidden;
 }
 div.btndiv {
     text-align: center;
@@ -57,8 +59,11 @@ div.btndiv {
     font-family: Tahoma, Calibri, sans-serif;
     font-size: 11px;
 }
-div.btndiv:hover {border-color:#00CCCC}
-ul {list-style-type: none;
+div.btndiv:hover {
+    border-color:#00CCCC
+}
+ul {
+    list-style-type: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -81,8 +86,7 @@ p.menuheading {
     height: 20px;
 }
 p.invlist {
-    display: inline-block;
-    margin-bottom: 50%;
+    display: inline;
 }
 li.inv {
     cursor: pointer;
