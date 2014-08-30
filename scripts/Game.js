@@ -18,6 +18,7 @@ var death_message = /* This array contains all the phrases which show up when yo
 var inventory = []; // This array contains the items the inventory has
 var shop_list = []; // This array contains the items the shop has - all array work is done in the shop functions 
 var map = []; // This array contains the locations known by the player
+var book = []; // This array contains the encyclopedia titles for information
 var errands = []; // This array contains the errands accepted by the player
 var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future, also area-dependant enemies */
         ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
@@ -28,6 +29,10 @@ var shopkeeper = /* This array contains all the various phrases and actions the 
             "complains about shoplifters.",
             "tells tales of mysterious dungeons and treasures.",
             "tells of strange and powerful artifacts."];
+var rare_colour = /* This array contains the colour schemes for the item tiers - used with rare items to show what tier item they are */
+    [
+        "5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"
+    ];
 
 //Game variables
 var player_hp; // Amount of health you have at the present
@@ -59,20 +64,24 @@ var show_consumables = true;
 var stat_maxhp = 20; // Maximum amount of hitpoints player has
 var stat_gold = 5; // Amount of gold player has
 var stat_level = 1; // Player awesomeness rating
-var stat_experience = 0; // 
-var stat_next_level = stat_level * 100;
+var stat_experience = 0; // Player experience in battle, more difficult locations provide more experience
+var stat_next_level = stat_level * 100; // How much experience is required to progress to the next level
 var stats = [0, 0, 0, 0]; // Battle stats (attack, defence, magic attack, magic defence)
 var equipped = ["00", "none", "none", "none"]; // Array containing equipped items - weapon, armour, amulet, misc
 
 function init() {
     'use strict';
     $("#menubar").html('<li id="menubar_inv" class="menu_icon glow">Inventory</li>' +
-                       '<li id="menubar_tvl" class="menu_icon glow">Travel</li>');
+                       '<li id="menubar_tvl" class="menu_icon glow">Travel</li>' +
+                       '<li id="menubar_ecp" class="menu_icon glow">Encyclopedia</li>');
     $("#menubar_inv").on("click", function () {
         viewMenu("inventory");
     });
-	$("#menubar_tvl").on("click", function () {
+	/*$("#menubar_tvl").on("click", function () {
         viewMenu("locations");
+    });*/
+    $("#menubar_ecp").on("click", function () {
+        viewMenu("encyclopedia");
     });
     /* $("#menubar_qst").on("click", function () {
         viewMenu("errands");
@@ -83,13 +92,16 @@ function init() {
     btn3 = $("#eventbutton03");
 	info = $("#info");
 	readout = $("#readout");
-    inventory.pop();
+    for(var i = 0; i < inventory.length; i += 1) {
+        inventory.pop();
+    }
     shop_list.pop();
     initShop();
 	initLocations();
 	eventTown();
     viewStats();
 	viewMenu("inventory");
+    load();
 }
                                         // Explore functions
 function eventExploreStart() {
@@ -108,6 +120,7 @@ function eventExploreArrival(w) {
 		eventExploreEnd();
 		return(" ");
 	}
+    readout.html("Your health: " + player_hp + " / " + stat_maxhp);
 	btn1.show();
 	btn1.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url(" + img_ui + ")'></div>Explore");
 	btn1.off('click').on("click", function () {
@@ -118,7 +131,7 @@ function eventExploreArrival(w) {
 }
 function eventExploreEnd() {
     'use strict';
-    var rand = Math.floor(Math.random() * 4);
+    var rand = Math.floor(Math.random() * 3);
     //Later, this switch statement should check the location you are exploring and throw a random number for encounters
     //Pressing explore brings up menu to select location - buttons for switching between searching for locations and going to found ones
     switch (rand) {
@@ -229,8 +242,8 @@ function initShop() {
     var newitem = {};
 	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health vial";	newitem.desc = "A glass vial containing some sort of red healing liquid";
     shop_list.push(newitem);
-	newitem.count = 2;
-	inventory.push(newitem);
+    newitem.count = 2;
+    inventory.push(newitem);
 	newitem = {};
 	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c1"; newitem.listx = 0; newitem.heal = 20; newitem.gold = 10; newitem.name = "Health potion";	newitem.desc = "A glass bottle containing some sort of red healing liquid";
     shop_list.push(newitem);
@@ -373,7 +386,8 @@ function eventBattle(t, n) {
 }
 function updateFight() {
     'use strict';
-    info.html("You hit the enemy for " + p_damage + " damage.<br>You were hit for " + e_damage + " damage.");
+    var damage_info = "You hit the enemy for " + p_damage + " damage.<br>You were hit for " + e_damage + " damage.<br>";
+    info.html(damage_info);
     if (player_hp <= 0) {
 		var gold_loss = Math.floor(stat_gold / 4);
         player_hp = 0;
@@ -381,7 +395,7 @@ function updateFight() {
         if (enemy_hp <= 0) {
             enemy_hp = 0;
         }
-        info.html(death_message[Math.floor(Math.random() * death_message.length)] + "<br>You lose " + gold_loss + " gold.");
+        info.html(damage_info + death_message[Math.floor(Math.random() * death_message.length)] + "<br>You lose " + gold_loss + " gold.");
         btn1.show();
 		btn1.html('<div class="btn_icon"></div>Back to Town');
         btn1.off('click').on("click", function () {
@@ -391,7 +405,7 @@ function updateFight() {
 		btn2.hide();
     } else if (enemy_hp <= 0) {
 		enemy_hp = 0;
-        var gold_inc = Math.ceil(Math.random() * 10 * current_location.difficulty), xp_inc = current_location.difficulty * 10;
+        var gold_inc = Math.ceil(Math.random() * 10 * current_location.difficulty), xp_inc = current_location.difficulty * 5;
         stat_gold += gold_inc;
 		stat_experience += xp_inc;
         battle = false;
@@ -405,22 +419,34 @@ function updateFight() {
 		btn2.off('click').on("click", function () {
             eventExploreStart();
         });
-    //score++;
 		if (enemy_number > 0) {
-			enemy_hp = current_location.difficulty * enemy_strength;
 			btn1.show();
 			btn1.html('<div class="btn_icon" style="background-position:0px 0px; background-image:url(' + img_def64 + ')"></div>Next Enemy');
 			btn1.off('click').on('click', function () {
 				eventBattle("dungeon", enemy_number);
 			});
 			btn2.hide();
+            if (enemy_number = 1) {
+                info.html(info.html() + "<br>There is " + enemy_number + " enemy left.");
+            } else {
+                info.html(info.html() + "<br>There are " + enemy_number + " enemies left.");
+            }
 			readout.html("Your health: " + player_hp + " / " + stat_maxhp);
 		} else if (dungeon === true) {
-			var dungeon_prize = Math.ceil(Math.random() * current_location.difficulty) + 10;
-			dungeon = false;
+			var dungeon_prize = Math.ceil(Math.random() * current_location.difficulty) + 10, i;
+            var info_text = "You have defeated the last enemy!<br>You gain " + gold_inc + " gold and " + xp_inc + " experience!<br>The reward for defeating the dungeon is " + dungeon_prize + " gold";
+			if (Math.random <= 0.05) {
+                createRareItem();
+                info_text += " and a <span style='color:" + rare_colour[stat_level] + "'>rare item!<span>";
+                i = true;
+            }
+            dungeon = false;
 			stat_gold += dungeon_prize;
             able_to_travel = true;
-			info.html("You have defeated the last enemy!<br>You gained " + gold_inc + " gold!<br>The reward for defeating the dungeon is " + dungeon_prize + " gold.");
+            if (i !== true) {
+                info_text += ".";
+            }
+			info.html(info_text);
 			btn1.hide();
 			btn2.show();
 			btn2.html('<div class="btn_icon" style="background-position:-128px 0px; background-image:url(' + img_ui + ')"></div>Explore');
@@ -565,7 +591,7 @@ function updateItems() {
 }
 function createRareItem() {
 	"use strict";
-	var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.difficulty - 1, rare_multiplier = (Math.random() * 1.5) + 1;
+	var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = Math.floor(stat_level / 3), rare_multiplier = (Math.random() * 1.5) + 1;
 	newitem.listy   = data.items[i].y;
 	newitem.type    = data.items[i].type;
 	newitem.itemid  = Math.random();
@@ -573,8 +599,8 @@ function createRareItem() {
 	newitem.damage  = Math.ceil(data.items[i].damage  * data.materials[m].damage_mult * rare_multiplier);
 	newitem.defence = Math.ceil(data.items[i].defence * data.materials[m].defence_mult * rare_multiplier);
 	newitem.gold    = Math.ceil(data.items[i].gold    * data.materials[m].gold_mult * rare_multiplier);
-	newitem.name    = "Unique " + data.materials[m].name + " " + data.items[i].name;
-	newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase()) + "<br>It almost seems to glow with power";
+	newitem.name    = "<span style='color:#" + rare_colour[m] + "'>Unique</span> " + data.materials[m].name + " " + data.items[i].name;
+	newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase()) + "<br><span style='color:#" + rare_colour[m] + "'>It almost seems to glow with power</span>";
 	newitem.count   = 1;
 	newitem.rare    = rare_multiplier;
 	inventory.push(newitem);
@@ -650,85 +676,90 @@ function viewMenu(screen) {
     'use strict';
     viewStats();
     switch (screen) {
-    case "inventory":
-        updateItems();
-        $(".menuheading").html("Inventory");
-        $("#list_heading").html("Inventory <i>(Click to use)</i>");
-		$("#list_sort").html('<li id="sort_desc" style="font-size:8pt">Sort items:</li>' +
-                         '<li id="sort_weapon" class="sort inv_icon" style="background-position:-32px 0px"></li>' +
-                         '<li id="sort_armour" class="sort inv_icon" style="background-position:-64px 0px"></li>' +
-                         '<li id="sort_consumables" class="sort inv_icon" style="background-position:0px -128px"></li><br>');
-		$("li.sort").hover(
-			function () {
-				$(this).css("border-color", "#000");
-			}, function () {
-				$(this).css("border-color", "#FFF");
-			}
-		); $("#sort_weapon").hover(
-			function () {
-				$("#sort_desc").html("Show/hide weapons");
-			}, function () {
-				$("#sort_desc").html("Sort items:");
-			}
-		); $("#sort_weapon").on("click",
-			 function () {
-				if (show_weapons === true) {
-					show_weapons = false;
-					$(this).css("opacity", "0.3");
-				} else {
-					show_weapons = true;
-					$(this).css("opacity", "1");
-				}
-				updateItems();
-			}
-		); $("#sort_armour").hover(
-			function () {
-				$("#sort_desc").html("Show/hide armour");
-			}, function () {
-				$("#sort_desc").html("Sort items:");
-			}
-		); $("#sort_armour").on("click",
-			 function () {
-				if (show_armour === true) {
-					show_armour = false;
-					$(this).css("opacity", "0.3");
-				} else {
-					show_armour = true;
-					$(this).css("opacity", "1");
-				}
-				updateItems();
-			}
-		); $("#sort_consumables").hover(
-			function () {
-				$("#sort_desc").html("Show/hide consumables");
-			}, function () {
-				$("#sort_desc").html("Sort items:");
-			}
-		);
-		$("#sort_consumables").on("click",
-			 function () {
-				if (show_consumables === true) {
-					show_consumables = false;
-					$(this).css("opacity", "0.3");
-				} else {
-					show_consumables = true;
-					$(this).css("opacity", "1");
-				}
-				updateItems();
-			}
-		);
-        break;
-    case "errands":
-        updateErrands();
-        $(".menuheading").html("Errands and Quests");
-        $("#list_heading").html("Errands and Quests <i>(Mouse over to view)</i>");
-        break;
-    case "locations":
-        updateLocations();
-        $(".menuheading").html("Map of locations");
-        $("#list_heading").html("Locations <i>(Click to travel)</i>");
-		$("#list_sort").html(" ");
-        break;
+        case "inventory":
+            updateItems();
+            $(".menuheading").html("Inventory");
+            $("#list_heading").html("Inventory <i>(Click to use)</i>");
+            $("#list_sort").html('<li id="sort_desc" style="font-size:8pt">Sort items:</li>' +
+                             '<li id="sort_weapon" class="sort inv_icon" style="background-position:-32px 0px"></li>' +
+                             '<li id="sort_armour" class="sort inv_icon" style="background-position:-64px 0px"></li>' +
+                             '<li id="sort_consumables" class="sort inv_icon" style="background-position:0px -128px"></li><br>');
+            $("li.sort").hover(
+                function () {
+                    $(this).css("border-color", "#000");
+                }, function () {
+                    $(this).css("border-color", "#FFF");
+                }
+            ); $("#sort_weapon").hover(
+                function () {
+                    $("#sort_desc").html("Show/hide weapons");
+                }, function () {
+                    $("#sort_desc").html("Sort items:");
+                }
+            ); $("#sort_weapon").on("click",
+                 function () {
+                    if (show_weapons === true) {
+                        show_weapons = false;
+                        $(this).css("opacity", "0.3");
+                    } else {
+                        show_weapons = true;
+                        $(this).css("opacity", "1");
+                    }
+                    updateItems();
+                }
+            ); $("#sort_armour").hover(
+                function () {
+                    $("#sort_desc").html("Show/hide armour");
+                }, function () {
+                    $("#sort_desc").html("Sort items:");
+                }
+            ); $("#sort_armour").on("click",
+                 function () {
+                    if (show_armour === true) {
+                        show_armour = false;
+                        $(this).css("opacity", "0.3");
+                    } else {
+                        show_armour = true;
+                        $(this).css("opacity", "1");
+                    }
+                    updateItems();
+                }
+            ); $("#sort_consumables").hover(
+                function () {
+                    $("#sort_desc").html("Show/hide consumables");
+                }, function () {
+                    $("#sort_desc").html("Sort items:");
+                }
+            );
+            $("#sort_consumables").on("click",
+                 function () {
+                    if (show_consumables === true) {
+                        show_consumables = false;
+                        $(this).css("opacity", "0.3");
+                    } else {
+                        show_consumables = true;
+                        $(this).css("opacity", "1");
+                    }
+                    updateItems();
+                }
+            );
+            break;
+        case "errands":
+            updateErrands();
+            $(".menuheading").html("Errands and Quests");
+            $("#list_heading").html("Errands and Quests <i>(Mouse over to view)</i>");
+            break;
+        case "locations":
+            updateLocations();
+            $(".menuheading").html("Map of locations");
+            $("#list_heading").html("Locations <i>(Click to travel)</i>");
+            $("#list_sort").html(" ");
+            break;
+        case "encyclopedia":
+            updateTopics();
+            $(".menuheading").html("Book about everything");
+            $("#list_heading").html("Topics <i>(Click to read)</i>");
+            $("#list_sort").html(" ");
     }
 }
 function updateErrands() {
@@ -769,6 +800,9 @@ function initLocations() {
     for (var l in data.locations) {
 		map.push(data.locations[l])
 	}
+    for (var t in data.topics) {
+		book.push(data.topics[t])
+	}
 }
 function updateLocations() {
 	'use strict';
@@ -801,7 +835,7 @@ function updateLocations() {
                     eventTown();
                 }
                 if (menuscreen === "locations") {
-                    updatelocations();
+                    updateLocations();
                 }
                 eventShop("hide");
             } else {
@@ -815,20 +849,82 @@ function viewLocation(l) {
 	list_text = "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + location.difficulty + " difficulty rating</li>";
 	$("#menu_list_right").html(list_text);
 }
-										//cookie functions
-function saveCookie() {
-	var cookieString, d = new Date(), expires, i;
-    d.setTime(d.getTime() + (100*24*60*60*1000));
-    expires = "expires="+d.toUTCString();
-    cookieString = "stat_gold=" + stat_gold + ";stat_level=" + stat_level;
-	for (i = 0; i < stats.length; i += 1) {
-		cookieString += ";stats[" + i + "]=" + stats[i];
+function updateTopics() {
+	'use strict';
+    var iconx, icony, a, t = " ";
+	for (a = 0; a < book.length; a += 1) {
+		iconx = book[a].x;
+        icony = book[a].y;
+		t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + book[a].name;
+		t += "</li>";
 	}
-	for (i = 0; i < inventory.length; i += 1) {
-		cookieString += "inventory=" + i + ";gold=" + inventory[i].gold + "damage=" + inventory[i].damage;
-	}
-	document.cookie(cookieString);
+    $("#menu_list_left").html(t);
+
+    //Mouseover stats
+    $("li.inv").hover(
+		function () {
+            $(this).css("background-color", "#DDD");
+            viewTopic(book[this.id]);
+        }
+    );
+    $("li.inv").off("click").on("click",
+        function () {
+            viewTopic(book[this.id]);
+        });
 }
-function getCookie() {
-	
+function viewTopic(l) {
+	var topic = l, list_text = " ";
+    for (var i in data.materials) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
+    }
+	$("#menu_list_right").html(list_text);
+	$("#menu_readout_top").html(topic.description + "<br><b>Information on the material tiers:</b>");
+}
+										// Save/load functions
+function save() {
+	$.jStorage.set("inventory", inventory);
+    $.jStorage.set("s_gold", stat_gold);
+    $.jStorage.set("s_exp", stat_experience);
+    $.jStorage.set("equipped", equipped);
+    console.log($.jStorage.get("inventory"));
+    console.log($.jStorage.get("s_gold"));
+    console.log($.jStorage.get("s_exp"));
+    console.log($.jStorage.get("equipped"));
+    info.html("Progress has been saved!");
+}
+function load() {
+    var log, i;
+    if (typeof $.jStorage.get("inventory")[0] === "object") {
+        for(i = 0; i < $.jStorage.get("inventory").length; i += 1) {
+            inventory[i] = $.jStorage.get("inventory")[i];
+            inventory[i].count = $.jStorage.get("inventory")[i].count;
+        }
+        console.log = inventory;
+    } if (typeof $.jStorage.get("equipped")[0] === "string") {
+        for(i = 0; i < $.jStorage.get("equipped").length; i += 1) {
+            equipped[i] = $.jStorage.get("equipped")[i];
+        }
+        equipped = $.jStorage.get("equipped");
+    } if (typeof $.jStorage.get("s_gold") === "number") {
+        stat_gold = $.jStorage.get("s_gold");
+    } if (typeof $.jStorage.get("s_exp") === "number") {
+        stat_experience = $.jStorage.get("s_exp");
+    }
+}
+function reset() {
+    if (confirm("Reset all progress? This cannot be undone.") === true) {
+        $.jStorage.flush();
+        inventory = [];
+        var newitem = {};
+        newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health vial";	newitem.desc = "A glass vial containing some sort of red healing liquid";
+        newitem.count = 2;
+        inventory.push(newitem);
+        inventory.push(shop_list[2]);
+        stat_gold = 5;
+        stat_level = 1;
+        stat_experience = 0;
+        stat_next_level = stat_level * 100;
+        stats = [0, 0, 0, 0];
+        equipped = ["00", "none", "none", "none"];
+    }
 }

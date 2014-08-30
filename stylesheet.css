@@ -41,7 +41,6 @@ div.menudiv{
     float: left;
 }
 div.menudiv_i{
-    height: 100%;
     text-align: left;
     border-top:1px solid #000;
     overflow-y: auto;
@@ -112,7 +111,9 @@ li.shop {
     padding: 5px;
     border-bottom: 1px solid black;
 }
-
+span {
+    font-weight: bold;
+}
 /* CSS Effects */
 
 .float {

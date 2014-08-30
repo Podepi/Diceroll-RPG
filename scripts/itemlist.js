@@ -28,73 +28,75 @@ var data = {"items":[
         "name":"Armour",
         "type":"Armour",
         "description":"An armour set made of -mat-, protects from damage.",
-        "gold":20,
+        "gold":40,
         "defence":2
     }
 ],
 "materials":[
     {
-        "x":0,
-        "name":"Bronze",
+        "x":-32,
+        "name":"Iron",
         "gold_mult":1,
         "damage_mult":1,
         "defence_mult":1,
+        "description":"Iron is the most common metallic substance used to craft items. As a result of this, it is very cheap and items made of it do not have high value. Unfortunately, items made of iron do not have high damage or defence and rust easily."
     },
     {
-        "x":-32,
-        "name":"Iron",
-        "gold_mult":3,
-        "damage_mult":2,
-        "defence_mult":2,
+        "x":0,
+        "name":"Bronze",
+        "gold_mult":6,
+        "damage_mult":4,
+        "defence_mult":4,
+        "description":"Slightly stronger and more expensive than iron, bronze is still a very common item-making substance. As it is an alloy, it is more expensive to make than iron. It still has low damage and defence, however."
     },
     {
         "x":-32,
         "name":"Steel",
-        "gold_mult":6,
-        "damage_mult":4,
-        "defence_mult":4,
+        "gold_mult":11,
+        "damage_mult":7,
+        "defence_mult":7,
     },
     {
         "x":-64,
         "name":"Cobalt",
-        "gold_mult":12,
-        "damage_mult":8,
-        "defence_mult":8,
+        "gold_mult":16,
+        "damage_mult":10,
+        "defence_mult":10,
     },
     {
         "x":-96,
         "name":"Titanium",
-        "gold_mult":24,
-        "damage_mult":16,
-        "defence_mult":16,
+        "gold_mult":21,
+        "damage_mult":13,
+        "defence_mult":13,
     },
     {
         "x":-128,
         "name":"Carbon",
-        "gold_mult":48,
-        "damage_mult":32,
-        "defence_mult":32,
+        "gold_mult":26,
+        "damage_mult":16,
+        "defence_mult":16,
     },
     {
         "x":-160,
         "name":"Mystium",
-        "gold_mult":96,
-        "damage_mult":64,
-        "defence_mult":64,
+        "gold_mult":31,
+        "damage_mult":19,
+        "defence_mult":19,
     },
     {
         "x":-192,
         "name":"Alienium",
-        "gold_mult":192,
-        "damage_mult":128,
-        "defence_mult":128,
+        "gold_mult":36,
+        "damage_mult":22,
+        "defence_mult":22,
     },
     {
         "x":-224,
         "name":"Adamantine",
-        "gold_mult":384,
-        "damage_mult":256,
-        "defence_mult":256,
+        "gold_mult":41,
+        "damage_mult":25,
+        "defence_mult":25,
     }
 ],
 "locations":[
@@ -131,7 +133,7 @@ var data = {"items":[
 	},
     {
 		"name":"Mountain Trail",
-		"difficulty":14,
+		"difficulty":28,
 		"description":"A cold and mountainous trail, dangerous to walk through.",
 		"arrival_text":"The freezing wind and snow turns your body to ice. You hope you don't get frostbite...",
 		"ground_type":"snow",
@@ -139,11 +141,19 @@ var data = {"items":[
 	},
     {
 		"name":"Mystic Portal",
-		"difficulty":14,
+		"difficulty":56,
 		"description":"A portal to the Mystic Realm, the main exporter of Mystium.",
 		"arrival_text":"The bright purple mystium dust hurts your eyes.",
 		"ground_type":"mystium dust",
         "x":-160
 	}
+],
+"topics":[
+    {
+        "x":-32,
+        "y":-32,
+        "name":"Materials",
+        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
+    }
 ]
 }

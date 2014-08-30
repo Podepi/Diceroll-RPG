@@ -6,6 +6,7 @@
         <script src="scripts/jquery-2.1.1.min.js"></script>
         <script src="scripts/Game.js"></script>
         <script src="scripts/itemlist.js"></script>
+        <script src="scripts/jstorage.js"></script>
         <title>Diceroll RPG - The Game With The Text-based GUI</title>
     </head>
     <body onload="init()">
@@ -39,7 +40,7 @@
             <p class="menuheading"></p>
             <div>
                 <div class="menudiv_i" style="width:49.7%; float:left;">
-                    <p id="list_heading" style="text-align:left; margin-left:5px">Inventory <i>(Click to use)</i></p>
+                    <p id="list_heading" style="text-align:left; margin-left:5px"></p>
                     <ul id="list_sort"></ul>
                     <ul id="menu_list_left"></ul>
                 </div>
@@ -53,6 +54,9 @@
         </div>
     </body>
     <footer>
-        <p style="text-align:right">Version 0.13.5</p>
+        <button onClick="reset()" style="display:inline">Reset progress</button>
+        <button onClick="save()" style="display:inline">Save progress</button>
+        <button onClick="load()" style="display:inline">Load progress</button>
+        <p style="text-align:right; display:inline">Version 0.13.6</p>
     </footer>
 </html>
