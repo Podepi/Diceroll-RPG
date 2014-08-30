@@ -189,7 +189,7 @@ function eventExploreEnd() {
         break;
     }
 }
-function eventTown() {
+function eventTown(t) {
     'use strict';
 	current_location = "town";
 	dungeon = false;
@@ -222,6 +222,9 @@ function eventTown() {
     });
     readout.html("Your health: " + player_hp + " / " + stat_maxhp);
     info.html("Welcome to the Town");
+    if (t === "shop") {
+        info.html("Click the 'travel' button to explore!");
+    }
 }
 function eventTownSquare() {
     btn1.show();
