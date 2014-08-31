@@ -20,6 +20,24 @@
     margin-right: 2px;
     vertical-align: middle;
 }
+.close {
+    background-image: url(images/cross.png);
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    float: right;
+    border: 2px solid #bfb9a0;
+}
+.close:hover {
+    border: 2px solid #e50000;
+}
+.img_border_grey {
+    border-image: url(images/border_image_gold.png) 12 12 round;
+}
+.starfield {
+    background-image: url(images/starfield.jpg);
+    background-size: cover;
+}
 .no_margin {
     margin: 0;
 }
@@ -29,10 +47,44 @@
 .no_margin_left {
     margin-left: 0;
 }
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.5); /*dim the background*/
+}
+.popup {
+    width: 50%;
+    height: 70%;
+    position: fixed;
+    top: 50%; 
+    left: 50%;
+    margin-top: -25%;
+    margin-left: -25%;
+    background-color: #EEE;
+    border-width: 6px;
+    text-align: center;
+    z-index: 11;
+    color:#EEE;
+    font-weight:bold;
+    font-family:Tahoma, Calibri, sans-serif;
+    font-size: 18px;
+}
+html, body{
+    min-height: 100%;
+}
+body {
+    position: relative;
+}
 div {
     height: 93%;
 }
-div.menudiv{
+div.menudiv {
     text-align: center;
     border-style: solid;
     border-color: #000;
@@ -40,7 +92,7 @@ div.menudiv{
     width: 49.5%;
     float: left;
 }
-div.menudiv_i{
+div.menudiv_i {
     text-align: left;
     border-top:1px solid #000;
     overflow-y: auto;

@@ -99,6 +99,58 @@ var data = {"items":[
         "defence_mult":25,
     }
 ],
+"worthless":[
+    {
+        "y":-64,
+        "x":0,
+        "name":"Brown Book"
+    },
+    {
+        "y":-64,
+        "x":-32,
+        "name":"Grey Book"
+    },
+    {
+        "y":-64,
+        "x":-64,
+        "name":"Blue Book"
+    },
+    {
+        "y":-64,
+        "x":-128,
+        "name":"Black Book"
+    },
+    {
+        "y":-64,
+        "x":-160,
+        "name":"Purple Book"
+    },
+    {
+        "y":-64,
+        "x":-192,
+        "name":"Green Book"
+    },
+    {
+        "y":-64,
+        "x":-256,
+        "name":"Red Book"
+    },
+    {
+        "y":-160,
+        "x":-160,
+        "name":"River Stone"
+    },
+    {
+        "y":-160,
+        "x":-128,
+        "name":"Rough Stone"
+    },
+    {
+        "y":-160,
+        "x":-192,
+        "name":"Apple"
+    },
+],
 "locations":[
 	{
 		"name":"Town",
@@ -117,7 +169,7 @@ var data = {"items":[
 	},
 	{
 		"name":"Coal Hills",
-		"difficulty":7,
+		"difficulty":4,
 		"description":"The hills here are rich in coal, the perfect place to start a coal industry.",
 		"arrival_text":"Inside the numerous caves here, you can see rich veins of coal embedded into the stone.",
 		"ground_type":"dark soil",
@@ -125,7 +177,7 @@ var data = {"items":[
 	},
 	{
 		"name":"Dark Forest",
-		"difficulty":14,
+		"difficulty":10,
 		"description":"A very foreboding forest, also very clichéd.",
 		"arrival_text":"You cannot see through the tree line. The shadowy trees send shivers down your spine.",
 		"ground_type":"foliage",
@@ -133,7 +185,7 @@ var data = {"items":[
 	},
     {
 		"name":"Mountain Trail",
-		"difficulty":28,
+		"difficulty":19,
 		"description":"A cold and mountainous trail, dangerous to walk through.",
 		"arrival_text":"The freezing wind and snow turns your body to ice. You hope you don't get frostbite...",
 		"ground_type":"snow",
@@ -141,7 +193,7 @@ var data = {"items":[
 	},
     {
 		"name":"Mystic Portal",
-		"difficulty":56,
+		"difficulty":31,
 		"description":"A portal to the Mystic Realm, the main exporter of Mystium.",
 		"arrival_text":"The bright purple mystium dust hurts your eyes.",
 		"ground_type":"mystium dust",
@@ -154,6 +206,38 @@ var data = {"items":[
         "y":-32,
         "name":"Materials",
         "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
+    }
+],
+"upgrades":[
+    {
+        "name":"Extra Health",
+        "max_points":"10",
+        "description":"Through the magic of gaining levels, you can increase your maximum hitpoints.<br>+10 health per point"
+    },
+    {
+        "name":"Dagger Proficiency",
+        "max_points":"1",
+        "description":"Your dagger awesomeness allows you to attack twice 20% of the time!<br>+20% chance to deal +100% damage with a dagger"
+    },
+    {
+        "name":"Sword Proficiency",
+        "max_points":"1",
+        "description":"Parry those attacks!.<br>+1 defence with a sword."
+    },
+    {
+        "name":"Hammer Proficiency",
+        "max_points":"1",
+        "description":"Learn how to swing a hammer better!<br>+10% damage with a hammer."
+    },
+    {
+        "name":"Armour Proficiency",
+        "max_points":"5",
+        "description":"Use armour more effectively!<br>+10% defence per point."
+    },
+    {
+        "name":"Prestige",
+        "max_points":"100",
+        "description":"Find you have nothing to spend your level points on? Spend them here!<br>+1 prestige."
     }
 ]
 }

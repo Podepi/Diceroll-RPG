@@ -5,58 +5,62 @@
         <link rel="stylesheet" type="text/css" href="stylesheet.css">
         <script src="scripts/jquery-2.1.1.min.js"></script>
         <script src="scripts/Game.js"></script>
+        <script src="scripts/Menu.js"></script>
+        <script src="scripts/Items.js"></script>
         <script src="scripts/itemlist.js"></script>
         <script src="scripts/jstorage.js"></script>
         <title>Diceroll RPG - The Game With The Text-based GUI</title>
     </head>
     <body onload="init()">
-        <div class="menudiv">
-            <div style="text-align:center; overflow:hidden; height:50%">
-                <p id="info" style="margin-left:0"></p>
-                <table style="margin:0 auto;"><tr>
-                    <td>
-                        <div class="btndiv float" id="eventbutton01">
-                            <div class="btn_icon"></div>
-                        </div>
-                    <td>
-                        <div class="btndiv float" id="eventbutton02">
-                            <div class="btn_icon"></div>
-                        </div>
-                    <td>
-                        <div class="btndiv float" id="eventbutton03">
-                            <div class="btn_icon"></div>
-                        </div>
-                    </tr>
-                </table>
-                <p id="readout">Javascript doesn't appear to be working - make sure it is enabled</p>
-            </div>
-            <div id="shop" style="text-align:center; overflow-y:auto; height:45%; border-top:1px solid #000">
-                <p id="shop_heading">Shop</p>
-                <ul id="shop_list"></ul>
-            </div>
-        </div>
-        <div class="menudiv">
-            <ul id="menubar" class="menubar"></ul>
-            <p class="menuheading"></p>
-            <div>
-                <div class="menudiv_i" style="width:49.7%; float:left;">
-                    <p id="list_heading" style="text-align:left; margin-left:5px"></p>
-                    <ul id="list_sort"></ul>
-                    <ul id="menu_list_left"></ul>
+        <div id="megadiv">
+            <div class="menudiv">
+                <div style="text-align:center; overflow:hidden; height:50%">
+                    <p id="info" style="margin-left:0"></p>
+                    <table style="margin:0 auto;"><tr>
+                        <td>
+                            <div class="btndiv float" id="eventbutton01">
+                                <div class="btn_icon"></div>
+                            </div>
+                        <td>
+                            <div class="btndiv float" id="eventbutton02">
+                                <div class="btn_icon"></div>
+                            </div>
+                        <td>
+                            <div class="btndiv float" id="eventbutton03">
+                                <div class="btn_icon"></div>
+                            </div>
+                        </tr>
+                    </table>
+                    <p id="readout">Javascript doesn't appear to be working - make sure it is enabled</p>
                 </div>
-                <div class="menudiv_i">
-                    <p id="menu_readout_top"></p>
-                    <ul id="menu_list_right"></ul>
-                    <p id="menu_extended"></p>
-                    <ul id="menu_list_ext"></ul>
+                <div id="shop" style="text-align:center; overflow-y:auto; height:45%; border-top:1px solid #000">
+                    <p id="shop_heading">Shop</p>
+                    <ul id="shop_list"></ul>
                 </div>
             </div>
+            <div class="menudiv">
+                <ul id="menubar" class="menubar"></ul>
+                <p class="menuheading"></p>
+                <div>
+                    <div class="menudiv_i" style="width:49.7%; float:left;">
+                        <p id="list_heading" style="text-align:left; margin-left:5px"></p>
+                        <ul id="list_sort"></ul>
+                        <ul id="menu_list_left"></ul>
+                    </div>
+                    <div class="menudiv_i">
+                        <p id="menu_readout_top"></p>
+                        <ul id="menu_list_right"></ul>
+                        <p id="menu_extended"></p>
+                        <ul id="menu_list_ext"></ul>
+                    </div>
+                </div>
+            </div>
+            <footer>
+            <button onClick="reset()" style="display:inline">Reset progress</button>
+            <button onClick="save()" style="display:inline">Save progress</button>
+            <button onClick="load()" style="display:inline">Load progress</button>
+            <p style="text-align:right; display:inline">Version 0.14.0</p>
+        </footer>
         </div>
     </body>
-    <footer>
-        <button onClick="reset()" style="display:inline">Reset progress</button>
-        <button onClick="save()" style="display:inline">Save progress</button>
-        <button onClick="load()" style="display:inline">Load progress</button>
-        <p style="text-align:right; display:inline">Version 0.13.7</p>
-    </footer>
 </html>
