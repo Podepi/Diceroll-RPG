@@ -210,6 +210,7 @@ function eventTown(t) {
 				info.html("Healed!");
 				readout.html("Your health: " + player_hp + " / " + stat_maxhp);
 				viewStats();
+                save();
 			}
 		} else {
 			info.html("You do not have enough gold");
@@ -368,7 +369,7 @@ function eventBattle(t, n) {
       }
     */
     'use strict';
-	enemy_number = 1;
+    enemy_number = 1;
 	btn1.show();
     btn1.off('click').on('click', function () {
         roll();
@@ -381,8 +382,8 @@ function eventBattle(t, n) {
     if (t !== "nodesc") {
         info.html("You have ventured into a dungeon!<br>Suddenly, " + desc() + " jumps out of nowhere and challenges you to a fight.");
     } if (t === "dungeon") {
-		enemy_number = n;
 		dungeon = true;
+        enemy_number = n;
 	}
     readout.html("Your health: " + player_hp + " / " + stat_maxhp + "<br>Enemy health: " + enemy_hp);
     able_to_travel = false;
@@ -429,7 +430,7 @@ function updateFight() {
 				eventBattle("dungeon", enemy_number);
 			});
 			btn2.hide();
-            if (enemy_number = 1) {
+            if (enemy_number === 1) {
                 info.html(info.html() + "<br>There is " + enemy_number + " enemy left.");
             } else {
                 info.html(info.html() + "<br>There are " + enemy_number + " enemies left.");
