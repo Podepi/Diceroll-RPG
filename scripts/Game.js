@@ -50,21 +50,25 @@ var e_damage; // Amount of damage enemy deals - dealt with at runtime in the rol
 var score = 0; // Number of enemies defeated this run for previously in-place score system
 var highscore = 0; // High score for previously in-place score system
 var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
-var battle = false; // Boolean defines whether hp potions display enemy health on readout
 var current_location; // Your current location
-var dungeon = false; // Determines whether to give prize after defeating all enemies
 var enemy_number; // Amount of enemies in dungeon
 var enemy_strength = 15; // How much health enemies have * current_location.difficulty
-var able_to_travel;
 var btn1; // These variables are shorthand for the three event buttons
 var btn2;
 var btn3;
 var info; // Shorthand for text above event buttons
 var readout // Shorthand for text below event buttons
+
+// Booleans
+var battle = false; // Boolean defines whether hp potions display enemy health on readout
+var dungeon = false; // Determines whether to give prize after defeating all enemies
+var boss = false; // Determines whether you are fighting  a boss or not
+var able_to_travel; // Determines whether you can travel or not
 var inv_sell = false; // Boolean defines whether you are selling items or not
 
 // Default text
-var readout_default = "This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...";
+var readout_default = "<span style='color:red'>This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...</span>";
+var wip_default = "<br><span style='color:red'>This part of the game is still new. Bugs are likely to be found here. Proceed at own risk!</span>";
 
 //Sorting
 var show_weapons = true;
@@ -159,9 +163,7 @@ function eventExploreArrival(w) {
 }
 function eventExploreEnd() {
     'use strict';
-    var rand = Math.floor(Math.random() * 4);
-    //Later, this switch statement should check the location you are exploring and throw a random number for encounters
-    //Pressing explore brings up menu to select location - buttons for switching between searching for locations and going to found ones
+    var rand = Math.floor(Math.random() * 5);
     switch (rand) {
     case 0:
         info.html("You find a penny in the " + current_location.ground_type + ".<br>+1 gold.");
@@ -205,15 +207,8 @@ function eventExploreEnd() {
             updateItems();
         }
         btn1.show();
-        btn1.html('<div class="btn_icon"></div>Onward!');
+        btn1.html('<div class="btn_icon"></div>Buy magical item');
 		btn1.off("click").on("click",
-			function() {
-				eventExploreStart();
-			}
-		)
-        btn2.show();
-        btn2.html('<div class="btn_icon"></div>Buy magical item');
-		btn2.off("click").on("click",
 			function() {
                 if (stat_gold >= rare_cost) {
                     stat_gold -= rare_cost;
@@ -221,9 +216,30 @@ function eventExploreEnd() {
                 }
 			}
 		)
+        btn2.show();
+        btn2.html('<div class="btn_icon" style="background-position:-128px, 0px; background-image:url('  + img_ui + ')"></div>Onward!');
+		btn2.off("click").on("click",
+			function() {
+				eventExploreStart();
+			}
+		)
         break;
     case 4:
-
+        info.html("You have stumbled upon the MEGA dungeon! It is home to this area's MEGA boss. Defeating it will grant you a shiny rare item! " + wip_default);
+        btn1.show();
+        btn1.html('<div class="btn_icon"></div>Enter MEGA dungeon');
+		btn1.off("click").on("click",
+			function() {
+				eventBattle("boss");
+			}
+		)
+        btn2.show();
+        btn2.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url("  + img_ui + ")'></div>Continue Exploring");
+		btn2.off("click").on("click",
+			function() {
+				eventExploreStart();
+			}
+		)
         break;
     }
 }
@@ -231,6 +247,7 @@ function eventTown(t) {
     'use strict';
 	current_location = "town";
 	dungeon = false;
+    battle = false;
     able_to_travel = true;
     eventShop("hide");
     btn1.show();
@@ -407,6 +424,7 @@ function eventBattle(t, n) {
     */
     'use strict';
     enemy_number = 1;
+    var e = "Enemy";
 	btn1.show();
     btn1.off('click').on('click', function () {
         roll();
@@ -421,12 +439,22 @@ function eventBattle(t, n) {
     } if (t === "dungeon") {
 		dungeon = true;
         enemy_number = n;
-	}
-    readout.html("Your health: " + player_hp + " / " + stat_maxhp + "<br>Enemy health: " + enemy_hp);
+	} if (t === "boss") {
+        info.html("As you walk through the MEGA entrance, you are MEGA amazed at the MEGA size and MEGA power of the MEGA boss! It appears to be MEGA guarding a MEGA item!");
+        e = "Boss";
+        boss = true;
+        enemy_hp = enemy_strength * 15 * current_location.difficulty;
+    }
+    readout.html("Your health: " + player_hp + " / " + stat_maxhp + "<br>" + e + " health: " + enemy_hp);
     able_to_travel = false;
 }
 function updateFight() {
     'use strict';
+    var e = "enemy", ecap = "Enemy";
+    if (boss === true) {
+        e = "boss";
+        ecap = "Boss";
+    }
     var damage_info = "You hit the enemy for " + p_damage + " damage.<br>You were hit for " + e_damage + " damage.<br>";
     info.html(damage_info);
     if (player_hp <= 0) {
@@ -447,12 +475,18 @@ function updateFight() {
     } else if (enemy_hp <= 0) {
 		enemy_hp = 0;
         var gold_inc = Math.ceil(Math.random() * 10 * current_location.difficulty), xp_inc = 20 + Math.round(tanh(current_location.difficulty - stat_level) * current_location.difficulty - stat_level), info_text = " ";
-        stat_gold += gold_inc;
         if (xp_inc + stat_experience >= stat_next_level) {
             info_text += "<br><span>You gained a level!</span>";
+        } if (boss === true) {
+            info_text += "<br>You acquired a <span style='color:" + rare_colour[stat_level] + "'>rare item!</span>";
+            createRareItem();
+            gold_inc += current_location.difficulty * 5;
+            xp_inc += current_location.difficulty * 5;
         }
+        stat_gold += gold_inc;
 		stat_experience += xp_inc;
         battle = false;
+        boss = false;
         able_to_travel = true;
         enemy_number -= 1;
 		info.html("You have won!<br>You gained " + gold_inc + " gold and " + xp_inc + " experience!" + info_text);
@@ -527,11 +561,15 @@ function desc() {
 }
 function roll() {
     'use strict';
+    var damage_mult = 1;
+    if (boss === true) {
+        damage_mult = 10;
+    }
     if (player_hp <= 0 || enemy_hp <= 0) {
         updateFight();
     } else {
         p_damage = Math.floor(Math.random() * (stats[0] + 1));
-        e_damage = current_location.difficulty;
+        e_damage = current_location.difficulty * damage_mult;
 		if (stats[1] > 0) {
 			e_damage -= Math.round(Math.random() * stats[1]);
 		}
@@ -589,7 +627,7 @@ function viewStats(t) {
         " magic damage</li>");
     $("#menu_extended").hide();
     $("#menu_list_ext").hide();
-    if (t = "init") {
+    if (t === "init") {
         player_hp = stat_maxhp;
     }
 }

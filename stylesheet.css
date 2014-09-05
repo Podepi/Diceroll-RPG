@@ -47,8 +47,11 @@
 .no_margin_left {
     margin-left: 0;
 }
+.megadiv {
+	padding: 0;
+}
 .overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
@@ -59,13 +62,13 @@
     background-color: rgba(0,0,0,0.5); /*dim the background*/
 }
 .popup {
-    width: 50%;
-    height: 70%;
-    position: fixed;
-    top: 50%; 
-    left: 50%;
-    margin-top: -25%;
-    margin-left: -25%;
+    width: 85%;
+    height: 85%;
+    position: absolute;
+    top: 7.5%; 
+    left: 7.5%;
+    margin-top: 0%;
+    margin-left: 0%;
     background-color: #EEE;
     border-width: 6px;
     text-align: center;
@@ -74,9 +77,6 @@
     font-weight:bold;
     font-family:Tahoma, Calibri, sans-serif;
     font-size: 18px;
-}
-html, body{
-    min-height: 100%;
 }
 body {
     position: relative;
