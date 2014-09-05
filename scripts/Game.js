@@ -41,6 +41,9 @@ var magician_name = ["El Weirdo", "Sir Magical", "Bill", "Carl"];
 var magician_type = ["Magician", "Intelligent", "Enchanter", "Alchemist", "Wizard", "Wise"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection"];
+var magician_l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Deserted", "Cloudy", "Stormy", "Warm", "Harmless", "Sandy", "Fertile", "Dangerous"];
+var magician_l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hills", "Mine", "Cave", "Grove", "Desert", "Beach", "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh"];
+var magician_i_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers"];
 
 //Game variables
 var player_hp; // Amount of health you have at the present
@@ -52,7 +55,7 @@ var highscore = 0; // High score for previously in-place score system
 var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
 var current_location; // Your current location
 var enemy_number; // Amount of enemies in dungeon
-var enemy_strength = 15; // How much health enemies have * current_location.difficulty
+var enemy_strength = 10; // How much health enemies have * current_location.difficulty
 var btn1; // These variables are shorthand for the three event buttons
 var btn2;
 var btn3;
@@ -143,11 +146,18 @@ function eventExploreStart() {
 	btn1.hide();
 	btn2.hide();
 	btn3.hide();
+    if (player_hp >= stat_maxhp) {
+        player_hp = stat_maxhp;
+    }
 }
 function eventExploreArrival(w) {
 	info.html(current_location.arrival_text);
 	dungeon = false;
+    boss = false;
     able_to_travel = true;
+    if (player_hp >= stat_maxhp) {
+        player_hp = stat_maxhp;
+    }
 	if (w !== true) {
 		eventExploreEnd();
 		return(" ");
@@ -213,6 +223,9 @@ function eventExploreEnd() {
                 if (stat_gold >= rare_cost) {
                     stat_gold -= rare_cost;
 				    createRareItem("magic");
+                    info.html('"This particular artifact is from the ' + magician_l_adj[Math.floor(Math.random() * magician_l_adj.length)] + 
+                              " " + magician_l_location[Math.floor(Math.random() * magician_l_location.length)] + 
+                              " of " + magician_i_of[Math.floor(Math.random() * magician_i_of.length)] + '."');
                 }
 			}
 		)
@@ -249,6 +262,9 @@ function eventTown(t) {
 	dungeon = false;
     battle = false;
     able_to_travel = true;
+    if (player_hp >= stat_maxhp) {
+        player_hp = stat_maxhp;
+    }
     eventShop("hide");
     btn1.show();
     btn1.html('<div class="btn_icon"></div>Shop');
@@ -432,7 +448,7 @@ function eventBattle(t, n) {
     btn1.html('<div class="btn_icon" style="background-position:0px 0px; background-image:url(' + img_physical + ')"></div>Fight');
     btn2.hide();
     btn3.hide();
-    enemy_hp = enemy_strength * current_location.difficulty;
+    enemy_hp = Math.floor(Math.random() * enemy_strength) + enemy_strength * current_location.difficulty;
     battle = true;
     if (t !== "nodesc") {
         info.html("You have ventured into a dungeon!<br>Suddenly, " + desc() + " jumps out of nowhere and challenges you to a fight.");
@@ -681,5 +697,8 @@ function reset(t) {
         stat_next_level = stat_level * 100;
         stats = [0, 0, 0, 0];
         equipped = ["00", "none", "none", "none"];
+        eventTown();
+        viewStats();
+        viewMenu("inventory"):
     }
 }
