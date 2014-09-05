@@ -699,6 +699,6 @@ function reset(t) {
         equipped = ["00", "none", "none", "none"];
         eventTown();
         viewStats();
-        viewMenu("inventory"):
+        viewMenu("inventory");
     }
 }
