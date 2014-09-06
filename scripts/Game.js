@@ -41,9 +41,9 @@ var magician_name = ["El Weirdo", "Sir Magical", "Bill", "Carl"];
 var magician_type = ["Magician", "Intelligent", "Enchanter", "Alchemist", "Wizard", "Wise"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection"];
-var magician_l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Deserted", "Cloudy", "Stormy", "Warm", "Harmless", "Sandy", "Fertile", "Dangerous"];
-var magician_l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hills", "Mine", "Cave", "Grove", "Desert", "Beach", "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh"];
-var magician_i_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers"];
+var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Deserted", "Cloudy", "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous"];
+var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hills", "Mine", "Cave", "Grove", "Desert", "Beach", "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh"];
+var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers"];
 
 //Game variables
 var player_hp; // Amount of health you have at the present
@@ -72,6 +72,7 @@ var inv_sell = false; // Boolean defines whether you are selling items or not
 // Default text
 var readout_default = "<span style='color:red'>This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...</span>";
 var wip_default = "<br><span style='color:red'>This part of the game is still new. Bugs are likely to be found here. Proceed at own risk!</span>";
+var travel_default = "You are not able to travel from here.";
 
 //Sorting
 var show_weapons = true;
@@ -97,11 +98,18 @@ function init() {
     $("#menubar_inv").on("click", function () {
         viewMenu("inventory");
     });
-    $("#menubar_lvl").on("click", function () {
+    /* $("#menubar_lvl").on("click", function () {
         viewMenu("levels");
-    });
+    }); */
 	$("#menubar_tvl").on("click", function () {
         viewMenu("locations");
+    });
+    $("#menubar_tvl").on("dblclick", function () {
+        if (able_to_travel === true) {
+            eventTown();
+        } else {
+            info.html(travel_default);
+        }
     });
     $("#menubar_ecp").on("click", function () {
         viewMenu("encyclopedia");
@@ -194,7 +202,7 @@ function eventExploreEnd() {
         break;
     case 2:
 		var number = Math.ceil(Math.random() * 5) + 1;
-        info.html("You find a dungeon entrance! It has " + number + " enemies.");
+        info.html("You find a dungeon entrance! It has " + number + " enemies.<br>A sign at the entrance says: <b>Welcome to the " + l_adj[Math.floor(Math.random() * l_adj.length)] + " dungeon of " + l_of[Math.floor(Math.random() * l_of.length)] + "</b>");
         btn1.show();
         btn1.html('<div class="btn_icon"></div>Enter Dungeon');
 		btn1.off("click").on("click",
@@ -223,9 +231,9 @@ function eventExploreEnd() {
                 if (stat_gold >= rare_cost) {
                     stat_gold -= rare_cost;
 				    createRareItem("magic");
-                    info.html('"This particular artifact is from the ' + magician_l_adj[Math.floor(Math.random() * magician_l_adj.length)] + 
-                              " " + magician_l_location[Math.floor(Math.random() * magician_l_location.length)] + 
-                              " of " + magician_i_of[Math.floor(Math.random() * magician_i_of.length)] + '."');
+                    info.html('"This particular artifact is from the ' + l_adj[Math.floor(Math.random() * l_adj.length)] + 
+                              " " + l_location[Math.floor(Math.random() * l_location.length)] + 
+                              " of " + l_of[Math.floor(Math.random() * l_of.length)] + '."');
                 }
 			}
 		)
@@ -293,7 +301,7 @@ function eventTown(t) {
         eventTownSquare();
     });
     readout.html("Your health: " + player_hp + " / " + stat_maxhp);
-    info.html("Welcome to the Town");
+    info.html("Welcome to the Town <br>Protip: Double click the travel button to travel here instantly!");
     if (t === "shop") {
         info.html("Click the 'travel' button to explore!");
     }
@@ -330,7 +338,7 @@ function initShop() {
             newitem.listx   = data.materials[m].x;
             newitem.damage  = data.items[i].damage   * data.materials[m].damage_mult;
             newitem.defence = data.items[i].defence  * data.materials[m].defence_mult;
-            newitem.gold    = data.items[i].gold     * data.materials[m].gold_mult;
+            newitem.gold    = data.items[i].gold * data.materials[m].gold_mult;
             newitem.name    = data.materials[m].name + " " + data.items[i].name;
             newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase());
             shop_list.push(newitem);
@@ -551,6 +559,11 @@ function updateFight() {
 				eventExploreStart();
 			});
 		}
+        if (Math.random() <= 0.33) {
+            var vowel = /[aeiou]/i, aa = "a ", item_name = createItem();
+            if (item_name.search(vowel) === 0) {aa = "an "; }
+            info.html(info.html() + "<br>The enemy dropped " + aa + item_name.toLowerCase() + "!");
+        }
     }
     readout.html("Your health: " + player_hp + " / " + stat_maxhp + "<br>Enemy health: " + enemy_hp);
 	viewStats();
@@ -623,7 +636,7 @@ function viewStats(t) {
                         stats[2] += inventory[a].magicatk;
                     } if (typeof inventory[a].magicdef === 'number' && inventory[a].magicdef > 0) {
                         stats[3] += inventory[a].magicdef;
-                    } if (typeof inventory[a].health === 'number' && inventory[a].magicdef > 0) {
+                    } if (typeof inventory[a].health === 'number' && inventory[a].health > 0) {
                         stat_maxhp += inventory[a].health;
                     }
 					break invsearch;
@@ -645,60 +658,5 @@ function viewStats(t) {
     $("#menu_list_ext").hide();
     if (t === "init") {
         player_hp = stat_maxhp;
-    }
-}
-										// Save/load functions
-function save() {
-	$.jStorage.set("inventory", inventory);
-    $.jStorage.set("s_gold", stat_gold);
-    $.jStorage.set("s_exp", stat_experience);
-    $.jStorage.set("s_lvl", stat_level);
-    $.jStorage.set("equipped", equipped);
-    console.log($.jStorage.get("inventory"));
-    console.log($.jStorage.get("s_gold"));
-    console.log($.jStorage.get("s_exp"));
-    console.log($.jStorage.get("equipped"));
-    info.html("Progress has been saved!");
-}
-function load() {
-    var i;
-    if (typeof $.jStorage.get("inventory")[0] === "object") {
-        for(i = 0; i < $.jStorage.get("inventory").length; i += 1) {
-            inventory[i] = $.jStorage.get("inventory")[i];
-            inventory[i].count = $.jStorage.get("inventory")[i].count;
-        }
-        console.log = inventory;
-    } if (typeof $.jStorage.get("equipped")[0] === "string") {
-        for(i = 0; i < $.jStorage.get("equipped").length; i += 1) {
-            equipped[i] = $.jStorage.get("equipped")[i];
-        }
-        equipped = $.jStorage.get("equipped");
-    } if (typeof $.jStorage.get("s_gold") === "number") {
-        stat_gold = $.jStorage.get("s_gold");
-    } if (typeof $.jStorage.get("s_exp") === "number") {
-        stat_experience = $.jStorage.get("s_exp");
-    } if (typeof $.jStorage.get("s_lvl") === "number") {
-        stat_experience = $.jStorage.get("s_lvl");
-    }
-}
-function reset(t) {
-    if (t === "nodialog" || confirm("Reset all progress? This cannot be undone.") === true) {
-        $.jStorage.flush();
-        inventory = [];
-        var newitem = {};
-        newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health vial";	newitem.desc = "A glass vial containing some sort of red healing liquid";
-        newitem.count = 2;
-        inventory.push(newitem);
-        inventory.push(shop_list[2]);
-        inventory[1].count = 1;
-        stat_gold = 5;
-        stat_level = 1;
-        stat_experience = 0;
-        stat_next_level = stat_level * 100;
-        stats = [0, 0, 0, 0];
-        equipped = ["00", "none", "none", "none"];
-        eventTown();
-        viewStats();
-        viewMenu("inventory");
     }
 }

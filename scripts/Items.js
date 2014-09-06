@@ -146,6 +146,29 @@ function createRareItem(t) {
     updateItems();
     viewStats();
 }
+function createItem() {
+    var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.difficulty - 1;
+    newitem.itemid  = i.toString() + m.toString();
+    newitem.name    = data.materials[m].name + " " + data.items[i].name;
+    newitem.listy   = data.items[i].y;
+    newitem.type    = data.items[i].type;
+    newitem.listx   = data.materials[m].x;
+    newitem.damage  = data.items[i].damage  * data.materials[m].damage_mult;
+    newitem.defence = data.items[i].defence * data.materials[m].defence_mult;
+    newitem.gold    = data.items[i].gold    * data.materials[m].gold_mult;
+    newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase());
+    newitem.count   = 1;
+    for (i = 0; i < inventory.length; i += 1) {
+        if(inventory[i].itemid === newitem.itemid) {
+            inventory[i].count += 1;
+            updateItems();
+            return(newitem.name);
+        }
+    }
+    inventory.push(newitem);
+    updateItems();
+    return(newitem.name);
+}
 function viewItem(item) {
     'use strict';
     var list_text;

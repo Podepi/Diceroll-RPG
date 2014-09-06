@@ -25,9 +25,9 @@ var data = {"items":[
     },
     {
         "y":-96,
-        "name":"Armour",
+        "name":"Plate Armour",
         "type":"Armour",
-        "description":"An armour set made of -mat-, protects from damage.",
+        "description":"A plate armour set made of -mat-, protects from damage.",
         "gold":40,
         "defence":2
     }
@@ -149,7 +149,7 @@ var data = {"items":[
         "y":-160,
         "x":-192,
         "name":"Apple"
-    },
+    }
 ],
 "locations":[
 	{
@@ -210,31 +210,43 @@ var data = {"items":[
 ],
 "upgrades":[
     {
+        "x":-96,
+        "y":0,
         "name":"Extra Health",
         "max_points":"10",
         "description":"Through the magic of gaining levels, you can increase your maximum hitpoints.<br>+10 health per point"
     },
     {
+        "x":-224,
+        "y":-160,
         "name":"Dagger Proficiency",
         "max_points":"1",
         "description":"Your dagger awesomeness allows you to attack twice 20% of the time!<br>+20% chance to deal +100% damage with a dagger"
     },
     {
+        "x":-256,
+        "y":-160,
         "name":"Sword Proficiency",
         "max_points":"1",
         "description":"Parry those attacks!.<br>+1 defence with a sword."
     },
     {
+        "x":-288,
+        "y":-160,
         "name":"Hammer Proficiency",
         "max_points":"1",
         "description":"Learn how to swing a hammer better!<br>+10% damage with a hammer."
     },
     {
+        "x":-32,
+        "y":-96,
         "name":"Armour Proficiency",
         "max_points":"5",
         "description":"Use armour more effectively!<br>+10% defence per point."
     },
     {
+        "x":-224,
+        "y":0,
         "name":"Prestige",
         "max_points":"100",
         "description":"Find you have nothing to spend your level points on? Spend them here!<br>+1 prestige."

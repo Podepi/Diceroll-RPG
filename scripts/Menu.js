@@ -116,7 +116,7 @@ function updateErrands() {
             viewItem(item);
         },
         function () {
-            $(this).css("background-color", "#FFF");
+            $(this).css("background-color", "transparent");
             viewStats();
         }
     );
@@ -150,7 +150,7 @@ function updateLocations() {
             viewLocation(map[this.id]);
         },
         function () {
-            $(this).css("background-color", "#FFF");
+            $(this).css("background-color", "transparent");
             viewStats();
         }
     );
@@ -168,7 +168,7 @@ function updateLocations() {
                 }
                 eventShop("hide");
             } else {
-                info.html("You are not able to travel from here.");
+                info.html(travel_default);
             }
         });
 }
@@ -209,25 +209,65 @@ function viewTopic(l) {
 	$("#menu_list_right").html(list_text);
 	$("#menu_readout_top").html(topic.description + "<br><b>Information on the material tiers:</b>");
 }
+function updateLevels(p_h, p_i) {
+    $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div style='height: 24px; background-color:#2e2e2e; border-width:0px; border-bottom-width:6px; border-image: url(images/border_image_gold.png) 12 12 round; font-weight: bold'>" + p_h + "<div class='close'></div></div>" + p_i + "</div></div>");
+    $(".close").on("click", function() {
+        closePrompt();
+    });
+    $("li.lvl").hover(
+        function() {
+            $(this).css("background-color", "#444");
+            viewLevel(this.id);
+        },
+        function() {
+            $(this).css("background-color", "transparent");
+            $("#megadiv").find("#menuheading").html("Mouse over an upgrade<br><div class='inv_icon' style='background_position: -224px 0px'></div>");
+        }
+    );
+    $("li.lvl").off("click").on("click", function() {
+            
+        }
+    );
+}
+function viewLevel(l) {
+    $("#megadiv").find(".menuheading").html(data.upgrades[l].name);
+    $("#popup_list").html("<li>" + data.upgrades[l].description + "</li>");
+}
 function createPrompt(pt) {
     var popup_info, popup_heading;
     switch (pt) {
         case "levelup":
             popup_heading = "Upgrades";
-            var iconx, icony, a, t = " ";
+            popup_info = "<div style='width:150px; float:left'><ul>"
+            var iconx, icony, a;
             for (a = 0; a < data.upgrades.length; a += 1) {
                 iconx = data.upgrades[a].x;
                 icony = data.upgrades[a].y;
-                t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + data.upgrades[a].name;
-                t += "</li>";
+                popup_info += "<li id='" + a + "' class='lvl'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>";
+                popup_info += "</li>";
             }
+            popup_info += "</ul></div><div style='float:left; width:; border-left:1px solid white'><p class='menuheading' style='padding-top:15px'>Mouse over an upgrade</p><ul id='popup_list'></ul></div>";
+            updateLevels(popup_heading, popup_info);
             break;
+        default:
+            $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div style='height: 24px; background-color:#2e2e2e; border-width:0px; border-bottom-width:6px; border-image: url(images/border_image_gold.png) 12 12 round;'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
+            $(".close").on("click", function() {
+                closePrompt();
+            });
     }
-    $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div style='height: 24px; background-color:#2e2e2e; border-width:0px; border-bottom-width:6px; border-image: url(images/border_image_gold.png) 12 12 round;'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
-    $(".close").on("click", function() {
-        closePrompt();
-    });
 }
 function closePrompt() {
     $(".overlay").remove();
+}
+function changeBackground(c) {
+    switch (c) {
+        case "day":
+            $("body").css("background-color","#fff");
+            $("footer").find("p").css( "color", "#000");
+            break;
+        case "night":
+            $("body").css("background-color","#000");
+            $("footer").find("p").css( "color", "#fff");
+            break;
+    }
 }

@@ -74,8 +74,7 @@
     text-align: center;
     z-index: 11;
     color:#EEE;
-    font-weight:bold;
-    font-family:Tahoma, Calibri, sans-serif;
+    font-family:Tahoma, Arial, sans-serif;
     font-size: 18px;
 }
 body {
@@ -89,6 +88,7 @@ div.menudiv {
     border-style: solid;
     border-color: #000;
     border-width: 1px;
+    background-color: #fff;
     width: 49.5%;
     float: left;
 }
@@ -107,7 +107,7 @@ div.btndiv {
     border-color: #000;
     border-width: 1px;
     cursor: pointer;
-    font-family: Tahoma, Calibri, sans-serif;
+    font-family: Tahoma, Arial, sans-serif;
     font-size: 11px;
 }
 div.btndiv:hover {
@@ -128,11 +128,12 @@ ul.menubar {
     height: 32px;
 }
 p, li {
-    font-family:Tahoma, Calibri, sans-serif;
+    font-family:Tahoma,  Arial, sans-serif;
 }
 p.menuheading {
     display: inline-block;
     margin: auto;
+    font-weight: bold;
     padding-bottom: 5px;
     height: 20px;
 }
@@ -144,6 +145,12 @@ li.inv {
     height: 35px;
     padding: 5px;
     border-bottom: 1px solid black;
+}
+li.lvl {
+    cursor: pointer;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid white;
 }
 li.stats {
     height: 35px;
