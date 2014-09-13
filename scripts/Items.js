@@ -95,20 +95,24 @@ function updateItems() {
     if (inv_sell === true) {
         $("li.inv").off("click").on("click",
             function () {
-                var item = inventory[this.id], info = $("#this.id").html(), i;
-                stat_gold += Math.floor(item.gold / 2);
-				item.count -= 1;
-				if (item.count <= 0) {
-					for (i = 0; i < equipped.length; i += 1) {
-						if (equipped[i] === item.itemid) {
-							equipped[i] = "none";
-						}
-					}
-					inventory.splice(this.id, 1);
-				}
-                readout.html("<div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold);
-                viewStats();
-                updateItems();
+                var item = inventory[this.id], info = $("#this.id").html(), i, a;
+                for (i = 0; i < equipped.length; i += 1) {
+                    if (equipped[i] === item.itemid) {
+                        a = i;
+                    }
+                }
+                if (item.count > 1 || confirm("Really sell this item?") === true) {
+                    equipped[i] = "none";
+                    stat_gold += Math.floor(item.gold / 2);
+                    item.count -= 1;
+                    if (item.count <= 0) {
+                        equipped[a] = "none";
+                        inventory.splice(this.id, 1);
+                    }
+                    readout.html("<div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold);
+                    viewStats();
+                    updateItems();
+                }
             }
         );
     }

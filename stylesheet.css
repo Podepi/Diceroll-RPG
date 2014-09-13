@@ -65,17 +65,17 @@
     width: 85%;
     height: 85%;
     position: absolute;
-    top: 7.5%; 
+    top: 7.5%;
     left: 7.5%;
     margin-top: 0%;
     margin-left: 0%;
     background-color: #EEE;
     border-width: 6px;
-    text-align: center;
     z-index: 11;
     color:#EEE;
     font-family:Tahoma, Arial, sans-serif;
     font-size: 18px;
+    overflow: auto;
 }
 body {
     position: relative;
@@ -112,6 +112,14 @@ div.btndiv {
 }
 div.btndiv:hover {
     border-color:#00CCCC
+}
+div.headerdiv {
+    height:24px;
+    text-align:center;
+    background-color:#2e2e2e;
+    border-width:0px;
+    border-bottom-width:6px;
+    border-image: url(images/border_image_gold.png) 12 12 round;
 }
 ul {
     list-style-type: none;
@@ -151,6 +159,7 @@ li.lvl {
     height: 35px;
     padding: 5px;
     border: 1px solid white;
+    text-align:left;
 }
 li.stats {
     height: 35px;
@@ -172,6 +181,10 @@ li.shop {
 }
 span {
     font-weight: bold;
+}
+span.level {
+    font-weight: normal;
+    text-align: left;
 }
 /* CSS Effects */
 

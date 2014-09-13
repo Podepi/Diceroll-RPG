@@ -4,7 +4,7 @@ function viewMenu(screen) {
     switch (screen) {
         case "inventory":
             updateItems();
-            $(".menuheading").html("Inventory");
+            $(".menuheading").html("Equip items and drink potions!");
             $("#list_heading").html("Inventory <i>(Click to use)</i>");
             $("#list_sort").html('<li id="sort_desc" style="font-size:8pt">Sort items:</li>' +
                              '<li id="sort_weapon" class="sort inv_icon" style="background-position:-32px 0px"></li>' +
@@ -72,21 +72,24 @@ function viewMenu(screen) {
             break;
         case "errands":
             updateErrands();
-            $(".menuheading").html("Errands and Quests");
+            $(".menuheading").html("'Help' others!");
             $("#list_heading").html("Errands and Quests <i>(Mouse over to view)</i>");
             break;
         case "locations":
             updateLocations();
-            $(".menuheading").html("Map of locations");
+            $(".menuheading").html("Travel to your doom!");
             $("#list_heading").html("Locations <i>(Click to travel)</i>");
             $("#list_sort").html(" ");
             break;
         case "levels":
-            createPrompt("levelup");
+            updateLevels();
+            $(".menuheading").html("Become more powerful!");
+            $("#list_heading").html("Upgrades <i style='color:#22bb00'>(" + (stat_level - stat_points_spent) + " points left)</i>");
+            $("#list_sort").html(" ");
             break;
         case "encyclopedia":
             updateTopics();
-            $(".menuheading").html("Book about everything");
+            $(".menuheading").html("Read the book about (not quite) everything!");
             $("#list_heading").html("Topics <i>(Click to read)</i>");
             $("#list_sort").html(" ");
     }
@@ -209,48 +212,73 @@ function viewTopic(l) {
 	$("#menu_list_right").html(list_text);
 	$("#menu_readout_top").html(topic.description + "<br><b>Information on the material tiers:</b>");
 }
-function updateLevels(p_h, p_i) {
-    $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div style='height: 24px; background-color:#2e2e2e; border-width:0px; border-bottom-width:6px; border-image: url(images/border_image_gold.png) 12 12 round; font-weight: bold'>" + p_h + "<div class='close'></div></div>" + p_i + "</div></div>");
-    $(".close").on("click", function() {
-        closePrompt();
-    });
-    $("li.lvl").hover(
-        function() {
-            $(this).css("background-color", "#444");
-            viewLevel(this.id);
-        },
-        function() {
-            $(this).css("background-color", "transparent");
-            $("#megadiv").find("#menuheading").html("Mouse over an upgrade<br><div class='inv_icon' style='background_position: -224px 0px'></div>");
-        }
-    );
-    $("li.lvl").off("click").on("click", function() {
-            
-        }
-    );
+function initLevels() {
+    var i;
+    for (i = 0; i < data.upgrades.length; i += 1) {
+        var new_upg = {};
+        new_upg.count = 0;
+        new_upg.max_points = data.upgrades[i].max_points;
+        upgrades.push(new_upg);
+    }
 }
-function viewLevel(l) {
-    $("#megadiv").find(".menuheading").html(data.upgrades[l].name);
-    $("#popup_list").html("<li>" + data.upgrades[l].description + "</li>");
+function updateLevels(cv) {
+    if (cv === true) {
+        /*$("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div class='headerdiv'>Level up!<div class='close'></div></div><canvas id='levelcanvas' width='1000' height='1000' style=''></canvas></div></div>");
+        var canvas = oCanvas.create({
+            canvas: "#levelcanvas"
+        });
+        var rectangle = canvas.display.rectangle({
+
+        });*/
+    }
+    else {
+        'use strict';
+        var iconx, icony, a, t = " ";
+        for (a = 0; a < data.upgrades.length; a += 1) {
+            iconx = data.upgrades[a].x;
+            icony = data.upgrades[a].y;
+            t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony +
+                "px'></div><p class='invlist'>" + data.upgrades[a].name + " (" + upgrades[a].count + "/" + data.upgrades[a].max_points + ")";
+        }
+        $("#menu_list_left").html(t);
+
+        //Mouseover stats
+        $("li.inv").hover(
+            function () {
+                $(this).css("background-color", "#DDD");
+                var upg = data.upgrades[this.id];
+                viewUpgrade(upg, this.id);
+            },
+            function () {
+                $(this).css("background-color", "#FFF");
+                viewStats();
+            }
+        );
+        $("li.inv").off("click").on("click",
+            function () {
+                var upg = upgrades[this.id], info = $("#this.id").html();
+                if (upg.count <= upg.max_points && stat_points_spent < stat_level) {
+                    upg.count += 1;
+                    stat_points_spent += 1;
+                    viewMenu("levels");
+                }
+            });
+    }
+}
+function viewUpgrade(l, n) {
+    var list_text;
+	$("#menu_readout_top").html(l.description);
+	list_text = "<li class='stats'><div class='inv_icon' style='background-position:-224px 0px'></div>: " + l.max_points + " maximum points</li>" +
+                "<li class='stats'><div class='inv_icon' style='background-position:-64px -64px'></div>: " + upgrades[n].count + " points invested</li>";
+	$("#menu_list_right").html(list_text);
 }
 function createPrompt(pt) {
-    var popup_info, popup_heading;
     switch (pt) {
         case "levelup":
-            popup_heading = "Upgrades";
-            popup_info = "<div style='width:150px; float:left'><ul>"
-            var iconx, icony, a;
-            for (a = 0; a < data.upgrades.length; a += 1) {
-                iconx = data.upgrades[a].x;
-                icony = data.upgrades[a].y;
-                popup_info += "<li id='" + a + "' class='lvl'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>";
-                popup_info += "</li>";
-            }
-            popup_info += "</ul></div><div style='float:left; width:; border-left:1px solid white'><p class='menuheading' style='padding-top:15px'>Mouse over an upgrade</p><ul id='popup_list'></ul></div>";
-            updateLevels(popup_heading, popup_info);
+            updateLevels();
             break;
         default:
-            $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div style='height: 24px; background-color:#2e2e2e; border-width:0px; border-bottom-width:6px; border-image: url(images/border_image_gold.png) 12 12 round;'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
+            $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div class='headerdiv'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
             $(".close").on("click", function() {
                 closePrompt();
             });

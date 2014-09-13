@@ -16,14 +16,15 @@ var death_message = /* This array contains all the phrases which show up when yo
             "Blocking that attack is basic knowledge at the Warrior Training School...",
             "You are sent to The Place Where All Beings Are Eternally Blessed."];
 var inventory = []; // This array contains the items the inventory has
-var shop_list = []; // This array contains the items the shop has - all array work is done in the shop functions 
+var shop_list = []; // This array contains the items the shop has - all array work is done in the shop functions
 var map = []; // This array contains the locations known by the player
 var book = []; // This array contains the encyclopedia titles for information
 var errands = []; // This array contains the errands accepted by the player
+var upgrades = []; // This array contains the level upgrades
 var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future, also area-dependant enemies */
-        ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre"];
+        ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre", "imp", "skeleton", "zombie", "wolf", "snake"];
 var adjective_list = /* This array contains all the adjectives an enemy can have - purely cosmetic */
-        ["stupid", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly-disguised", "annoying", "idiotic", "armed", "armoured", "stereotyped", "ghostly", "orcish", "wraith-like", "trollish", "spidery", "golem-like"];
+        ["stupid", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly disguised", "annoying", "idiotic", "armed", "armoured", "stereotyped", "ghostly", "orcish", "wraith-like", "trollish", "spidery", "golem-like"];
 var shopkeeper = /* This array contains all the various phrases and actions the shopkeeper does */
         ["tells you about all the various bargains.",
             "complains about shoplifters.",
@@ -32,18 +33,19 @@ var shopkeeper = /* This array contains all the various phrases and actions the 
             "says, \"Because I'm not running a charity here, all items you sell will be at half price.\"",
             "says, \"Remember to equip your items before you rush recklessly into battle!\""];
 var rare_colour = /* This array contains the colour schemes for the item tiers - used with rare items to show what tier item they are */
-    [
-        "5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"
-    ];
+    ["5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"];
 
-//Travelling Magician arrays...
+//Travelling Magician arrays
 var magician_name = ["El Weirdo", "Sir Magical", "Bill", "Carl"];
 var magician_type = ["Magician", "Intelligent", "Enchanter", "Alchemist", "Wizard", "Wise"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection"];
-var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Deserted", "Cloudy", "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous"];
-var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hills", "Mine", "Cave", "Grove", "Desert", "Beach", "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh"];
-var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers"];
+var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Deserted", "Cloudy",
+             "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous"];
+var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hills", "Mine", "Cave", "Grove", "Desert", "Beach",
+                  "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh"];
+var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology",
+            "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers"];
 
 //Game variables
 var player_hp; // Amount of health you have at the present
@@ -60,7 +62,7 @@ var btn1; // These variables are shorthand for the three event buttons
 var btn2;
 var btn3;
 var info; // Shorthand for text above event buttons
-var readout // Shorthand for text below event buttons
+var readout; // Shorthand for text below event buttons
 
 // Booleans
 var battle = false; // Boolean defines whether hp potions display enemy health on readout
@@ -85,7 +87,7 @@ var stat_gold = 5; // Amount of gold player has
 var stat_level = 1; // Player awesomeness rating
 var stat_experience = 0; // Player experience in battle, more difficult locations provide more experience
 var stat_next_level = stat_level * 100; // How much experience is required to progress to the next level
-var stat_points_spent;
+var stat_points_spent = 0;
 var stats = [0, 0, 0, 0]; // Battle stats (attack, defence, magic attack, magic defence)
 var equipped = ["00", "none", "none", "none"]; // Array containing equipped items - weapon, armour, amulet, misc
 
@@ -98,9 +100,9 @@ function init() {
     $("#menubar_inv").on("click", function () {
         viewMenu("inventory");
     });
-    /* $("#menubar_lvl").on("click", function () {
+    $("#menubar_lvl").on("click", function () {
         viewMenu("levels");
-    }); */
+    });
 	$("#menubar_tvl").on("click", function () {
         viewMenu("locations");
     });
@@ -128,14 +130,15 @@ function init() {
     shop_list.pop();
     initShop();
 	initLocations();
-    viewStats("init");
-    eventTown();
+    initLevels();
     try {
         load();
     } catch (e) {
         reset("nodialog");
     }
     viewMenu("inventory");
+    viewStats("init");
+    eventTown();
 }
 
 function tanh(arg) {
@@ -231,8 +234,8 @@ function eventExploreEnd() {
                 if (stat_gold >= rare_cost) {
                     stat_gold -= rare_cost;
 				    createRareItem("magic");
-                    info.html('"This particular artifact is from the ' + l_adj[Math.floor(Math.random() * l_adj.length)] + 
-                              " " + l_location[Math.floor(Math.random() * l_location.length)] + 
+                    info.html('"This particular artifact is from the ' + l_adj[Math.floor(Math.random() * l_adj.length)] +
+                              " " + l_location[Math.floor(Math.random() * l_location.length)] +
                               " of " + l_of[Math.floor(Math.random() * l_of.length)] + '."');
                 }
 			}
@@ -300,7 +303,7 @@ function eventTown(t) {
     btn3.off('click').on("click", function () {
         eventTownSquare();
     });
-    readout.html("Your health: " + player_hp + " / " + stat_maxhp);
+    updateHealth();
     info.html("Welcome to the Town <br>Protip: Double click the travel button to travel here instantly!");
     if (t === "shop") {
         info.html("Click the 'travel' button to explore!");
@@ -316,7 +319,7 @@ function eventTownSquare() {
     btn2.show();
     btn2.html("<div class='btn_icon'></div>Look for Quest");
     btn2.off('click').on("click", function () {
-        
+
     });
     btn3.hide();
 }
@@ -324,10 +327,16 @@ function eventTownSquare() {
 function initShop() {
     'use strict';
     var newitem = {};
-	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health vial";	newitem.desc = "A glass vial containing some sort of red healing liquid";
+    newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health Vial";	newitem.desc = "A glass vial containing some sort of red healing liquid";
     shop_list.push(newitem);
 	newitem = {};
-	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c1"; newitem.listx = 0; newitem.heal = 20; newitem.gold = 10; newitem.name = "Health potion";	newitem.desc = "A glass bottle containing some sort of red healing liquid";
+    newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c1"; newitem.listx = 0; newitem.heal = 20; newitem.gold = 10; newitem.name = "Health Potion";	newitem.desc = "A glass bottle containing some sort of red healing liquid";
+    shop_list.push(newitem);
+    newitem = {};
+	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c3"; newitem.listx = -160; newitem.heal = 40; newitem.gold = 20; newitem.name = "Concentrated Health Vial";	newitem.desc = "A glass vial containing a strong healing liquid";
+    shop_list.push(newitem);
+    newitem = {};
+	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c4"; newitem.listx = -128; newitem.heal = 80; newitem.gold = 40; newitem.name = "Concentrated Health Potion";	newitem.desc = "A glass bottle containing a strong healing liquid";
     shop_list.push(newitem);
 	newitem = {};
 	for (var m in data.materials) {
@@ -610,6 +619,13 @@ function roll() {
         updateFight(enemy_number);
     }
 }
+function updateHealth() {
+    var t = "Your health: " + player_hp + " / " + stat_maxhp;
+    if (battle === true) {
+        t += "<br>Enemy health: " + enemy_hp;
+    }
+    readout.html(t);
+}
 function viewStats(t) {
     'use strict';
     var i, a, level_icon;
@@ -644,6 +660,7 @@ function viewStats(t) {
             }
         }
     }
+    updateStats();
     $("#menu_readout_top").html("Your stats:");
     $("#menu_list_right").html("<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + stat_maxhp +
         " max health</li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + stat_gold +
@@ -658,5 +675,19 @@ function viewStats(t) {
     $("#menu_list_ext").hide();
     if (t === "init") {
         player_hp = stat_maxhp;
+    }
+    if (stat_level - stat_points_spent > 0) {
+        $("#menubar_lvl").css("color", "#22bb00");
+    } else {
+        $("#menubar_lvl").css("color", "#000");
+    }
+    updateHealth();
+}
+function updateStats() {
+    var i;
+    for(i = 0; i < upgrades.length; i += 1) {
+        if (i === 0) {
+            stat_maxhp += upgrades[0].count * 5;
+        }
     }
 }

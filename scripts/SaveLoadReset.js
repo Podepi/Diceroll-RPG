@@ -7,6 +7,7 @@ function save() {
     console.log($.jStorage.get("inventory"));
     console.log($.jStorage.get("s_gold"));
     console.log($.jStorage.get("s_exp"));
+    console.log($.jStorage.get("s_lvl"));
     console.log($.jStorage.get("equipped"));
     info.html("Progress has been saved!");
 }
@@ -28,7 +29,7 @@ function load() {
     } if (typeof $.jStorage.get("s_exp") === "number") {
         stat_experience = $.jStorage.get("s_exp");
     } if (typeof $.jStorage.get("s_lvl") === "number") {
-        stat_experience = $.jStorage.get("s_lvl");
+        stat_level = $.jStorage.get("s_lvl");
     }
 }
 function reset(t) {
