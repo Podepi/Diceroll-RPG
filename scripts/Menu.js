@@ -139,8 +139,25 @@ function updateLocations() {
                     updateLocations();
                 }
                 eventShop("hide");
-            } else {
+            } else if (battle === true) {
                 info.html(travel_default);
+            } else {
+                current_location = map[this.id];
+                inv_sell = false;
+                shop = false;
+                battle = false;
+                viewStats();
+                current_location = map[this.id];
+                $("#location_header").html(current_location.name);
+                if (current_location.difficulty > 0) {
+                    eventExploreArrival(true);
+                } else {
+                    eventTown();
+                }
+                if (menuscreen === "locations") {
+                    updateLocations();
+                }
+                eventShop("hide");
             }
         });
 }

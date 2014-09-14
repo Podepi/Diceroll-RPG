@@ -67,7 +67,7 @@ var info; // Shorthand for text above event buttons
 var readout; // Shorthand for text below event buttons
 
 // Booleans
-var battle = false; // Boolean defines whether hp potions display enemy health on readout
+var battle = false; // Boolean defines whether you are fighting or not
 var dungeon = false; // Determines whether to give prize after defeating all enemies
 var boss = false; // Determines whether you are fighting  a boss or not
 var able_to_travel; // Determines whether you can travel or not
@@ -77,7 +77,7 @@ var shop = false;
 // Default text
 var readout_default = "<span style='color:red'>This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...</span>";
 var wip_default = "<br><span style='color:red'>This part of the game is still new. Bugs are likely to be found here. Proceed at own risk!</span>";
-var travel_default = "You are not able to travel from here.";
+var travel_default = "You are not able to escape from here.";
 
 //Sorting
 var show_weapons = true;
@@ -460,6 +460,7 @@ function shopSell() {
     if(inv_sell === false) {
         btn2.html('<div class="btn_icon"></div>Stop selling items');
         btn1.hide();
+        $("#shop").hide();
         info.html("Click on items to sell them for half price.");
         inv_sell = true;
 		updateItems();
