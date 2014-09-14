@@ -16,64 +16,65 @@ function viewMenu(screen) {
                 }, function () {
                     $(this).css("border-color", "#FFF");
                 }
-            ); $("#sort_weapon").hover(
-                function () {
-                    $("#sort_desc").html("Show/hide weapons");
-                }, function () {
-                    $("#sort_desc").html("Sort items:");
-                }
-            ); $("#sort_weapon").on("click",
-                 function () {
-                    if (show_weapons === true) {
-                        show_weapons = false;
-                        $(this).css("opacity", "0.3");
-                    } else {
-                        show_weapons = true;
-                        $(this).css("opacity", "1");
+                ); $("#sort_weapon").hover(
+                    function () {
+                        $("#sort_desc").html("Show/hide weapons");
+                    }, function () {
+                        $("#sort_desc").html("Sort items:");
                     }
-                    updateItems();
-                }
-            ); $("#sort_armour").hover(
-                function () {
-                    $("#sort_desc").html("Show/hide armour");
-                }, function () {
-                    $("#sort_desc").html("Sort items:");
-                }
-            ); $("#sort_armour").on("click",
-                 function () {
-                    if (show_armour === true) {
-                        show_armour = false;
-                        $(this).css("opacity", "0.3");
-                    } else {
-                        show_armour = true;
-                        $(this).css("opacity", "1");
+                ); $("#sort_weapon").on("click",
+                     function () {
+                        if (show_weapons === true) {
+                            show_weapons = false;
+                            $(this).css("opacity", "0.3");
+                        } else {
+                            show_weapons = true;
+                            $(this).css("opacity", "1");
+                        }
+                        updateItems();
                     }
-                    updateItems();
-                }
-            ); $("#sort_consumables").hover(
-                function () {
-                    $("#sort_desc").html("Show/hide consumables");
-                }, function () {
-                    $("#sort_desc").html("Sort items:");
-                }
-            );
-            $("#sort_consumables").on("click",
-                 function () {
-                    if (show_consumables === true) {
-                        show_consumables = false;
-                        $(this).css("opacity", "0.3");
-                    } else {
-                        show_consumables = true;
-                        $(this).css("opacity", "1");
+                ); $("#sort_armour").hover(
+                    function () {
+                        $("#sort_desc").html("Show/hide armour");
+                    }, function () {
+                        $("#sort_desc").html("Sort items:");
                     }
-                    updateItems();
-                }
-            );
+                ); $("#sort_armour").on("click",
+                     function () {
+                        if (show_armour === true) {
+                            show_armour = false;
+                            $(this).css("opacity", "0.3");
+                        } else {
+                            show_armour = true;
+                            $(this).css("opacity", "1");
+                        }
+                        updateItems();
+                    }
+                ); $("#sort_consumables").hover(
+                    function () {
+                        $("#sort_desc").html("Show/hide consumables");
+                    }, function () {
+                        $("#sort_desc").html("Sort items:");
+                    }
+                );
+                $("#sort_consumables").on("click",
+                     function () {
+                        if (show_consumables === true) {
+                            show_consumables = false;
+                            $(this).css("opacity", "0.3");
+                        } else {
+                            show_consumables = true;
+                            $(this).css("opacity", "1");
+                        }
+                        updateItems();
+                    }
+                );
             break;
         case "errands":
             updateErrands();
             $(".menuheading").html("'Help' others!");
             $("#list_heading").html("Errands and Quests <i>(Mouse over to view)</i>");
+            $("#list_sort").html(" ");
             break;
         case "locations":
             updateLocations();
@@ -92,39 +93,6 @@ function viewMenu(screen) {
             $(".menuheading").html("Read the book about (not quite) everything!");
             $("#list_heading").html("Topics <i>(Click to read)</i>");
             $("#list_sort").html(" ");
-    }
-}
-function updateErrands() {
-    'use strict';
-    var iconx, icony, a, t;
-    try {
-        iconx = errands[0].listx;
-        icony = errands[0].listy;
-    } catch (err) { return ("quest update failed"); }
-    t = "<li id='0' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + errands[0].name;
-    t += "</li>";
-    for (a = 1; a < errands.length; a += 1) {
-        iconx = errands[a].listx;
-        icony = errands[a].listy;
-        t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + errands[a].name;
-        t += "</li>";
-    }
-    $("#menu_list_left").html(t);
-
-    //Mouseover stats
-    $("li.inv").hover(
-        function () {
-            $(this).css("background-color", "#DDD");
-            var item = errands[this.id];
-            viewItem(item);
-        },
-        function () {
-            $(this).css("background-color", "transparent");
-            viewStats();
-        }
-    );
-    if (menuscreen === "errands") {
-        updateItems();
     }
 }
 function initLocations() {
@@ -161,6 +129,7 @@ function updateLocations() {
         function () {
             if (able_to_travel === true) {
                 current_location = map[this.id];
+                $("#location_header").html(current_location.name);
                 if (current_location.difficulty > 0) {
                     eventExploreArrival(true);
                 } else {
@@ -257,7 +226,7 @@ function updateLevels(cv) {
         $("li.inv").off("click").on("click",
             function () {
                 var upg = upgrades[this.id], info = $("#this.id").html();
-                if (upg.count <= upg.max_points && stat_points_spent < stat_level) {
+                if (upg.count < upg.max_points && stat_points_spent < stat_level) {
                     upg.count += 1;
                     stat_points_spent += 1;
                     viewMenu("levels");

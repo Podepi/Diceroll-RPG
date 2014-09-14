@@ -1,4 +1,5 @@
-var data = {"items":[
+var data = {
+"items":[
     {
         "y":-224,
         "name":"Dagger",
@@ -155,13 +156,15 @@ var data = {"items":[
 	{
 		"name":"Town",
 		"difficulty":0,
+        "item_drop":0,
 		"description":"The safest place in the entire region",
 		"arrival_text":"Welcome to the Town",
         "x":0
 	},
 	{
 		"name":"Green Fields",
-		"difficulty":1,
+        "difficulty":1,
+        "item_drop":0,
 		"description":"Serene grasslands with mostly harmless inhabitants.",
 		"arrival_text":"You can see grasslands stretching beyond the horizon, scattered with the occasional tree.",
 		"ground_type":"green grass",
@@ -169,7 +172,8 @@ var data = {"items":[
 	},
 	{
 		"name":"Coal Hills",
-		"difficulty":4,
+		"difficulty":11,
+        "item_drop":1,
 		"description":"The hills here are rich in coal, the perfect place to start a coal industry.",
 		"arrival_text":"Inside the numerous caves here, you can see rich veins of coal embedded into the stone.",
 		"ground_type":"dark soil",
@@ -177,7 +181,8 @@ var data = {"items":[
 	},
 	{
 		"name":"Dark Forest",
-		"difficulty":10,
+		"difficulty":24,
+        "item_drop":3,
 		"description":"A very foreboding forest, also very clichéd.",
 		"arrival_text":"You cannot see through the tree line. The shadowy trees send shivers down your spine.",
 		"ground_type":"foliage",
@@ -185,7 +190,8 @@ var data = {"items":[
 	},
     {
 		"name":"Mountain Trail",
-		"difficulty":19,
+		"difficulty":40,
+        "item_drop":5,
 		"description":"A cold and mountainous trail, dangerous to walk through.",
 		"arrival_text":"The freezing wind and snow turns your body to ice. You hope you don't get frostbite...",
 		"ground_type":"snow",
@@ -193,7 +199,8 @@ var data = {"items":[
 	},
     {
 		"name":"Mystic Portal",
-		"difficulty":31,
+		"difficulty":59,
+        "item_drop":7,
 		"description":"A portal to the Mystic Realm, the main exporter of Mystium.",
 		"arrival_text":"The bright purple mystium dust hurts your eyes.",
 		"ground_type":"mystium dust",
@@ -250,6 +257,18 @@ var data = {"items":[
         "name":"Prestige",
         "max_points":"100",
         "description":"Find you have nothing to spend your level points on? Spend them here!<br><br><span>+1 prestige.</span>"
+    }
+],
+"quests":[
+    {
+        "type":"Bandit",
+        "name":"Kill -name- in -location-",
+        "description":"A nearby bandit has been terrorising the town! Put an end to his crimes!"
+    },
+    {
+        "type":"Collect",
+        "name":"Find -number- of -item-",
+        "description":"A random person wants you to collect -number -item-s!"
     }
 ]
 }

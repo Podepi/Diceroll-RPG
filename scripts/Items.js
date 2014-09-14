@@ -34,7 +34,7 @@ function updateItems() {
                 t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + inventory[a].name + " (" + inventory[a].count + ")";
             }
         }
-    }
+    } if (t === " ") {t = "<li><i>Congratulations! You have sold all your items! You probably have no other choice but to reset...</i></li>"}
     $("#menu_list_left").html(t);
 
     //Mouseover stats
@@ -119,7 +119,7 @@ function updateItems() {
 }
 function createRareItem(t) {
 	"use strict";
-	var chance = 1, newitem = {}, i = Math.floor(Math.random() * data.items.length), m = Math.floor(stat_level / 3), rare_multiplier = (Math.random() * 2) + 1;
+	var chance = 1, newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.item_drop, rare_multiplier = (Math.random() * 2) + 1;
 	newitem.count = 1;
     if (t === "magic") {
         chance = 0.2;
@@ -151,7 +151,7 @@ function createRareItem(t) {
     viewStats();
 }
 function createItem() {
-    var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.difficulty - 1;
+    var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.itemdrop;
     newitem.itemid  = i.toString() + m.toString();
     newitem.name    = data.materials[m].name + " " + data.items[i].name;
     newitem.listy   = data.items[i].y;

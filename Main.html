@@ -7,6 +7,7 @@
         <script src="scripts/Game.js"></script>
         <script src="scripts/Menu.js"></script>
         <script src="scripts/Items.js"></script>
+        <script src="scripts/Quests.js"></script>
         <script src="scripts/SaveLoadReset.js"></script>
         <script src="scripts/itemlist.js"></script>
         <script src="scripts/jstorage.js"></script>
@@ -16,6 +17,7 @@
     <body onload="init()">
         <div id="megadiv">
             <div class="menudiv">
+                <div style="height:20px; border-bottom:1px solid black; padding:0 auto"><p id="location_header" style="display:inline"></p></div>
                 <div style="text-align:center; overflow:hidden; height:50%">
                     <p id="info" style="margin-left:0"></p>
                     <table style="margin:0 auto;"><tr>
@@ -63,6 +65,6 @@
 		<button onClick="reset()" style="display:inline">Reset progress</button>
 		<button onClick="save()" style="display:inline">Save progress</button>
 		<button onClick="load()" style="display:inline">Load progress</button>
-		<p style="text-align:right; display:inline">Version 0.14.4</p>
+		<p style="text-align:right; display:inline">Version 0.14.5</p>
 	</footer>
 </html>
