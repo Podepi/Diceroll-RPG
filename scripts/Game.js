@@ -458,6 +458,7 @@ function shopSell() {
     if(inv_sell === false) {
         btn2.html('<div class="btn_icon"></div>Stop selling items');
         btn1.hide();
+        $("#shop").hide();
         info.html("Click on items to sell them for half price.");
         inv_sell = true;
 		updateItems();
