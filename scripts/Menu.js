@@ -181,6 +181,12 @@ function updateTopics() {
     //Mouseover stats
     $("li.inv").hover(
 		function () {
+            $("li.inv").css("background-color", "#FFF");
+            $(this).css("background-color", "#DDD");
+            viewTopic(book[this.id]);
+        },
+        function () {
+            $("li.inv").css("background-color", "#FFF");
             $(this).css("background-color", "#DDD");
             viewTopic(book[this.id]);
         }
@@ -191,12 +197,17 @@ function updateTopics() {
         });
 }
 function viewTopic(l) {
-	var topic = l, list_text = " ";
-    for (var i in data.materials) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
+	var list_text = " ";
+    if (l.name === "Materials") {
+        for (var i in data.materials) {
+            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
+        }
+        $("#menu_readout_top").html(l.description + "<br><b>Information on the material tiers:</b>");
+    } else {
+        $("#menu_readout_top").html(l.description);
+        list_text = l.list;
     }
 	$("#menu_list_right").html(list_text);
-	$("#menu_readout_top").html(topic.description + "<br><b>Information on the material tiers:</b>");
 }
 function initLevels() {
     var i;

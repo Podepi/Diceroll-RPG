@@ -219,7 +219,22 @@ var data = {
         "x":-32,
         "y":-32,
         "name":"Materials",
-        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
+        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth.",
+        "list":" "
+    },
+    {
+        "x":-32,
+        "y":-128,
+        "name":"Potions",
+        "description":"Potions help you survive battle. You can use healing potions to heal past your maximum hp temporarily.",
+        "list":" "
+    },
+    {
+        "x":-32,
+        "y":-0,
+        "name":"Battle",
+        "description":"Meeting an enemy is more than likely to happen eventually. As a guide, instructions on how not to die instantly are included below.<br><b>Step-by-step guide on how to fight:</b>",
+        "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>"
     }
 ],
 "upgrades":[

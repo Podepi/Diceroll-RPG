@@ -40,7 +40,7 @@ function load() {
     stat_level = $.jStorage.get("s_lvl");
     stat_points_spent = $.jStorage.get("s_p_s");
 }
-function reset(t) {
+function reset(t, r) {
     if (t === "nodialog" || confirm("Reset all progress? This cannot be undone.") === true) {
         $.jStorage.flush();
         inventory = [];
@@ -59,5 +59,8 @@ function reset(t) {
         eventTown();
         viewStats();
         viewMenu("inventory");
+        if (r === true) {
+            location.reload();
+        }
     }
 }
