@@ -162,6 +162,7 @@ function updateLocations() {
         });
 }
 function viewLocation(l) {
+    'use strict';
 	var location = l, list_text;
 	$("#menu_readout_top").text(location.description);
 	list_text = "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + location.difficulty + " difficulty rating</li>";
@@ -181,12 +182,6 @@ function updateTopics() {
     //Mouseover stats
     $("li.inv").hover(
 		function () {
-            $("li.inv").css("background-color", "#FFF");
-            $(this).css("background-color", "#DDD");
-            viewTopic(book[this.id]);
-        },
-        function () {
-            $("li.inv").css("background-color", "#FFF");
             $(this).css("background-color", "#DDD");
             viewTopic(book[this.id]);
         }
@@ -197,19 +192,16 @@ function updateTopics() {
         });
 }
 function viewTopic(l) {
-	var list_text = " ";
-    if (l.name === "Materials") {
-        for (var i in data.materials) {
-            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
-        }
-        $("#menu_readout_top").html(l.description + "<br><b>Information on the material tiers:</b>");
-    } else {
-        $("#menu_readout_top").html(l.description);
-        list_text = l.list;
+    'use strict';
+	var topic = l, list_text = " ";
+    for (var i in data.materials) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
     }
 	$("#menu_list_right").html(list_text);
+	$("#menu_readout_top").html(topic.description + "<br><b>Information on the material tiers:</b>");
 }
 function initLevels() {
+    'use strict';
     var i;
     for (i = 0; i < data.upgrades.length; i += 1) {
         var new_upg = {};
@@ -219,6 +211,7 @@ function initLevels() {
     }
 }
 function updateLevels(cv) {
+    'use strict';
     if (cv === true) {
         /*$("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div class='headerdiv'>Level up!<div class='close'></div></div><canvas id='levelcanvas' width='1000' height='1000' style=''></canvas></div></div>");
         var canvas = oCanvas.create({
@@ -263,6 +256,7 @@ function updateLevels(cv) {
     }
 }
 function viewUpgrade(l, n) {
+    'use strict';
     var list_text;
 	$("#menu_readout_top").html(l.description);
 	list_text = "<li class='stats'><div class='inv_icon' style='background-position:-224px 0px'></div>: " + l.max_points + " maximum points</li>" +
@@ -270,6 +264,7 @@ function viewUpgrade(l, n) {
 	$("#menu_list_right").html(list_text);
 }
 function createPrompt(pt) {
+    'use strict';
     switch (pt) {
         case "levelup":
             updateLevels();
@@ -282,9 +277,11 @@ function createPrompt(pt) {
     }
 }
 function closePrompt() {
+    'use strict';
     $(".overlay").remove();
 }
 function changeBackground(c) {
+    'use strict';
     switch (c) {
         case "day":
             $("body").css("background-color","#fff");

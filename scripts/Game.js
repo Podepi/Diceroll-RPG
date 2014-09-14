@@ -145,6 +145,7 @@ function init() {
     eventTown();
 }
 function createName() {
+    'use strict';
     var n1, n2;
     n1 = n_start[Math.floor(Math.random() * n_start.length)]
     n2 = n_end[Math.floor(Math.random() * n_end.length)]
@@ -171,6 +172,7 @@ function eventExploreStart() {
     }
 }
 function eventExploreArrival(w) {
+    'use strict';
 	info.html(current_location.arrival_text);
 	dungeon = false;
     boss = false;
@@ -236,7 +238,7 @@ function eventExploreEnd(n) {
         if (Math.random() <= 0.2 || n === 3) {
             var rare_cost = 100 + Math.round(Math.random() * 500);
             info.html("Welcome to " + magician_name[Math.floor(Math.random() * magician_name.length)] + " the "  + l_adj[Math.floor(Math.random() * l_adj.length)] + " " + magician_type[Math.floor(Math.random() * magician_type.length)] + "'s " + magician_adj[Math.floor(Math.random() * magician_adj.length)] + " " + magician_show[Math.floor(Math.random() * magician_show.length)] + "!<br>He is selling rare items for " + rare_cost + " gold each.");
-            viewMenu("inventory");
+            menuscreen("inventory");
             btn1.show();
             btn1.html('<div class="btn_icon"></div>Buy magical item');
             btn1.off("click").on("click",
@@ -329,6 +331,7 @@ function eventTown(t) {
     }
 }
 function eventTownSquare() {
+    'use strict';
     info.html("This place is filled with merchants and random strangers.");
     btn1.show();
     btn1.html('<div class="btn_icon"></div>Back to Town');
@@ -458,7 +461,6 @@ function shopSell() {
     if(inv_sell === false) {
         btn2.html('<div class="btn_icon"></div>Stop selling items');
         btn1.hide();
-        $("#shop").hide();
         info.html("Click on items to sell them for half price.");
         inv_sell = true;
 		updateItems();
@@ -643,6 +645,7 @@ function roll() {
     }
 }
 function updateHealth() {
+    'use strict';
     var t = "Your health: " + player_hp + " / " + stat_maxhp;
     if (battle === true) {
         if (boss === true) {
@@ -714,6 +717,7 @@ function viewStats(t) {
     updateHealth();
 }
 function updateStats() {
+    'use strict';
     var i, e, s_d, s_s, s_h;
     stat_maxhp += upgrades[0].count * 5;
     for (i = 0; i < inventory.length; i += 1) {
@@ -738,6 +742,6 @@ function updateStats() {
         stats[0] += stats[0] * 0.1;
     }
     if (upgrades[4].count > 0) {
-        stats[1] = Math.round((stats[1] *= 1 + upgrades[4].count * 0.1) * 10) / 10;
+        stats[1] *= 1 + upgrades[4].count * 0.1;
     }
 }

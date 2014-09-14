@@ -1,4 +1,5 @@
 function eventQuest(q) {
+    'use strict';
     var new_quest;
     switch (q) {
         case "errand":
@@ -46,6 +47,7 @@ function updateErrands() {
     }
 }
 function viewErrand(e) {
+    'use strict';
     $("#menu_readout_top").html(e.description);
     $("#menu_list_right").html("<li><b>" + e.type + "</b></li>");
 }

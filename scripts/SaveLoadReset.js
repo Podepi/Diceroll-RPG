@@ -1,4 +1,5 @@
 function save() {
+    'use strict';
 	$.jStorage.set("inventory", inventory);
     $.jStorage.set("s_gold", stat_gold);
     $.jStorage.set("s_exp", stat_experience);
@@ -15,6 +16,7 @@ function save() {
     info.html("Progress has been saved!");
 }
 function load() {
+    'use strict';
     var i;
     if (typeof $.jStorage.get("inventory")[0] === "object") {
         for(i = 0; i < $.jStorage.get("inventory").length; i += 1) {
@@ -40,7 +42,8 @@ function load() {
     stat_level = $.jStorage.get("s_lvl");
     stat_points_spent = $.jStorage.get("s_p_s");
 }
-function reset(t, r) {
+function reset(t) {
+    'use strict';
     if (t === "nodialog" || confirm("Reset all progress? This cannot be undone.") === true) {
         $.jStorage.flush();
         inventory = [];
@@ -59,8 +62,5 @@ function reset(t, r) {
         eventTown();
         viewStats();
         viewMenu("inventory");
-        if (r === true) {
-            location.reload();
-        }
     }
 }

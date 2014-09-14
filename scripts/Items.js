@@ -149,6 +149,7 @@ function createRareItem(t) {
     viewStats();
 }
 function createItem() {
+    'use strict';
     var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.item_drop;
     newitem.itemid  = i.toString() + m.toString();
     newitem.name    = data.materials[m].name + " " + data.items[i].name;
