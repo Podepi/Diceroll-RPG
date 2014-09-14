@@ -88,9 +88,7 @@ function updateItems() {
 				}
                 break;
             }
-            if (menuscreen === "inventory") {
-                updateItems();
-            }
+            updateItems();
         });
     if (inv_sell === true) {
         $("li.inv").off("click").on("click",
@@ -147,11 +145,11 @@ function createRareItem(t) {
         newitem.desc    = "A worthless scam.";
         inventory.push(newitem);
     }
-    updateItems();
+    viewMenu("inventory");
     viewStats();
 }
 function createItem() {
-    var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.itemdrop;
+    var newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.item_drop;
     newitem.itemid  = i.toString() + m.toString();
     newitem.name    = data.materials[m].name + " " + data.items[i].name;
     newitem.listy   = data.items[i].y;
@@ -165,12 +163,12 @@ function createItem() {
     for (i = 0; i < inventory.length; i += 1) {
         if(inventory[i].itemid === newitem.itemid) {
             inventory[i].count += 1;
-            updateItems();
+            viewMenu("inventory");
             return(newitem.name);
         }
     }
     inventory.push(newitem);
-    updateItems();
+    viewMenu("inventory");
     return(newitem.name);
 }
 function viewItem(item) {

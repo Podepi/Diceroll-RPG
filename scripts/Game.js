@@ -67,7 +67,7 @@ var info; // Shorthand for text above event buttons
 var readout; // Shorthand for text below event buttons
 
 // Booleans
-var battle = false; // Boolean defines whether you are fighting or not
+var battle = false; // Boolean defines whether hp potions display enemy health on readout
 var dungeon = false; // Determines whether to give prize after defeating all enemies
 var boss = false; // Determines whether you are fighting  a boss or not
 var able_to_travel; // Determines whether you can travel or not
@@ -77,7 +77,7 @@ var shop = false;
 // Default text
 var readout_default = "<span style='color:red'>This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...</span>";
 var wip_default = "<br><span style='color:red'>This part of the game is still new. Bugs are likely to be found here. Proceed at own risk!</span>";
-var travel_default = "You are not able to escape from here.";
+var travel_default = "You are not able to travel from here.";
 
 //Sorting
 var show_weapons = true;
@@ -182,7 +182,7 @@ function eventExploreArrival(w) {
 		eventExploreEnd();
 		return(" ");
 	}
-    readout.html("Your health: " + player_hp + " / " + stat_maxhp);
+    updateHealth();
 	btn1.show();
 	btn1.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url(" + img_ui + ")'></div>Explore");
 	btn1.off('click').on("click", function () {
@@ -236,9 +236,7 @@ function eventExploreEnd(n) {
         if (Math.random() <= 0.2 || n === 3) {
             var rare_cost = 100 + Math.round(Math.random() * 500);
             info.html("Welcome to " + magician_name[Math.floor(Math.random() * magician_name.length)] + " the "  + l_adj[Math.floor(Math.random() * l_adj.length)] + " " + magician_type[Math.floor(Math.random() * magician_type.length)] + "'s " + magician_adj[Math.floor(Math.random() * magician_adj.length)] + " " + magician_show[Math.floor(Math.random() * magician_show.length)] + "!<br>He is selling rare items for " + rare_cost + " gold each.");
-            if (menuscreen === "inventory") {
-                updateItems();
-            }
+            menuscreen("inventory");
             btn1.show();
             btn1.html('<div class="btn_icon"></div>Buy magical item');
             btn1.off("click").on("click",
@@ -311,7 +309,7 @@ function eventTown(t) {
 				player_hp = stat_maxhp;
 				stat_gold -= 5;
 				info.html("Healed!");
-				readout.html("Your health: " + player_hp + " / " + stat_maxhp);
+				updateHealth();
 				viewStats();
                 save();
 			}
@@ -331,7 +329,7 @@ function eventTown(t) {
     }
 }
 function eventTownSquare() {
-    readout.html("This place is filled with merchants and random strangers.");
+    info.html("This place is filled with merchants and random strangers.");
     btn1.show();
     btn1.html('<div class="btn_icon"></div>Back to Town');
     btn1.off('click').on("click", function () {
@@ -395,7 +393,7 @@ function updateShop() {
     }
     $("#shop_list").html(t);
     $("#shop_heading").html("Shop");
-    readout.html("<div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold);
+    updateHealth();
     $("li.shop").hover(
         function () {
             $(this).css("background-color", "#DDD");
@@ -417,13 +415,13 @@ function updateShop() {
 				for (i = 0; i < inventory.length; i += 1) {
 					if(inventory[i].itemid === item.itemid) {
 						inventory[i].count += 1;
-						updateItems();
+						viewMenu("inventory");
 						return(" ");
 					}
 				}
 				item.count = 1;
 				inventory.push(item);
-                updateItems();
+                viewMenu("inventory");
             }
         });
 }
@@ -431,9 +429,9 @@ function eventShop(visible) {
     'use strict';
     switch (visible) {
     case "show":
-        updateShop();
         shop = true;
         inv_sell = false;
+        updateShop();
         $("#shop").show();
         btn1.html('<div class="btn_icon"></div>Exit to Town');
         btn1.off('click').on("click", function () {
@@ -456,11 +454,10 @@ function eventShop(visible) {
 }
 function shopSell() {
     "use strict";
-    menuscreen = "inventory";
+    viewMenu("inventory");
     if(inv_sell === false) {
         btn2.html('<div class="btn_icon"></div>Stop selling items');
         btn1.hide();
-        $("#shop").hide();
         info.html("Click on items to sell them for half price.");
         inv_sell = true;
 		updateItems();
@@ -481,7 +478,6 @@ function eventBattle(t, n) {
     */
     'use strict';
     enemy_number = 1;
-    var e = "Enemy";
 	btn1.show();
     btn1.off('click').on('click', function () {
         roll();
@@ -498,11 +494,10 @@ function eventBattle(t, n) {
         enemy_number = n;
 	} if (t === "boss") {
         info.html("As you walk through the MEGA entrance, you are MEGA amazed at the MEGA size and MEGA power of the MEGA boss! It appears to be MEGA guarding a MEGA item!");
-        e = "Boss";
         boss = true;
         enemy_hp = enemy_strength * 15 * current_location.difficulty;
     }
-    readout.html("Your health: " + player_hp + " / " + stat_maxhp + "<br>" + e + " health: " + enemy_hp);
+    updateHealth();
     able_to_travel = false;
 }
 function updateFight() {
@@ -548,7 +543,8 @@ function updateFight() {
         able_to_travel = true;
         enemy_number -= 1;
 		info.html("You have won!<br>You gained " + gold_inc + " gold and " + xp_inc + " experience!" + info_text);
-		readout.html("Your health: " + player_hp + " / " + stat_maxhp);
+		updateHealth();
+        viewStats();
 		btn1.hide();
 		btn2.show();
 		btn2.html('<div class="btn_icon" style="background-position:-128px 0px; background-image:url(' + img_ui + ')"></div>Explore');
@@ -567,7 +563,7 @@ function updateFight() {
             } else {
                 info.html(info.html() + "<br>There are " + enemy_number + " enemies left.");
             }
-			readout.html("Your health: " + player_hp + " / " + stat_maxhp);
+			updateHealth();
 		} else if (dungeon === true) {
 			var dungeon_prize = Math.ceil(Math.random() * current_location.difficulty) + 10, i;
             info_text = "You have defeated the last enemy!<br>You gain " + gold_inc + " gold and " + xp_inc + " experience!<br>The reward for defeating the dungeon is " + dungeon_prize + " gold";
@@ -599,7 +595,7 @@ function updateFight() {
             info.html(info.html() + "<br>The enemy dropped " + aa + item_name.toLowerCase() + "!");
         }
     }
-    readout.html("Your health: " + player_hp + " / " + stat_maxhp + "<br>Enemy health: " + enemy_hp);
+    updateHealth();
 	viewStats();
 }
 function eventEscape() {
@@ -648,7 +644,11 @@ function roll() {
 function updateHealth() {
     var t = "Your health: " + player_hp + " / " + stat_maxhp;
     if (battle === true) {
-        t += "<br>Enemy health: " + enemy_hp;
+        if (boss === true) {
+            t += "<br>Boss health: " + enemy_hp;
+        } else {
+            t += "<br>Enemy health: " + enemy_hp;
+        }
     }
     if (shop === true) {
         t = "<div class='inv_icon' style='float:none; background-position:0px 0px; display:inline-block;'></div>: " + stat_gold;
@@ -737,6 +737,6 @@ function updateStats() {
         stats[0] += stats[0] * 0.1;
     }
     if (upgrades[4].count > 0) {
-        stats[1] += upgrades[4].count * 0.1;
+        stats[1] *= 1 + upgrades[4].count * 0.1;
     }
 }
