@@ -56,6 +56,7 @@ var data = {
         "gold_mult":11,
         "damage_mult":7,
         "defence_mult":7,
+        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth."
     },
     {
         "x":-64,
@@ -63,6 +64,7 @@ var data = {
         "gold_mult":16,
         "damage_mult":10,
         "defence_mult":10,
+        "description":"This metal is strong, lustrous and useful for alloys."
     },
     {
         "x":-96,
@@ -70,6 +72,7 @@ var data = {
         "gold_mult":21,
         "damage_mult":13,
         "defence_mult":13,
+        "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion."
     },
     {
         "x":-128,
@@ -77,6 +80,7 @@ var data = {
         "gold_mult":26,
         "damage_mult":16,
         "defence_mult":16,
+        "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else."
     },
     {
         "x":-160,
@@ -84,6 +88,7 @@ var data = {
         "gold_mult":31,
         "damage_mult":19,
         "defence_mult":19,
+        "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material."
     },
     {
         "x":-192,
@@ -91,6 +96,7 @@ var data = {
         "gold_mult":36,
         "damage_mult":22,
         "defence_mult":22,
+        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine."
     },
     {
         "x":-224,
@@ -98,6 +104,7 @@ var data = {
         "gold_mult":41,
         "damage_mult":25,
         "defence_mult":25,
+        "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material."
     }
 ],
 "worthless":[
@@ -257,8 +264,24 @@ var data = {
         "x":-32,
         "y":-32,
         "name":"Materials",
+        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth.",
+        "list":" "
+    },
+    {
+        "x":-32,
+        "y":-128,
+        "name":"Potions",
+        "description":"Potions help you survive battle. You can use healing potions to heal past your maximum hp temporarily.",
+        "list":" "
+    },
+    {
+        "x":-32,
+        "y":-0,
+        "name":"Battle",
+        "description":"Meeting an enemy is more than likely to happen eventually. As a guide, instructions on how not to die instantly are included below.<br><b>Step-by-step guide on how to fight:</b>",
+        "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>",
         "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
-    }
+     }
 ],
 "upgrades":[
     {
