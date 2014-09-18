@@ -7,12 +7,14 @@ function save() {
     $.jStorage.set("s_p_s", stat_points_spent);
     $.jStorage.set("equipped", equipped);
     $.jStorage.set("upgrades", upgrades);
+    $.jStorage.set("rand", rand);
     console.log($.jStorage.get("inventory"));
     console.log($.jStorage.get("s_gold"));
     console.log($.jStorage.get("s_exp"));
     console.log($.jStorage.get("s_lvl"));
     console.log($.jStorage.get("equipped"));
     console.log($.jStorage.get("upgrades"));
+    console.log($.jStorage.get("rand"));
     info.html("Progress has been saved!");
 }
 function load() {
@@ -41,6 +43,7 @@ function load() {
     stat_experience = $.jStorage.get("s_exp");
     stat_level = $.jStorage.get("s_lvl");
     stat_points_spent = $.jStorage.get("s_p_s");
+    rand = $.jStorage.get("rand");
 }
 function reset(t) {
     'use strict';
@@ -59,6 +62,10 @@ function reset(t) {
         stat_next_level = stat_level * 100;
         stats = [0, 0, 0, 0];
         equipped = ["00", "none", "none", "none"];
+        rand = [l_adj[Math.floor(Math.random() * l_adj.length)],
+            l_of[Math.floor(Math.random() * l_of.length)],
+            l_of[Math.floor(Math.random() * l_of.length)]
+           ];
         eventTown();
         viewStats();
         viewMenu("inventory");

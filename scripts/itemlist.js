@@ -56,7 +56,6 @@ var data = {
         "gold_mult":11,
         "damage_mult":7,
         "defence_mult":7,
-        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth."
     },
     {
         "x":-64,
@@ -64,7 +63,6 @@ var data = {
         "gold_mult":16,
         "damage_mult":10,
         "defence_mult":10,
-        "description":"This metal is strong, lustrous and useful for alloys."
     },
     {
         "x":-96,
@@ -72,7 +70,6 @@ var data = {
         "gold_mult":21,
         "damage_mult":13,
         "defence_mult":13,
-        "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion."
     },
     {
         "x":-128,
@@ -80,7 +77,6 @@ var data = {
         "gold_mult":26,
         "damage_mult":16,
         "defence_mult":16,
-        "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else."
     },
     {
         "x":-160,
@@ -88,7 +84,6 @@ var data = {
         "gold_mult":31,
         "damage_mult":19,
         "defence_mult":19,
-        "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material."
     },
     {
         "x":-192,
@@ -96,7 +91,6 @@ var data = {
         "gold_mult":36,
         "damage_mult":22,
         "defence_mult":22,
-        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine."
     },
     {
         "x":-224,
@@ -104,7 +98,6 @@ var data = {
         "gold_mult":41,
         "damage_mult":25,
         "defence_mult":25,
-        "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material."
     }
 ],
 "worthless":[
@@ -179,7 +172,7 @@ var data = {
 	},
 	{
 		"name":"Coal Hills",
-		"difficulty":11,
+		"difficulty":8,
         "item_drop":1,
 		"description":"The hills here are rich in coal, the perfect place to start a coal industry.",
 		"arrival_text":"Inside the numerous caves here, you can see rich veins of coal embedded into the stone.",
@@ -188,8 +181,8 @@ var data = {
 	},
 	{
 		"name":"Dark Forest",
-		"difficulty":24,
-        "item_drop":3,
+		"difficulty":16,
+        "item_drop":2,
 		"description":"A very foreboding forest, also very clichéd.",
 		"arrival_text":"You cannot see through the tree line. The shadowy trees send shivers down your spine.",
 		"ground_type":"foliage",
@@ -197,21 +190,66 @@ var data = {
 	},
     {
 		"name":"Mountain Trail",
-		"difficulty":40,
-        "item_drop":5,
+		"difficulty":25,
+        "item_drop":3,
 		"description":"A cold and mountainous trail, dangerous to walk through.",
 		"arrival_text":"The freezing wind and snow turns your body to ice. You hope you don't get frostbite...",
 		"ground_type":"snow",
         "x":-128
 	},
     {
-		"name":"Mystic Portal",
-		"difficulty":59,
+		"name":"Hidden Valley",
+		"difficulty":35,
+        "item_drop":4,
+		"description":"The mountain trail leads to this valley hidden in the mountains.",
+		"arrival_text":"Towering mountain peaks surround you from a distance. A river runs through here; you decide to follow it.",
+		"ground_type":"grass",
+        "x":-192
+	},
+    {
+		"name":"Deserted Desert",
+		"difficulty":46,
+        "item_drop":5,
+		"description":"A harsh and sunny desert. Hopefully you have a large supply of water.",
+		"arrival_text":"The river has died down to a trickle of water which ends in a puddle of mud. The scorching sun and burning sand make you thirsty just by thinking about them.",
+		"ground_type":"sand",
+        "x":-224
+	},
+    {
+		"name":"-rand1- Land",
+		"difficulty":58,
+        "item_drop":6,
+		"description":"A land of -rand2- and -rand3-.",
+		"arrival_text":"You instantly notice the -rand1-ness of the place.",
+		"ground_type":"-rand1- ground",
+        "x":-256
+	},
+    {
+		"name":"Unnamed Abyss",
+		"difficulty":71,
         "item_drop":7,
+		"description":"A bottomless chasm with no proper name.",
+		"arrival_text":"You stay well away from the edge. The chasm appears to drop forever",
+		"ground_type":"nothingness",
+        "x":-288
+	},
+    {
+		"name":"Mystic Portal",
+		"difficulty":85,
+        "item_drop":8,
 		"description":"A portal to the Mystic Realm, the main exporter of Mystium.",
 		"arrival_text":"The bright purple mystium dust hurts your eyes.",
 		"ground_type":"mystium dust",
         "x":-160
+	},
+    {
+		"name":"Alien Landing Site",
+		"difficulty":100,
+        "item_drop":9,
+		"description":"An alien landing site. Bright lens flares and green alienium is used everywhere.",
+		"arrival_text":"It is impossible to see anything through all the lens flares and bad CGI.",
+		"ground_type":"Alienium",
+        "x":-320
 	}
 ],
 "topics":[
@@ -219,22 +257,7 @@ var data = {
         "x":-32,
         "y":-32,
         "name":"Materials",
-        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth.",
-        "list":" "
-    },
-    {
-        "x":-32,
-        "y":-128,
-        "name":"Potions",
-        "description":"Potions help you survive battle. You can use healing potions to heal past your maximum hp temporarily.",
-        "list":" "
-    },
-    {
-        "x":-32,
-        "y":-0,
-        "name":"Battle",
-        "description":"Meeting an enemy is more than likely to happen eventually. As a guide, instructions on how not to die instantly are included below.<br><b>Step-by-step guide on how to fight:</b>",
-        "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>"
+        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
     }
 ],
 "upgrades":[
@@ -292,5 +315,19 @@ var data = {
         "name":"Find -number- of -item-",
         "description":"A random person wants you to collect -number -item-s!"
     }
+],
+"enchantments":[
+    {
+        "name":"Fire"
+    },
+    {
+        "name":"Ice"
+    },
+    {
+        "name":"Speed"
+    },
+    {
+        "name":"Health"
+    },
 ]
 }

@@ -37,19 +37,23 @@ var rare_colour = /* This array contains the colour schemes for the item tiers -
 
 //Random Naming arrays
 var magician_name = ["El Weirdo", "Sir Magical", "Bill", "Carl", "Fladnag"];
-var magician_type = ["Magician", "Intelligent", "Enchanter", "Alchemist", "Wizard", "Wise", "Bearded One"];
+var magician_type = ["Magician", /*"Intelligent",*/ "Enchanter", "Alchemist", "Wizard", /*"Wise",*/ "One"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical", "Enchanting"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection", "Caravan", "Troupe", "Company"];
-var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Deserted", "Cloudy",
-             "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous", "'Safe'", "Experimental", "Scientific", "Brick", "Glass"];
-var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hills", "Mine", "Cave", "Grove", "Desert", "Beach",
+var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Desert", "Cloudy",
+             "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous", "'Safe'", "Experimental", "Scientific", "Cold", "Shiny"];
+var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hill", "Mine", "Cave", "Grove", "Desert", "Beach",
                   "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh", "River", "Tomb", "Castle"];
 var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Clay",
             "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers", "Science", "Safety"];
 var n_start = [];
 var n_end = [];
+var rand = [l_adj[Math.floor(Math.random() * l_adj.length)],
+            l_of[Math.floor(Math.random() * l_of.length)],
+            l_of[Math.floor(Math.random() * l_of.length)]
+           ];
 
-//Game variables
+// Game variables
 var player_hp; // Amount of health you have at the present
 var enemy_hp; // Amount of health enemy has - dealt with during battle - eventBattle() function
 var p_damage; // Amount of damage you deal - dealt with at runtime in the roll() function
@@ -189,7 +193,6 @@ function eventExploreArrival(w) {
 	btn1.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url(" + img_ui + ")'></div>Explore");
 	btn1.off('click').on("click", function () {
         eventExploreStart();
-        explore_difficulty = "e";
     });
 	btn2.hide();
     btn3.hide();
@@ -238,7 +241,7 @@ function eventExploreEnd(n) {
         if (Math.random() <= 0.2 || n === 3) {
             var rare_cost = 100 + Math.round(Math.random() * 500);
             info.html("Welcome to " + magician_name[Math.floor(Math.random() * magician_name.length)] + " the "  + l_adj[Math.floor(Math.random() * l_adj.length)] + " " + magician_type[Math.floor(Math.random() * magician_type.length)] + "'s " + magician_adj[Math.floor(Math.random() * magician_adj.length)] + " " + magician_show[Math.floor(Math.random() * magician_show.length)] + "!<br>He is selling rare items for " + rare_cost + " gold each.");
-            menuscreen("inventory");
+            viewMenu("inventory");
             btn1.show();
             btn1.html('<div class="btn_icon"></div>Buy magical item');
             btn1.off("click").on("click",

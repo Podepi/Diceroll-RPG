@@ -97,6 +97,13 @@ function viewMenu(screen) {
 }
 function initLocations() {
     'use strict';
+    var name = data.locations[7].name.replace("-rand1-", rand[0]);
+    var a_desc = data.locations[7].description.replace("-rand2-", rand[1].toLowerCase()), b_desc = a_desc.replace("-rand3-", rand[2].toLowerCase());
+    var arrival = data.locations[7].arrival_text.replace("-rand1-", rand[0].toLowerCase()), ground = data.locations[7].ground_type.replace("-rand1-", rand[0].toLowerCase());
+    data.locations[7].name = name;
+    data.locations[7].description = b_desc;
+    data.locations[7].arrival_text = arrival;
+    data.locations[7].ground_type = ground;
     for (var l in data.locations) {
 		map.push(data.locations[l])
 	}
