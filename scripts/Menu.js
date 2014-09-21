@@ -1,6 +1,7 @@
 function viewMenu(screen) {
     'use strict';
     viewStats();
+    menuscreen = screen;
     switch (screen) {
         case "inventory":
             updateItems();

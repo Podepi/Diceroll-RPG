@@ -40,7 +40,8 @@ var data = {
         "gold_mult":1,
         "damage_mult":1,
         "defence_mult":1,
-        "description":"Iron is the most common metallic substance used to craft items. As a result of this, it is very cheap and items made of it do not have high value. Unfortunately, items made of iron do not have high damage or defence and rust easily."
+        "description":"Iron is the most common metallic substance used to craft items. As a result of this, it is very cheap and items made of it do not have high value. Unfortunately, items made of iron do not have high damage or defence and rust easily.",
+        "shop":"true"
     },
     {
         "x":0,
@@ -48,7 +49,8 @@ var data = {
         "gold_mult":6,
         "damage_mult":4,
         "defence_mult":4,
-        "description":"Slightly stronger and more expensive than iron, bronze is still a very common item-making substance. As it is an alloy, it is more expensive to make than iron. It still has low damage and defence, however."
+        "description":"Slightly stronger and more expensive than iron, bronze is still a very common item-making substance. As it is an alloy, it is more expensive to make than iron. It still has low damage and defence, however.",
+        "shop":"false"
     },
     {
         "x":-32,
@@ -56,7 +58,8 @@ var data = {
         "gold_mult":11,
         "damage_mult":7,
         "defence_mult":7,
-        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth."
+        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth.",
+        "shop":"false"
     },
     {
         "x":-64,
@@ -64,7 +67,8 @@ var data = {
         "gold_mult":16,
         "damage_mult":10,
         "defence_mult":10,
-        "description":"This metal is strong, lustrous and useful for alloys."
+        "description":"This metal is strong, lustrous and useful for alloys.",
+        "shop":"false"
     },
     {
         "x":-96,
@@ -72,7 +76,8 @@ var data = {
         "gold_mult":21,
         "damage_mult":13,
         "defence_mult":13,
-        "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion."
+        "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion.",
+        "shop":"false"
     },
     {
         "x":-128,
@@ -80,7 +85,8 @@ var data = {
         "gold_mult":26,
         "damage_mult":16,
         "defence_mult":16,
-        "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else."
+        "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else.",
+        "shop":"false"
     },
     {
         "x":-160,
@@ -88,7 +94,8 @@ var data = {
         "gold_mult":31,
         "damage_mult":19,
         "defence_mult":19,
-        "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material."
+        "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material.",
+        "shop":"false"
     },
     {
         "x":-192,
@@ -96,7 +103,8 @@ var data = {
         "gold_mult":36,
         "damage_mult":22,
         "defence_mult":22,
-        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine."
+        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine.",
+        "shop":"false"
     },
     {
         "x":-224,
@@ -104,7 +112,8 @@ var data = {
         "gold_mult":41,
         "damage_mult":25,
         "defence_mult":25,
-        "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material."
+        "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material.",
+        "shop":"false"
     }
 ],
 "worthless":[
@@ -145,12 +154,12 @@ var data = {
     },
     {
         "y":-160,
-        "x":-160,
+        "x":-128,
         "name":"River Stone"
     },
     {
         "y":-160,
-        "x":-128,
+        "x":-160,
         "name":"Rough Stone"
     },
     {
@@ -340,16 +349,53 @@ var data = {
 ],
 "enchantments":[
     {
-        "name":"Fire"
+        "name":"Fire",
+        "desc":"burns things",
+        "stat":0,
+        "x":0,
+        "y":-320
     },
     {
-        "name":"Ice"
+        "name":"Ice",
+        "desc":"freezes things",
+        "stat":1,
+        "x":0,
+        "y":-320
     },
     {
-        "name":"Speed"
+        "name":"Speed",
+        "desc":"Speedy and fast",
+        "stat":0,
+        "x":0,
+        "y":-320
     },
     {
-        "name":"Health"
+        "name":"Health",
+        "desc":"extra Health",
+        "stat":"h",
+        "x":0,
+        "y":-320
     },
+    {
+        "name":"Dagger Proficiency",
+        "desc":"20% chance for +100% damage",
+        "stat":"wp",
+        "x":-224,
+        "y":-160
+    },
+    {
+        "name":"Sword Proficiency",
+        "desc":"+1 defence",
+        "stat":"wp",
+        "x":-256,
+        "y":-160
+    },
+    {
+        "name":"Hammer Proficiency",
+        "desc":"+10% damage",
+        "stat":"wp",
+        "x":-288,
+        "y":-160
+    }
 ]
 }

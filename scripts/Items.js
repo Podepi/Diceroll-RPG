@@ -115,6 +115,33 @@ function updateItems() {
         );
     }
 }
+function viewItem(item) {
+    'use strict';
+    var list_text;
+    $("#menu_readout_top").html(item.desc);
+    list_text = "<li class='stats'><b>" + item.type + "</b></li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + item.gold + " gold</li>";
+    if (typeof item.damage === 'number' && item.damage > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + item.damage + " damage</li>";
+    }
+    if (typeof item.defence === 'number' && item.defence > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + item.defence + " armour</li>";
+    }
+    if (typeof item.heal === 'number' && item.heal > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + item.heal + " HP restored</li>";
+    } if (typeof item.rare === 'number' && item.rare > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-128px 0px'></div>: " + Math.round(item.rare * 1000)/1000 + " rareness</li>";
+    }
+    $("#menu_list_right").html(list_text);
+    $("#menu_extended").hide();
+    if (item.magic.length > 0) {
+        $("#menu_list_ext").show();
+        list_text = "<li><b>Enchantments</b></li>";
+        for (var e in item.magic) {
+            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + item.magic[e].x + "px " + item.magic[e].y + "px'></div>: " + item.magic[e].name + " " + item.magic[e].power + " - " + item.magic[e].desc + "</li>"
+        }
+        $("#menu_list_ext").html(list_text);
+    }
+}
 function createRareItem(t) {
 	"use strict";
 	var chance = 1, newitem = {}, i = Math.floor(Math.random() * data.items.length), m = current_location.item_drop, rare_multiplier = (Math.random() * 2) + 1;
@@ -161,6 +188,7 @@ function createItem() {
     newitem.gold    = data.items[i].gold    * data.materials[m].gold_mult;
     newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase());
     newitem.count   = 1;
+    newitem.magic   = [];
     for (i = 0; i < inventory.length; i += 1) {
         if(inventory[i].itemid === newitem.itemid) {
             inventory[i].count += 1;
@@ -172,23 +200,7 @@ function createItem() {
     viewMenu("inventory");
     return(newitem.name);
 }
-function viewItem(item) {
-    'use strict';
-    var list_text;
-    $("#menu_readout_top").html(item.desc);
-    list_text = "<li class='stats'><b>" + item.type + "</b></li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + item.gold + " gold</li>";
-    if (typeof item.damage === 'number' && item.damage > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + item.damage + " damage</li>";
-    }
-    if (typeof item.defence === 'number' && item.defence > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + item.defence + " armour</li>";
-    }
-    if (typeof item.heal === 'number' && item.heal > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + item.heal + " HP restored</li>";
-    } if (typeof item.rare === 'number' && item.rare > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-128px 0px'></div>: " + Math.round(item.rare * 1000)/1000 + " rareness</li>";
-    }
-    $("#menu_list_right").html(list_text);
-    $("#menu_extended").hide();
-    $("#menu_list_ext").hide();
+function enchantItem(item) {
+    item = inventory[item];
+    item.magic.push(data.enchantments[0]);
 }

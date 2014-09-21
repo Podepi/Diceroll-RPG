@@ -13,13 +13,14 @@ function eventQuest(q) {
             var d3 = d2.replace("-location-", location);
             new_quest.description = d3;
             new_quest.name = n3;
+            new_quest.gold = count * 10;
             errands.push(new_quest);
             break;
     }
 }
 function updateErrands() {
     'use strict';
-    var iconx, icony, a, t = " ", iconx = 0, icony = 0;
+    var iconx = 0, icony = 0, a, t = " ";
     for (a = 0; a < errands.length; a += 1) {
         //iconx = errands[a].listx;
         //icony = errands[a].listy;
@@ -49,5 +50,7 @@ function updateErrands() {
 function viewErrand(e) {
     'use strict';
     $("#menu_readout_top").html(e.description);
-    $("#menu_list_right").html("<li><b>" + e.type + "</b></li>");
+    $("#menu_list_right").html("<li><b>" + e.type + "</b></li>" +
+        "<li><div class='inv_icon' style='background-position:0px 0px'></div>: " + e.gold +
+        " gold on completion</li>");
 }
