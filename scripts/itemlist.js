@@ -50,7 +50,7 @@ var data = {
         "damage_mult":4,
         "defence_mult":4,
         "description":"Slightly stronger and more expensive than iron, bronze is still a very common item-making substance. As it is an alloy, it is more expensive to make than iron. It still has low damage and defence, however.",
-        "shop":"false"
+        "shop":"true"
     },
     {
         "x":-32,
@@ -350,52 +350,48 @@ var data = {
 "enchantments":[
     {
         "name":"Fire",
-        "desc":"burns things",
-        "stat":0,
+        "desc":"Burns things for -amount- magic damage",
+        "stat":2,
+        "amount":1,
+        "power":1,
         "x":0,
+        "y":-320
+    },
+    {
+        "name":"Arcane",
+        "desc":"Smites for -amount- magic damage",
+        "stat":2,
+        "amount":1,
+        "power":3,
+        "x":-64,
         "y":-320
     },
     {
         "name":"Ice",
-        "desc":"freezes things",
+        "desc":"Blocks -amount- extra damage",
         "stat":1,
-        "x":0,
+        "amount":1,
+        "power":1,
+        "x":-32,
         "y":-320
     },
     {
         "name":"Speed",
-        "desc":"Speedy and fast",
+        "desc":"Speeds attacks to deal -amount- extra damage on average",
         "stat":0,
+        "amount":1,
+        "power":1,
         "x":0,
         "y":-320
     },
     {
         "name":"Health",
-        "desc":"extra Health",
+        "desc":"-amount- extra health",
         "stat":"h",
+        "amount":1,
+        "power":1,
         "x":0,
         "y":-320
-    },
-    {
-        "name":"Dagger Proficiency",
-        "desc":"20% chance for +100% damage",
-        "stat":"wp",
-        "x":-224,
-        "y":-160
-    },
-    {
-        "name":"Sword Proficiency",
-        "desc":"+1 defence",
-        "stat":"wp",
-        "x":-256,
-        "y":-160
-    },
-    {
-        "name":"Hammer Proficiency",
-        "desc":"+10% damage",
-        "stat":"wp",
-        "x":-288,
-        "y":-160
     }
 ]
 }

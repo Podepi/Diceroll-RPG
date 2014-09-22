@@ -57,7 +57,6 @@ function reset(t) {
         newitem = shop_list[4];
         inventory.push(newitem);
         inventory[1].count = 1;
-        enchantItem(1);
         stat_gold = 5;
         stat_level = 1;
         stat_experience = 0;

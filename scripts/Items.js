@@ -137,7 +137,7 @@ function viewItem(item) {
         $("#menu_list_ext").show();
         list_text = "<li><b>Enchantments</b></li>";
         for (var e in item.magic) {
-            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + item.magic[e].x + "px " + item.magic[e].y + "px'></div>: " + item.magic[e].name + " " + item.magic[e].power + " - " + item.magic[e].desc + "</li>"
+            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + item.magic[e].x + "px " + item.magic[e].y + "px'></div>: " + item.magic[e].name + " " + item.magic[e].amount + " - " + item.magic[e].desc + "</li>"
         }
         $("#menu_list_ext").html(list_text);
     }
@@ -200,7 +200,30 @@ function createItem() {
     viewMenu("inventory");
     return(newitem.name);
 }
-function enchantItem(item) {
+function enchantItem(item, e) {
+    if (e === undefined) {e = 0;}
+    var b = false, new_enchantment = data.enchantments[e];
     item = inventory[item];
-    item.magic.push(data.enchantments[0]);
+    for (var m in item.magic) {
+        loop:
+        if (item.magic[m].name === data.enchantments[e]) {
+            b = true;
+            item.magic[m].desc = data.enchantments[e].desc.replace("-amount-", item.magic[m].amount * data.enchantments[e].power);
+            item.magic[m].amount += 1;
+            break loop;
+        }
+    }
+    if (b === false) {
+        new_enchantment.desc = data.enchantments[e].desc.replace("-amount-", data.enchantments[e].amount * data.enchantments[e].power);
+        item.magic.push(new_enchantment);
+    }
+}
+function getEquipped(id) {
+    var i;
+    for (i = 0; i < inventory.length; i += 1) {
+        if (equipped[id] === inventory[i].itemid) {
+            return (inventory[i]);
+        }
+    }
+    return("none");
 }

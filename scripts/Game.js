@@ -36,7 +36,7 @@ var rare_colour = /* This array contains the colour schemes for the item tiers -
     ["5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"];
 
 //Random Naming arrays
-var magician_name = ["El Weirdo", "Sir Magical", "Bill", "Carl", "Fladnag"];
+var magician_name = ["El Weirdo", "Sir Venture", "Bill", "Carl", "Fladnag", "Bob"];
 var magician_type = ["Magician", /*"Intelligent",*/ "Enchanter", "Alchemist", "Wizard", /*"Wise",*/ "One"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical", "Enchanting"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection", "Caravan", "Troupe", "Company"];
@@ -46,8 +46,6 @@ var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City",
                   "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh", "River", "Tomb", "Castle"];
 var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Clay",
             "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers", "Science", "Safety"];
-var n_start = [];
-var n_end = [];
 var rand = [l_adj[Math.floor(Math.random() * l_adj.length)],
             l_of[Math.floor(Math.random() * l_of.length)],
             l_of[Math.floor(Math.random() * l_of.length)]
@@ -133,7 +131,7 @@ function init() {
     btn3 = $("#eventbutton03");
 	info = $("#info");
 	readout = $("#readout");
-    for(var i = 0; i < inventory.length; i += 1) {
+    for (var i = 0; i < inventory.length; i += 1) {
         inventory.pop();
     }
     shop_list.pop();
@@ -611,7 +609,11 @@ function updateFight() {
 function battleText() {
     var text = " ";
     if (p_damage === 0) {
-        text += "The enemy blocks your pathetic attack!<br>"
+        if (stats[0] === 0) {
+            text += "The enemy laughs at your feeble 'punches'!<br>";
+        } else {
+            text += "The enemy blocks your pathetic attack!<br>";
+        }
     } else {
         if (crit === true) {
             text += "<span style='color:red'>You crit the enemy for " + p_damage + " damage!</span><br>";
@@ -670,14 +672,10 @@ function roll() {
     }
 }
 function playerDamage() {
-    var base_damage = Math.floor(Math.random() * (stats[0] + 1)), w_name, final_damage = base_damage;
+    var base_damage = Math.floor(Math.random() * (stats[0] + 1)), final_damage = base_damage, item = getEquipped(0), w_name, extra_damage = 0;
     crit = false;
-    for (i = 0; i < inventory.length; i += 1) {
-        inv:
-        if (equipped[0] === inventory[i].itemid) {
-            w_name = inventory[i].name;
-            break inv;
-        }
+    if (equipped[0] === item.itemid) {
+        w_name = item.name;
     }
     if (upgrades[1].count > 0 && w_name.search(/dagger/i) >= 0) {
         if (Math.random() <= 0.2) {
@@ -685,6 +683,8 @@ function playerDamage() {
             crit = true;
         }
     }
+    extra_damage = stats[2];
+    final_damage += extra_damage;
     return(final_damage);
 }
 function updateHealth() {
@@ -761,40 +761,30 @@ function viewStats(t) {
 }
 function updateStats() {
     'use strict';
-    var i, e, s_d, s_s, s_h;
+    var e, item_weapon = getEquipped(0);
+
+    // Upgrades
+
     stat_maxhp += upgrades[0].count * 5;
-    for (i = 0; i < inventory.length; i += 1) {
-        inv:
-        if (inventory[i].id === equipped[0]) {
-            e = inventory[i].name;
-            s_d = e.search(/dagger/i);
-            s_s = e.search(/sword/i);
-            s_h = e.search(/hammer/i);
-            console.log(s_d);
-            console.log(s_s);
-            console.log(s_h);
-            break inv;
-        }
-    }
-    if (upgrades[1].count > 0) {
-        for (i = 0; i < inventory.length; i += 1) {
-            e = inventory[i].name;
-            s_d = e.search(/dagger/i);
-            if (s_d >= 0) {
-                inventory[i].magic[0] = data.enchantments[0];
-            }
-        }
-    }
-    if (upgrades[2].count > 0 && s_s > 0) {
+    if (upgrades[2].count > 0 && item_weapon.name.search(/sword/i) >= 0) {
         stats[1] += 1;
     }
-    if (upgrades[3].count > 0 && s_h > 0) {
-        stats[0] += stats[0] * 0.1;
+    if (upgrades[3].count > 0 && item_weapon.name.search(/hammer/i) >= 0) {
+        stats[0] += Math.round(stats[0] * 0.1);
     }
     if (upgrades[4].count > 0) {
         stats[1] *= 1 + upgrades[4].count * 0.1;
     }
-    if (Math.random < 0.2) {
-        stats[0] *= 2;
+
+    // Enchantments
+
+    for (var m in item_weapon.magic) {
+        if (typeof item_weapon.magic[m].stat === "number") {
+            if (item_weapon.magic[m].stat === "h") {
+                stat_maxhp += item_weapon.magic[m].amount * item_weapon.magic[m].power;
+            } else {
+                stats[item_weapon.magic[m].stat] += item_weapon.magic[m].amount * item_weapon.magic[m].power;
+            }
+        }
     }
 }
