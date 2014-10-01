@@ -277,14 +277,14 @@ function viewUpgrade(l, n) {
                 "<li class='stats'><div class='inv_icon' style='background-position:-64px -64px'></div>: " + upgrades[n].count + " points invested</li>";
 	$("#menu_list_right").html(list_text);
 }
-function createPrompt(pt) {
+function createPrompt(pt, popup_heading, popup_info) {
     'use strict';
     switch (pt) {
         case "levelup":
             updateLevels();
             break;
-        default:
-            $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div class='headerdiv'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
+        case 0:
+            $("#megadiv").append("<div class='overlay'><div class='popup img_border'><div class='headerdiv'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
             $(".close").on("click", function() {
                 closePrompt();
             });

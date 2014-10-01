@@ -1,14 +1,15 @@
-//images (64x64)
+// images (64x64)
 var img_artifacts = "images/iconlist_artifacts.png"; // 64x64 misc. object  spritesheet
 var img_magic = "images/iconlist_magic.png"; // 64x64 magic spritesheet
 var img_physical = "images/iconlist_physical.png"; //64x64 physical attack spritesheet
 var img_ui = "images/iconlist_ui.png"; //64x64 ui spritesheet
 var img_def64 = "images/default_64.png"; //default 64x64 image
+var img_tileset = "images/tileset.png"; // tileset for canvas
 
-//icons (16x16)
+// icons (16x16)
 var ico_list = "images/icon_list_16.png"; //16x16 icon spritesheet
 
-//Arrays
+// Arrays
 var death_message = /* This array contains all the phrases which show up when you die */
         ["The generic enemy attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
             "Your armour fails to relect the weapon aimed at your face.",
@@ -21,6 +22,7 @@ var map = []; // This array contains the locations known by the player
 var book = []; // This array contains the encyclopedia titles for information
 var errands = []; // This array contains the errands accepted by the player
 var upgrades = []; // This array contains the level upgrades
+var airship = []; // This array contains everything relating to your airship
 var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future, also area-dependant enemies */
         ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre", "imp", "skeleton", "zombie", "wolf", "snake"];
 var adjective_list = /* This array contains all the adjectives an enemy can have - purely cosmetic */
@@ -34,8 +36,11 @@ var shopkeeper = /* This array contains all the various phrases and actions the 
             "says, \"Remember to equip your items before you rush recklessly into battle!\""];
 var rare_colour = /* This array contains the colour schemes for the item tiers - used with rare items to show what tier item they are */
     ["5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"];
+var map_objects = [] // This array holds the objects shown on the canvas
+var char = {} // This array holds canvas-related information about your character
+var keys_held = [] // This array holds the keys that are currently being held down
 
-//Random Naming arrays
+// Random Naming arrays
 var magician_name = ["El Weirdo", "Sir Venture", "Bill", "Carl", "Fladnag", "Bob"];
 var magician_type = ["Magician", /*"Intelligent",*/ "Enchanter", "Alchemist", "Wizard", /*"Wise",*/ "One"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical", "Enchanting"];
@@ -50,6 +55,9 @@ var rand = [l_adj[Math.floor(Math.random() * l_adj.length)],
             l_of[Math.floor(Math.random() * l_of.length)],
             l_of[Math.floor(Math.random() * l_of.length)]
            ];
+var n_v = ["a", "e", "i", "o", "u"];
+var n_c = ["b", "c", "d", "f", "g", "h", "j", "l", "m", "n", "p", "r", "s", "t", "v", "w", "x", "y", "z"];
+var n_ls = ["cv", "vc"]
 
 // Game variables
 var player_hp; // Amount of health you have at the present
@@ -60,13 +68,16 @@ var score = 0; // Number of enemies defeated this run for previously in-place sc
 var highscore = 0; // High score for previously in-place score system
 var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
 var current_location; // Your current location
+var location_header = "Nowhere in particular"; // Stores text for your current location
 var enemy_number; // Amount of enemies in dungeon
 var enemy_strength = 10; // How much health enemies have * current_location.difficulty
+var camera = {"x":0, "y":0};
 var btn1; // These variables are shorthand for the three event buttons
 var btn2;
 var btn3;
 var info; // Shorthand for text above event buttons
 var readout; // Shorthand for text below event buttons
+var c;
 
 // Booleans
 var battle = false; // Boolean defines whether hp potions display enemy health on readout
@@ -76,18 +87,19 @@ var able_to_travel; // Determines whether you can travel or not
 var inv_sell = false; // Boolean defines whether you are selling items or not
 var shop = false;
 var crit = false; // Determines whether to show that your attack was more powerful than normal
+var mouse_down = false;
 
 // Default text
 var readout_default = "<span style='color:red'>This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...</span>";
 var wip_default = "<br><span style='color:red'>This part of the game is still new. Bugs are likely to be found here. Proceed at own risk!</span>";
 var travel_default = "You are not able to travel from here.";
 
-//Sorting
+// Sorting
 var show_weapons = true;
 var show_armour = true;
 var show_consumables = true;
 
-//Stats
+// Stats
 var stat_maxhp = 20; // Maximum amount of hitpoints player has
 var stat_gold = 5; // Amount of gold player has
 var stat_level = 1; // Player awesomeness rating
@@ -99,6 +111,12 @@ var equipped = ["00", "none", "none", "none"]; // Array containing equipped item
 
 function init() {
     'use strict';
+    var new_game = false;
+    initCanvas();
+    window.addEventListener('keydown',canvasKeyDown,true);
+    window.addEventListener('keyup',canvasKeyUp,true);
+    window.setInterval(onTick, 20);
+    $("#gameDiv").hide();
     $("#menubar").html('<li id="menubar_inv" class="menu_icon glow">Inventory</li>' +
                        '<li id="menubar_tvl" class="menu_icon glow">Travel</li>' +
                        '<li id="menubar_qst" class="menu_icon glow">Errands</li>' +
@@ -135,24 +153,49 @@ function init() {
         inventory.pop();
     }
     shop_list.pop();
-    initShop();
+    //initShop();
 	initLocations();
     initLevels();
     try {
         load();
     } catch (e) {
+        new_game = true;
         reset("nodialog");
     }
     viewMenu("inventory");
     viewStats("init");
-    eventTown();
+    if (new_game === true) {
+        eventIntro();
+    } else {
+        eventTown();
+    }
 }
 function createName() {
     'use strict';
-    var n1, n2;
-    n1 = n_start[Math.floor(Math.random() * n_start.length)]
-    n2 = n_end[Math.floor(Math.random() * n_end.length)]
-    return("bob");
+    var n = "", i, ii, s = Math.ceil(Math.random() * 3) + 1, ls;
+    for (i = 0; i < s; i += 1) {
+        ls = n_ls[Math.floor(Math.random() * n_ls.length)];
+        for (ii = 0; ii < ls.length; ii += 1) {
+            if (ls.charAt(ii) === "c") {
+                n += n_c[Math.floor(Math.random() * n_c.length)];
+            } else {
+                n += n_v[Math.floor(Math.random() * n_v.length)];
+            }
+        }
+    }
+    switch (ls.charAt(ls.length - 1)) {
+        case "c":
+            if (Math.random() <= 0.3) {
+                n += n_v[Math.floor(Math.random() * n_v.length)];
+            }
+            break;
+        case "v":
+            if (Math.random() <= 0.3) {
+                n += n_c[Math.floor(Math.random() * n_c.length)];
+            }
+            break;
+    }
+    return(n);
 }
 function tanh(arg) {
   //  discuss at: http://phpjs.org/functions/tanh/
@@ -291,7 +334,7 @@ function eventExploreEnd(n) {
 function eventTown(t) {
     'use strict';
 	current_location = "town";
-    $("#location_header").html("The Town");
+    location_header = "The Town";
 	dungeon = false;
     battle = false;
     shop = false;
@@ -347,7 +390,7 @@ function eventTownSquare() {
     });
     btn3.hide();
 }
-                                        //shop functions
+                                        // Shop functions
 function initShop() {
     'use strict';
     var newitem = {};
@@ -475,7 +518,7 @@ function shopSell() {
         btn1.show();
     }
 }
-                                        //battle functions
+                                        // Battle functions
 function eventBattle(t, n) {
     /*if (player_hp <= 0) {
         if(score > highscore) {
@@ -672,12 +715,12 @@ function roll() {
     }
 }
 function playerDamage() {
-    var base_damage = Math.floor(Math.random() * (stats[0] + 1)), final_damage = base_damage, item = getEquipped(0), w_name, extra_damage = 0;
+    var base_damage = Math.floor(Math.random() * (stats[0] + 1)), final_damage = base_damage, item = getEquipped(0), w_name = -1, extra_damage = 0;
     crit = false;
     if (equipped[0] === item.itemid) {
-        w_name = item.name;
+        w_name = item.name.search(/dagger/i);
     }
-    if (upgrades[1].count > 0 && w_name.search(/dagger/i) >= 0) {
+    if (upgrades[1].count > 0 && w_name >= 0) {
         if (Math.random() <= 0.2) {
             final_damage = stats[0] * 2;
             crit = true;

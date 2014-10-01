@@ -8,16 +8,20 @@
         <script src="scripts/Menu.js"></script>
         <script src="scripts/Items.js"></script>
         <script src="scripts/Quests.js"></script>
+        <script src="scripts/Backstory.js"></script>
         <script src="scripts/SaveLoadReset.js"></script>
         <script src="scripts/itemlist.js"></script>
+        <script src="scripts/Canvas.js"></script>
         <script src="scripts/jstorage.js"></script>
         <title>Diceroll RPG - The Game With The Text-based GUI</title>
     </head>
     <body onload="init()">
         <div id="megadiv">
             <div class="menudiv">
-                <div style="height:20px; border-bottom:1px solid black; padding:0 auto"><p id="location_header" style="display:inline"></p></div>
-                <div style="text-align:center; overflow:hidden; height:50%">
+                <div id="canvasDiv" style="text-align:center; overflow:hidden; height:100%; width: 100%; padding:0">
+                    <canvas id="C"></canvas>
+                </div>
+                <div id="gameDiv" style="text-align:center; overflow:hidden; height:50%">
                     <p id="info" style="margin-left:0"></p>
                     <table style="margin:0 auto;"><tr>
                         <td>

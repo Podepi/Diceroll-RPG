@@ -93,13 +93,16 @@ function updateItems() {
     if (inv_sell === true) {
         $("li.inv").off("click").on("click",
             function () {
-                var item = inventory[this.id], info = $("#this.id").html(), i, a;
+                var item = inventory[this.id], info = $("#this.id").html(), i, a, s = true;
                 for (i = 0; i < equipped.length; i += 1) {
                     if (equipped[i] === item.itemid) {
                         a = i;
+                        if (item.count <= 1) {
+                            s = false;
+                        }
                     }
                 }
-                if (item.count > 1 || confirm("Really sell this item?") === true) {
+                if (s === true || confirm("Really sell this item?") === true) {
                     equipped[i] = "none";
                     stat_gold += Math.floor(item.gold / 2);
                     item.count -= 1;
@@ -133,14 +136,16 @@ function viewItem(item) {
     }
     $("#menu_list_right").html(list_text);
     $("#menu_extended").hide();
-    if (item.magic.length > 0) {
-        $("#menu_list_ext").show();
-        list_text = "<li><b>Enchantments</b></li>";
-        for (var e in item.magic) {
-            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + item.magic[e].x + "px " + item.magic[e].y + "px'></div>: " + item.magic[e].name + " " + item.magic[e].amount + " - " + item.magic[e].desc + "</li>"
+    try {
+        if (item.magic.length > 0) {
+            $("#menu_list_ext").show();
+            list_text = "<li><b>Enchantments</b></li>";
+            for (var m in item.magic) {
+                list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + item.magic[m].x + "px " + item.magic[m].y + "px'></div>: " + item.magic[m].name + " " + item.magic[m].amount + " - " + item.magic[m].desc + "</li>"
+            }
+            $("#menu_list_ext").html(list_text);
         }
-        $("#menu_list_ext").html(list_text);
-    }
+    } catch(e) {}
 }
 function createRareItem(t) {
 	"use strict";

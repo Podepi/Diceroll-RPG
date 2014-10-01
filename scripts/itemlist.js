@@ -181,7 +181,7 @@ var data = {
 		"name":"Green Fields",
         "difficulty":1,
         "item_drop":0,
-		"description":"Serene grasslands with mostly harmless inhabitants.",
+		"description":"Serene grasslands with mostly harmless inhabitants. A crashed airship resides here, thanks to your bad piloting skills.",
 		"arrival_text":"You can see grasslands stretching beyond the horizon, scattered with the occasional tree.",
 		"ground_type":"green grass",
         "x":-32
@@ -393,5 +393,52 @@ var data = {
         "x":0,
         "y":-320
     }
-]
+],
+"airship":{
+    "materials":[
+        {
+            "name":"Wood",
+            "weight":1,
+            "strength":0.5,
+            "power":0.5
+        },
+        {
+            "name":"Iron",
+            "weight":3,
+            "strength":2,
+            "power":1
+        },
+        {
+            "name":"Bronze",
+            "weight":4,
+            "strength":4,
+            "power":2
+        },
+        {
+            "name":"Mystium",
+            "weight":2,
+            "strength":8,
+            "power":4
+        }
+    ],
+    "propeller":{
+        "name":"-mat- propeller",
+        "description":"Upgrading the propeller will increase the speed you can travel at.",
+        "weight":"2",
+        "speed":"1",
+        "material":""
+    },
+    "balloon":{
+        "name":"Balloon",
+        "description":"Upgrading the balloon will increase the maximum weight your airship can carry.",
+        "lift":"10",
+    },
+    "hull":{
+        "name":"-mat- hull",
+        "description":"Upgrading the hull will increase the availabe space on your airship.",
+        "space":"10",
+        "weight":"3",
+        "material":"",
+    }
+}
 }

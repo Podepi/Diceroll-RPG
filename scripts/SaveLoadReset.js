@@ -68,7 +68,11 @@ function reset(t) {
             l_of[Math.floor(Math.random() * l_of.length)]
            ];
         eventTown();
+        eventQuest("main");
         viewStats();
         viewMenu("inventory");
+        if (t !== "nodialog") {
+            location.reload();
+        }
     }
 }
