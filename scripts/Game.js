@@ -4,7 +4,6 @@ var img_magic = "images/iconlist_magic.png"; // 64x64 magic spritesheet
 var img_physical = "images/iconlist_physical.png"; //64x64 physical attack spritesheet
 var img_ui = "images/iconlist_ui.png"; //64x64 ui spritesheet
 var img_def64 = "images/default_64.png"; //default 64x64 image
-var img_tileset = "images/tileset.png"; // tileset for canvas
 
 // icons (16x16)
 var ico_list = "images/icon_list_16.png"; //16x16 icon spritesheet
@@ -36,9 +35,6 @@ var shopkeeper = /* This array contains all the various phrases and actions the 
             "says, \"Remember to equip your items before you rush recklessly into battle!\""];
 var rare_colour = /* This array contains the colour schemes for the item tiers - used with rare items to show what tier item they are */
     ["5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"];
-var map_objects = [] // This array holds the objects shown on the canvas
-var char = {} // This array holds canvas-related information about your character
-var keys_held = [] // This array holds the keys that are currently being held down
 
 // Random Naming arrays
 var magician_name = ["El Weirdo", "Sir Venture", "Bill", "Carl", "Fladnag", "Bob"];
@@ -78,6 +74,7 @@ var btn3;
 var info; // Shorthand for text above event buttons
 var readout; // Shorthand for text below event buttons
 var c;
+var pause = false;
 
 // Booleans
 var battle = false; // Boolean defines whether hp potions display enemy health on readout
@@ -112,11 +109,6 @@ var equipped = ["00", "none", "none", "none"]; // Array containing equipped item
 function init() {
     'use strict';
     var new_game = false;
-    initCanvas();
-    window.addEventListener('keydown',canvasKeyDown,true);
-    window.addEventListener('keyup',canvasKeyUp,true);
-    window.setInterval(onTick, 20);
-    $("#gameDiv").hide();
     $("#menubar").html('<li id="menubar_inv" class="menu_icon glow">Inventory</li>' +
                        '<li id="menubar_tvl" class="menu_icon glow">Travel</li>' +
                        '<li id="menubar_qst" class="menu_icon glow">Errands</li>' +
@@ -153,7 +145,7 @@ function init() {
         inventory.pop();
     }
     shop_list.pop();
-    //initShop();
+    initShop();
 	initLocations();
     initLevels();
     try {
@@ -164,11 +156,7 @@ function init() {
     }
     viewMenu("inventory");
     viewStats("init");
-    if (new_game === true) {
-        eventIntro();
-    } else {
-        eventTown();
-    }
+    eventTown();
 }
 function createName() {
     'use strict';
@@ -608,7 +596,11 @@ function updateFight() {
 			btn1.off('click').on('click', function () {
 				eventBattle("dungeon", enemy_number);
 			});
-			btn2.hide();
+			btn2.show();
+            btn2.html('<div class="btn_icon" style="background-position:-128px 0px; background-image:url(' + img_ui + ')"></div>Leave Dungeon');
+            btn2.off('click').on("click", function () {
+                eventExploreStart();
+            });
             if (enemy_number === 1) {
                 info.html(info.html() + "<br>There is " + enemy_number + " enemy left.");
             } else {

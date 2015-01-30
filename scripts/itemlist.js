@@ -6,7 +6,10 @@ var data = {
         "type":"Weapon",
         "description":"A short -mat- blade with a small hilt, stabs enemies.",
         "gold":12,
-        "damage":3
+        "damage":3,
+        "timeout":12,
+        "attack_speed":15,
+        "speed":10
     },
     {
         "y":-192,
@@ -14,7 +17,10 @@ var data = {
         "type":"Weapon",
         "description":"A sharp blade made of -mat-, cutting-edge medieval technology.",
         "gold":20,
-        "damage":5
+        "damage":5,
+        "timeout":20,
+        "attack_speed":22,
+        "speed":8.5
     },
     {
         "y":-256,
@@ -22,7 +28,10 @@ var data = {
         "type":"Weapon",
         "description":"A heavy slab of -mat- with a handle.",
         "gold":28,
-        "damage":7
+        "damage":7,
+        "timeout":30,
+        "attack_speed":30,
+        "speed":7
     },
     {
         "y":-96,
