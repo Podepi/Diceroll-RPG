@@ -224,11 +224,12 @@ function enchantItem(item, e) {
     }
 }
 function getEquipped(id) {
-    var i;
+    var i, obj = {"name":"none", "material":"none", "magic":0};
     for (i = 0; i < inventory.length; i += 1) {
         if (equipped[id] === inventory[i].itemid) {
-            return (inventory[i]);
+            obj = inventory[i];
+            break;
         }
     }
-    return("none");
+    return(obj);
 }
