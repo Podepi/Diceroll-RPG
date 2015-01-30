@@ -67,12 +67,8 @@ var data = {
         "gold_mult":11,
         "damage_mult":7,
         "defence_mult":7,
-<<<<<<< HEAD
-        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth."
-=======
-        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth.",
+        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strength.",
         "shop":"false"
->>>>>>> dev
     },
     {
         "x":-64,
@@ -80,12 +76,8 @@ var data = {
         "gold_mult":16,
         "damage_mult":10,
         "defence_mult":10,
-<<<<<<< HEAD
-        "description":"This metal is strong, lustrous and useful for alloys."
-=======
         "description":"This metal is strong, lustrous and useful for alloys.",
         "shop":"false"
->>>>>>> dev
     },
     {
         "x":-96,
@@ -93,12 +85,8 @@ var data = {
         "gold_mult":21,
         "damage_mult":13,
         "defence_mult":13,
-<<<<<<< HEAD
-        "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion."
-=======
         "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion.",
         "shop":"false"
->>>>>>> dev
     },
     {
         "x":-128,
@@ -106,12 +94,8 @@ var data = {
         "gold_mult":26,
         "damage_mult":16,
         "defence_mult":16,
-<<<<<<< HEAD
-        "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else."
-=======
         "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else.",
         "shop":"false"
->>>>>>> dev
     },
     {
         "x":-160,
@@ -119,12 +103,8 @@ var data = {
         "gold_mult":31,
         "damage_mult":19,
         "defence_mult":19,
-<<<<<<< HEAD
-        "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material."
-=======
         "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material.",
         "shop":"false"
->>>>>>> dev
     },
     {
         "x":-192,
@@ -132,12 +112,8 @@ var data = {
         "gold_mult":36,
         "damage_mult":22,
         "defence_mult":22,
-<<<<<<< HEAD
-        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine."
-=======
-        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine.",
+        "description":"A material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine.",
         "shop":"false"
->>>>>>> dev
     },
     {
         "x":-224,
@@ -145,12 +121,8 @@ var data = {
         "gold_mult":41,
         "damage_mult":25,
         "defence_mult":25,
-<<<<<<< HEAD
-        "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material."
-=======
         "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material.",
         "shop":"false"
->>>>>>> dev
     }
 ],
 "worthless":[
@@ -209,15 +181,15 @@ var data = {
 	{
 		"name":"Town",
 		"difficulty":0,
-        "item_drop":0,
+    "item_drop":0,
 		"description":"The safest place in the entire region",
 		"arrival_text":"Welcome to the Town",
         "x":0
 	},
 	{
 		"name":"Green Fields",
-        "difficulty":1,
-        "item_drop":0,
+    "difficulty":1,
+    "item_drop":0,
 		"description":"Serene grasslands with mostly harmless inhabitants. A crashed airship resides here, thanks to your bad piloting skills.",
 		"arrival_text":"You can see grasslands stretching beyond the horizon, scattered with the occasional tree.",
 		"ground_type":"green grass",
@@ -226,7 +198,7 @@ var data = {
 	{
 		"name":"Coal Hills",
 		"difficulty":8,
-        "item_drop":1,
+    "item_drop":1,
 		"description":"The hills here are rich in coal, the perfect place to start a coal industry.",
 		"arrival_text":"Inside the numerous caves here, you can see rich veins of coal embedded into the stone.",
 		"ground_type":"dark soil",
@@ -235,7 +207,7 @@ var data = {
 	{
 		"name":"Dark Forest",
 		"difficulty":16,
-        "item_drop":2,
+    "item_drop":2,
 		"description":"A very foreboding forest, also very clichéd.",
 		"arrival_text":"You cannot see through the tree line. The shadowy trees send shivers down your spine.",
 		"ground_type":"foliage",
@@ -244,7 +216,7 @@ var data = {
     {
 		"name":"Mountain Trail",
 		"difficulty":25,
-        "item_drop":3,
+    "item_drop":3,
 		"description":"A cold and mountainous trail, dangerous to walk through.",
 		"arrival_text":"The freezing wind and snow turns your body to ice. You hope you don't get frostbite...",
 		"ground_type":"snow",
@@ -253,7 +225,7 @@ var data = {
     {
 		"name":"Hidden Valley",
 		"difficulty":35,
-        "item_drop":4,
+    "item_drop":4,
 		"description":"The mountain trail leads to this valley hidden in the mountains.",
 		"arrival_text":"Towering mountain peaks surround you from a distance. A river runs through here; you decide to follow it.",
 		"ground_type":"grass",
@@ -262,7 +234,7 @@ var data = {
     {
 		"name":"Deserted Desert",
 		"difficulty":46,
-        "item_drop":5,
+    "item_drop":5,
 		"description":"A harsh and sunny desert. Hopefully you have a large supply of water.",
 		"arrival_text":"The river has died down to a trickle of water which ends in a puddle of mud. The scorching sun and burning sand make you thirsty just by thinking about them.",
 		"ground_type":"sand",
@@ -271,7 +243,7 @@ var data = {
     {
 		"name":"-rand1- Land",
 		"difficulty":58,
-        "item_drop":6,
+    "item_drop":6,
 		"description":"A land of -rand2- and -rand3-.",
 		"arrival_text":"You instantly notice the -rand1-ness of the place.",
 		"ground_type":"-rand1- ground",
@@ -280,7 +252,7 @@ var data = {
     {
 		"name":"Unnamed Abyss",
 		"difficulty":71,
-        "item_drop":7,
+    "item_drop":7,
 		"description":"A bottomless chasm with no proper name.",
 		"arrival_text":"You stay well away from the edge. The chasm appears to drop forever",
 		"ground_type":"nothingness",
@@ -289,7 +261,7 @@ var data = {
     {
 		"name":"Mystic Portal",
 		"difficulty":85,
-        "item_drop":8,
+    "item_drop":8,
 		"description":"A portal to the Mystic Realm, the main exporter of Mystium.",
 		"arrival_text":"The bright purple mystium dust hurts your eyes.",
 		"ground_type":"mystium dust",
@@ -298,7 +270,7 @@ var data = {
     {
 		"name":"Alien Landing Site",
 		"difficulty":100,
-        "item_drop":9,
+    "item_drop":9,
 		"description":"An alien landing site. Bright lens flares and green alienium is used everywhere.",
 		"arrival_text":"It is impossible to see anything through all the lens flares and bad CGI.",
 		"ground_type":"Alienium",
@@ -311,11 +283,7 @@ var data = {
         "y":-32,
         "name":"Materials",
         "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth.",
-<<<<<<< HEAD
-        "list":" "
-=======
         "list":"true"
->>>>>>> dev
     },
     {
         "x":-32,
@@ -329,14 +297,8 @@ var data = {
         "y":-0,
         "name":"Battle",
         "description":"Meeting an enemy is more than likely to happen eventually. As a guide, instructions on how not to die instantly are included below.<br><b>Step-by-step guide on how to fight:</b>",
-<<<<<<< HEAD
-        "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>",
-        "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
-     }
-=======
         "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>"
     }
->>>>>>> dev
 ],
 "upgrades":[
     {
@@ -440,52 +402,4 @@ var data = {
         "x":0,
         "y":-320
     }
-],
-"airship":{
-    "materials":[
-        {
-            "name":"Wood",
-            "weight":1,
-            "strength":0.5,
-            "power":0.5
-        },
-        {
-            "name":"Iron",
-            "weight":3,
-            "strength":2,
-            "power":1
-        },
-        {
-            "name":"Bronze",
-            "weight":4,
-            "strength":4,
-            "power":2
-        },
-        {
-            "name":"Mystium",
-            "weight":2,
-            "strength":8,
-            "power":4
-        }
-    ],
-    "propeller":{
-        "name":"-mat- propeller",
-        "description":"Upgrading the propeller will increase the speed you can travel at.",
-        "weight":"2",
-        "speed":"1",
-        "material":""
-    },
-    "balloon":{
-        "name":"Balloon",
-        "description":"Upgrading the balloon will increase the maximum weight your airship can carry.",
-        "lift":"10",
-    },
-    "hull":{
-        "name":"-mat- hull",
-        "description":"Upgrading the hull will increase the availabe space on your airship.",
-        "space":"10",
-        "weight":"3",
-        "material":"",
-    }
-}
-}
+]}
