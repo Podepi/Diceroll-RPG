@@ -1,14 +1,14 @@
-//images (64x64)
+// images (64x64)
 var img_artifacts = "images/iconlist_artifacts.png"; // 64x64 misc. object  spritesheet
 var img_magic = "images/iconlist_magic.png"; // 64x64 magic spritesheet
 var img_physical = "images/iconlist_physical.png"; //64x64 physical attack spritesheet
 var img_ui = "images/iconlist_ui.png"; //64x64 ui spritesheet
 var img_def64 = "images/default_64.png"; //default 64x64 image
 
-//icons (16x16)
+// icons (16x16)
 var ico_list = "images/icon_list_16.png"; //16x16 icon spritesheet
 
-//Arrays
+// Arrays
 var death_message = /* This array contains all the phrases which show up when you die */
         ["The generic enemy attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
             "Your armour fails to relect the weapon aimed at your face.",
@@ -35,8 +35,8 @@ var shopkeeper = /* This array contains all the various phrases and actions the 
 var rare_colour = /* This array contains the colour schemes for the item tiers - used with rare items to show what tier item they are */
     ["5b3318", "636b7e", "2c1a79", "686868", "171717", "442896", "207d45", "700202"];
 
-//Random Naming arrays
-var magician_name = ["El Weirdo", "Sir Magical", "Bill", "Carl", "Fladnag"];
+// Random Naming arrays
+var magician_name = ["El Weirdo", "Sir Venture", "Bill", "Carl", "Fladnag", "Bob"];
 var magician_type = ["Magician", /*"Intelligent",*/ "Enchanter", "Alchemist", "Wizard", /*"Wise",*/ "One"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical", "Enchanting"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection", "Caravan", "Troupe", "Company"];
@@ -46,12 +46,13 @@ var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City",
                   "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh", "River", "Tomb", "Castle"];
 var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Clay",
             "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers", "Science", "Safety"];
-var n_start = [];
-var n_end = [];
 var rand = [l_adj[Math.floor(Math.random() * l_adj.length)],
             l_of[Math.floor(Math.random() * l_of.length)],
             l_of[Math.floor(Math.random() * l_of.length)]
            ];
+var n_v = ["a", "e", "i", "o", "u"];
+var n_c = ["b", "c", "d", "f", "g", "h", "j", "l", "m", "n", "p", "r", "s", "t", "v", "w", "x", "y", "z"];
+var n_ls = ["cv", "vc"]
 
 // Game variables
 var player_hp; // Amount of health you have at the present
@@ -62,6 +63,7 @@ var score = 0; // Number of enemies defeated this run for previously in-place sc
 var highscore = 0; // High score for previously in-place score system
 var menuscreen = "inventory"; // For planned menu screens e.g. travel screen for selecting destinations, inventory screen for managing items, stats screen for managing stats
 var current_location; // Your current location
+var location_header = "Nowhere in particular"; // Stores text for your current location
 var enemy_number; // Amount of enemies in dungeon
 var enemy_strength = 10; // How much health enemies have * current_location.difficulty
 var btn1; // These variables are shorthand for the three event buttons
@@ -77,18 +79,19 @@ var boss = false; // Determines whether you are fighting  a boss or not
 var able_to_travel; // Determines whether you can travel or not
 var inv_sell = false; // Boolean defines whether you are selling items or not
 var shop = false;
+var crit = false; // Determines whether to show that your attack was more powerful than normal
 
 // Default text
 var readout_default = "<span style='color:red'>This part of the game is not yet functional. Probably best you don't touch anything here in case you mess up your save...</span>";
 var wip_default = "<br><span style='color:red'>This part of the game is still new. Bugs are likely to be found here. Proceed at own risk!</span>";
 var travel_default = "You are not able to travel from here.";
 
-//Sorting
+// Sorting
 var show_weapons = true;
 var show_armour = true;
 var show_consumables = true;
 
-//Stats
+// Stats
 var stat_maxhp = 20; // Maximum amount of hitpoints player has
 var stat_gold = 5; // Amount of gold player has
 var stat_level = 1; // Player awesomeness rating
@@ -100,6 +103,7 @@ var equipped = ["00", "none", "none", "none"]; // Array containing equipped item
 
 function init() {
     'use strict';
+    var new_game = false;
     $("#menubar").html('<li id="menubar_inv" class="menu_icon glow">Inventory</li>' +
                        '<li id="menubar_tvl" class="menu_icon glow">Travel</li>' +
                        '<li id="menubar_qst" class="menu_icon glow">Errands</li>' +
@@ -115,10 +119,10 @@ function init() {
         viewMenu("locations");
     });
     $("#menubar_tvl").on("dblclick", function () {
-        if (able_to_travel === true) {
-            eventTown();
-        } else {
-            info.html(travel_default);
+        eventTown();
+        inv_sell = false;
+        if (menuscreen === inventory) {
+            updateItems();
         }
     });
     $("#menubar_ecp").on("click", function () {
@@ -132,7 +136,7 @@ function init() {
     btn3 = $("#eventbutton03");
 	info = $("#info");
 	readout = $("#readout");
-    for(var i = 0; i < inventory.length; i += 1) {
+    for (var i = 0; i < inventory.length; i += 1) {
         inventory.pop();
     }
     shop_list.pop();
@@ -142,6 +146,7 @@ function init() {
     try {
         load();
     } catch (e) {
+        new_game = true;
         reset("nodialog");
     }
     viewMenu("inventory");
@@ -150,10 +155,30 @@ function init() {
 }
 function createName() {
     'use strict';
-    var n1, n2;
-    n1 = n_start[Math.floor(Math.random() * n_start.length)]
-    n2 = n_end[Math.floor(Math.random() * n_end.length)]
-    return("bob");
+    var n = "", i, ii, s = Math.ceil(Math.random() * 3) + 1, ls;
+    for (i = 0; i < s; i += 1) {
+        ls = n_ls[Math.floor(Math.random() * n_ls.length)];
+        for (ii = 0; ii < ls.length; ii += 1) {
+            if (ls.charAt(ii) === "c") {
+                n += n_c[Math.floor(Math.random() * n_c.length)];
+            } else {
+                n += n_v[Math.floor(Math.random() * n_v.length)];
+            }
+        }
+    }
+    switch (ls.charAt(ls.length - 1)) {
+        case "c":
+            if (Math.random() <= 0.3) {
+                n += n_v[Math.floor(Math.random() * n_v.length)];
+            }
+            break;
+        case "v":
+            if (Math.random() <= 0.3) {
+                n += n_c[Math.floor(Math.random() * n_c.length)];
+            }
+            break;
+    }
+    return(n);
 }
 function tanh(arg) {
   //  discuss at: http://phpjs.org/functions/tanh/
@@ -240,7 +265,7 @@ function eventExploreEnd(n) {
     case 3:
         if (Math.random() <= 0.2 || n === 3) {
             var rare_cost = 100 + Math.round(Math.random() * 500);
-            info.html("Welcome to " + magician_name[Math.floor(Math.random() * magician_name.length)] + " the "  + l_adj[Math.floor(Math.random() * l_adj.length)] + " " + magician_type[Math.floor(Math.random() * magician_type.length)] + "'s " + magician_adj[Math.floor(Math.random() * magician_adj.length)] + " " + magician_show[Math.floor(Math.random() * magician_show.length)] + "!<br>He is selling rare items for " + rare_cost + " gold each.");
+            info.html("Welcome to " + magician_name[Math.floor(Math.random() * magician_name.length)] + " the " + magician_type[Math.floor(Math.random() * magician_type.length)] + "'s " + magician_adj[Math.floor(Math.random() * magician_adj.length)] + " " + magician_show[Math.floor(Math.random() * magician_show.length)] + " of " + l_of[Math.floor(Math.random() * l_of.length)] + "!<br>He is selling rare items for " + rare_cost + " gold each.");
             viewMenu("inventory");
             btn1.show();
             btn1.html('<div class="btn_icon"></div>Buy magical item');
@@ -292,7 +317,7 @@ function eventExploreEnd(n) {
 function eventTown(t) {
     'use strict';
 	current_location = "town";
-    $("#location_header").html("The Town");
+    location_header = "The Town";
 	dungeon = false;
     battle = false;
     shop = false;
@@ -322,7 +347,7 @@ function eventTown(t) {
 			info.html("You do not have enough gold");
 		}
     });
-    btn3.hide();
+    btn3.show();
     btn3.html("<div class='btn_icon'></div>Town Square");
     btn3.off('click').on("click", function () {
         eventTownSquare();
@@ -348,23 +373,23 @@ function eventTownSquare() {
     });
     btn3.hide();
 }
-                                        //shop functions
+                                        // Shop functions
 function initShop() {
     'use strict';
     var newitem = {};
-    newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32;  newitem.heal = 10; newitem.gold = 5;  newitem.name = "Health Vial";             newitem.desc = "A glass vial containing some sort of red healing liquid";
+    newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32;  newitem.heal = 10; newitem.gold = 5;  newitem.name = "Health Vial";                newitem.shop = "true"; newitem.desc = "A glass vial containing some sort of red healing liquid";
     shop_list.push(newitem);
 	newitem = {};
-    newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c1"; newitem.listx = 0;    newitem.heal = 20; newitem.gold = 10; newitem.name = "Health Potion";           newitem.desc = "A glass bottle containing some sort of red healing liquid";
+    newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c1"; newitem.listx = 0;    newitem.heal = 20; newitem.gold = 10; newitem.name = "Health Potion";              newitem.shop = "true"; newitem.desc = "A glass bottle containing some sort of red healing liquid";
     shop_list.push(newitem);
     newitem = {};
-	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c3"; newitem.listx = -160; newitem.heal = 40; newitem.gold = 20; newitem.name = "Concentrated Health Vial"; newitem.desc = "A glass vial containing a strong healing liquid";
+	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c3"; newitem.listx = -160; newitem.heal = 40; newitem.gold = 20; newitem.name = "Concentrated Health Vial";   newitem.shop = "true"; newitem.desc = "A glass vial containing a strong healing liquid";
     shop_list.push(newitem);
     newitem = {};
-	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c4"; newitem.listx = -128; newitem.heal = 80; newitem.gold = 40; newitem.name = "Concentrated Health Potion"; newitem.desc = "A glass bottle containing a strong healing liquid";
+	newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c4"; newitem.listx = -128; newitem.heal = 80; newitem.gold = 40; newitem.name = "Concentrated Health Potion"; newitem.shop = "true"; newitem.desc = "A glass bottle containing a strong healing liquid";
     shop_list.push(newitem);
 	newitem = {};
-	for (var m in data.materials) {
+	for (var m = 0; m < data.materials.length; m += 1) {
         for (var i in data.items) {
             newitem.listy   = data.items[i].y;
             newitem.type    = data.items[i].type;
@@ -375,6 +400,8 @@ function initShop() {
             newitem.gold    = data.items[i].gold * data.materials[m].gold_mult;
             newitem.name    = data.materials[m].name + " " + data.items[i].name;
             newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase());
+            newitem.shop    = data.materials[m].shop;
+            newitem.magic   = [];
             shop_list.push(newitem);
 			/*if (newitem.itemid === "00") {
 				newitem.count = 1;
@@ -389,13 +416,15 @@ function updateShop() {
     'use strict';
     var iconx = shop_list[0].listx, icony = shop_list[0].listy, a, i, t = " ";
     for (a = 0; a < shop_list.length; a += 1) {
-        iconx = shop_list[a].listx;
-        icony = shop_list[a].listy;
-        t += "<li id='" + a + "' class='shop'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + shop_list[a].name;
-        if (stat_gold < shop_list[a].gold) {
-            t += "<i style='color:#FF0000'> - Not enough gold</i>";
+        if (shop_list[a].shop === "true") {
+            iconx = shop_list[a].listx;
+            icony = shop_list[a].listy;
+            t += "<li id='" + a + "' class='shop'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + shop_list[a].name;
+            if (stat_gold < shop_list[a].gold) {
+                t += "<i style='color:#FF0000'> - Not enough gold</i>";
+            }
+            t += "</li>";
         }
-        t += "</li>";
     }
     $("#shop_list").html(t);
     $("#shop_heading").html("Shop");
@@ -451,7 +480,6 @@ function eventShop(visible) {
         });
         btn3.hide();
         info.html('The shopkeeper ' + shopkeeper[Math.floor(Math.random() * shopkeeper.length)]);
-        able_to_travel = false;
         break;
     case "hide":
         $("#shop").hide();
@@ -473,7 +501,7 @@ function shopSell() {
         btn1.show();
     }
 }
-                                        //battle functions
+                                        // Battle functions
 function eventBattle(t, n) {
     /*if (player_hp <= 0) {
         if(score > highscore) {
@@ -513,7 +541,7 @@ function updateFight() {
         e = "boss";
         ecap = "Boss";
     }
-    var damage_info = "You hit the enemy for " + p_damage + " damage.<br>You were hit for " + e_damage + " damage.<br>";
+    var damage_info = battleText();
     info.html(damage_info);
     if (player_hp <= 0) {
 		var gold_loss = Math.floor(stat_gold / 4);
@@ -563,7 +591,11 @@ function updateFight() {
 			btn1.off('click').on('click', function () {
 				eventBattle("dungeon", enemy_number);
 			});
-			btn2.hide();
+			btn2.show();
+            btn2.html('<div class="btn_icon" style="background-position:-128px 0px; background-image:url(' + img_ui + ')"></div>Leave Dungeon');
+            btn2.off('click').on("click", function () {
+                eventExploreStart();
+            });
             if (enemy_number === 1) {
                 info.html(info.html() + "<br>There is " + enemy_number + " enemy left.");
             } else {
@@ -604,6 +636,28 @@ function updateFight() {
     updateHealth();
 	viewStats();
 }
+function battleText() {
+    var text = " ";
+    if (p_damage === 0) {
+        if (stats[0] === 0) {
+            text += "The enemy laughs at your feeble 'punches'!<br>";
+        } else {
+            text += "The enemy blocks your pathetic attack!<br>";
+        }
+    } else {
+        if (crit === true) {
+            text += "<span style='color:red'>You crit the enemy for " + p_damage + " damage!</span><br>";
+        } else {
+            text += "You hit the enemy for " + p_damage + " damage.<br>";
+        }
+    }
+    if (e_damage === 0) {
+        text += "You block the enemy's pathetic attack!";
+    } else {
+        text += "You were hit by the enemy for " + e_damage + " damage.<br>";
+    }
+    return(text);
+}
 function eventEscape() {
     'use strict';
     var escapechance = Math.random();
@@ -634,7 +688,7 @@ function roll() {
         updateFight();
     } else {
         viewStats();
-        p_damage = Math.floor(Math.random() * (stats[0] + 1));
+        p_damage = playerDamage();
         e_damage = current_location.difficulty * damage_mult;
 		if (stats[1] > 0) {
 			e_damage -= Math.round(Math.random() * stats[1]);
@@ -646,6 +700,22 @@ function roll() {
         enemy_hp -= p_damage;
         updateFight(enemy_number);
     }
+}
+function playerDamage() {
+    var base_damage = Math.floor(Math.random() * (stats[0] + 1)), final_damage = base_damage, item = getEquipped(0), w_name = -1, extra_damage = 0;
+    crit = false;
+    if (equipped[0] === item.itemid) {
+        w_name = item.name.search(/dagger/i);
+    }
+    if (upgrades[1].count > 0 && w_name >= 0) {
+        if (Math.random() <= 0.2) {
+            final_damage = stats[0] * 2;
+            crit = true;
+        }
+    }
+    extra_damage = stats[2];
+    final_damage += extra_damage;
+    return(final_damage);
 }
 function updateHealth() {
     'use strict';
@@ -721,30 +791,30 @@ function viewStats(t) {
 }
 function updateStats() {
     'use strict';
-    var i, e, s_d, s_s, s_h;
+    var e, item_weapon = getEquipped(0);
+
+    // Upgrades
+
     stat_maxhp += upgrades[0].count * 5;
-    for (i = 0; i < inventory.length; i += 1) {
-        inv:
-        if (inventory[i].id === equipped[0]) {
-            e = inventory[i].name;
-            s_d = e.search(/dagger/i);
-            s_s = e.search(/sword/i);
-            s_h = e.search(/hammer/i);
-            break inv;
-        }
-    }
-    if (upgrades[1].count > 0 && s_d > 0) {
-        if (Math.random < 0.2) {
-            stats[0] *= 2;
-        }
-    }
-    if (upgrades[2].count > 0 && s_s > 0) {
+    if (upgrades[2].count > 0 && item_weapon.name.search(/sword/i) >= 0) {
         stats[1] += 1;
     }
-    if (upgrades[3].count > 0 && s_h > 0) {
-        stats[0] += stats[0] * 0.1;
+    if (upgrades[3].count > 0 && item_weapon.name.search(/hammer/i) >= 0) {
+        stats[0] += Math.round(stats[0] * 0.1);
     }
     if (upgrades[4].count > 0) {
         stats[1] *= 1 + upgrades[4].count * 0.1;
+    }
+
+    // Enchantments
+
+    for (var m in item_weapon.magic) {
+        if (typeof item_weapon.magic[m].stat === "number") {
+            if (item_weapon.magic[m].stat === "h") {
+                stat_maxhp += item_weapon.magic[m].amount * item_weapon.magic[m].power;
+            } else {
+                stats[item_weapon.magic[m].stat] += item_weapon.magic[m].amount * item_weapon.magic[m].power;
+            }
+        }
     }
 }

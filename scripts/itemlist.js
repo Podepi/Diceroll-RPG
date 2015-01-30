@@ -6,7 +6,10 @@ var data = {
         "type":"Weapon",
         "description":"A short -mat- blade with a small hilt, stabs enemies.",
         "gold":12,
-        "damage":3
+        "damage":3,
+        "timeout":12,
+        "attack_speed":15,
+        "speed":10
     },
     {
         "y":-192,
@@ -14,7 +17,10 @@ var data = {
         "type":"Weapon",
         "description":"A sharp blade made of -mat-, cutting-edge medieval technology.",
         "gold":20,
-        "damage":5
+        "damage":5,
+        "timeout":20,
+        "attack_speed":22,
+        "speed":8.5
     },
     {
         "y":-256,
@@ -22,7 +28,10 @@ var data = {
         "type":"Weapon",
         "description":"A heavy slab of -mat- with a handle.",
         "gold":28,
-        "damage":7
+        "damage":7,
+        "timeout":30,
+        "attack_speed":30,
+        "speed":7
     },
     {
         "y":-96,
@@ -40,7 +49,8 @@ var data = {
         "gold_mult":1,
         "damage_mult":1,
         "defence_mult":1,
-        "description":"Iron is the most common metallic substance used to craft items. As a result of this, it is very cheap and items made of it do not have high value. Unfortunately, items made of iron do not have high damage or defence and rust easily."
+        "description":"Iron is the most common metallic substance used to craft items. As a result of this, it is very cheap and items made of it do not have high value. Unfortunately, items made of iron do not have high damage or defence and rust easily.",
+        "shop":"true"
     },
     {
         "x":0,
@@ -48,7 +58,8 @@ var data = {
         "gold_mult":6,
         "damage_mult":4,
         "defence_mult":4,
-        "description":"Slightly stronger and more expensive than iron, bronze is still a very common item-making substance. As it is an alloy, it is more expensive to make than iron. It still has low damage and defence, however."
+        "description":"Slightly stronger and more expensive than iron, bronze is still a very common item-making substance. As it is an alloy, it is more expensive to make than iron. It still has low damage and defence, however.",
+        "shop":"true"
     },
     {
         "x":-32,
@@ -56,7 +67,12 @@ var data = {
         "gold_mult":11,
         "damage_mult":7,
         "defence_mult":7,
+<<<<<<< HEAD
         "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth."
+=======
+        "description":"Steel is an alloy made from iron and carbon. It has a high tensile strangth.",
+        "shop":"false"
+>>>>>>> dev
     },
     {
         "x":-64,
@@ -64,7 +80,12 @@ var data = {
         "gold_mult":16,
         "damage_mult":10,
         "defence_mult":10,
+<<<<<<< HEAD
         "description":"This metal is strong, lustrous and useful for alloys."
+=======
+        "description":"This metal is strong, lustrous and useful for alloys.",
+        "shop":"false"
+>>>>>>> dev
     },
     {
         "x":-96,
@@ -72,7 +93,12 @@ var data = {
         "gold_mult":21,
         "damage_mult":13,
         "defence_mult":13,
+<<<<<<< HEAD
         "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion."
+=======
+        "description":"A lustrous, strong and light metal with a silvery colour. It is highly resistant to corrosion.",
+        "shop":"false"
+>>>>>>> dev
     },
     {
         "x":-128,
@@ -80,7 +106,12 @@ var data = {
         "gold_mult":26,
         "damage_mult":16,
         "defence_mult":16,
+<<<<<<< HEAD
         "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else."
+=======
+        "description":"A material from the future, it is reinforced by the crystalline structure of carbon atoms. Its light-absorbing colour makes it highly desirable for dark lords, for fashion if nothing else.",
+        "shop":"false"
+>>>>>>> dev
     },
     {
         "x":-160,
@@ -88,7 +119,12 @@ var data = {
         "gold_mult":31,
         "damage_mult":19,
         "defence_mult":19,
+<<<<<<< HEAD
         "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material."
+=======
+        "description":"A highly magical substance, most of it comes from the Mystic Realm. It is highly sought after by all magicians, as its thaumic properties allow it to be enhanced past the level of any mundane material.",
+        "shop":"false"
+>>>>>>> dev
     },
     {
         "x":-192,
@@ -96,7 +132,12 @@ var data = {
         "gold_mult":36,
         "damage_mult":22,
         "defence_mult":22,
+<<<<<<< HEAD
         "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine."
+=======
+        "description":"The material used by beings from another world, alienium is extremely common on their planet. Here, it is almost as rare as adamantine.",
+        "shop":"false"
+>>>>>>> dev
     },
     {
         "x":-224,
@@ -104,7 +145,12 @@ var data = {
         "gold_mult":41,
         "damage_mult":25,
         "defence_mult":25,
+<<<<<<< HEAD
         "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material."
+=======
+        "description":"Despite it being the toughest, heaviest and rarest substance in the universe, the shopkeeper seems to have an unlimited amount of it. The weapons of the gods are made from this material.",
+        "shop":"false"
+>>>>>>> dev
     }
 ],
 "worthless":[
@@ -145,12 +191,12 @@ var data = {
     },
     {
         "y":-160,
-        "x":-160,
+        "x":-128,
         "name":"River Stone"
     },
     {
         "y":-160,
-        "x":-128,
+        "x":-160,
         "name":"Rough Stone"
     },
     {
@@ -172,7 +218,7 @@ var data = {
 		"name":"Green Fields",
         "difficulty":1,
         "item_drop":0,
-		"description":"Serene grasslands with mostly harmless inhabitants.",
+		"description":"Serene grasslands with mostly harmless inhabitants. A crashed airship resides here, thanks to your bad piloting skills.",
 		"arrival_text":"You can see grasslands stretching beyond the horizon, scattered with the occasional tree.",
 		"ground_type":"green grass",
         "x":-32
@@ -265,7 +311,11 @@ var data = {
         "y":-32,
         "name":"Materials",
         "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth.",
+<<<<<<< HEAD
         "list":" "
+=======
+        "list":"true"
+>>>>>>> dev
     },
     {
         "x":-32,
@@ -279,9 +329,14 @@ var data = {
         "y":-0,
         "name":"Battle",
         "description":"Meeting an enemy is more than likely to happen eventually. As a guide, instructions on how not to die instantly are included below.<br><b>Step-by-step guide on how to fight:</b>",
+<<<<<<< HEAD
         "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>",
         "description":"Materials are what everything in this world is made of. They determine how powerful an item is and the rarity of the material determines how much the item is worth."
      }
+=======
+        "list":"<li><b>Step 1:</b> Click the 'Fight!' button</li><li><b>Step 2:</b> Click it again</li><li><b>Step 3:</b> Is your health low? Drink a health potion!</li><li><b>Step 4:</b> Repeat above until either you or the enemy is defeated</li>"
+    }
+>>>>>>> dev
 ],
 "upgrades":[
     {
@@ -341,16 +396,96 @@ var data = {
 ],
 "enchantments":[
     {
-        "name":"Fire"
+        "name":"Fire",
+        "desc":"Burns things for -amount- magic damage",
+        "stat":2,
+        "amount":1,
+        "power":1,
+        "x":0,
+        "y":-320
     },
     {
-        "name":"Ice"
+        "name":"Arcane",
+        "desc":"Smites for -amount- magic damage",
+        "stat":2,
+        "amount":1,
+        "power":3,
+        "x":-64,
+        "y":-320
     },
     {
-        "name":"Speed"
+        "name":"Ice",
+        "desc":"Blocks -amount- extra damage",
+        "stat":1,
+        "amount":1,
+        "power":1,
+        "x":-32,
+        "y":-320
     },
     {
-        "name":"Health"
+        "name":"Speed",
+        "desc":"Speeds attacks to deal -amount- extra damage on average",
+        "stat":0,
+        "amount":1,
+        "power":1,
+        "x":0,
+        "y":-320
     },
-]
+    {
+        "name":"Health",
+        "desc":"-amount- extra health",
+        "stat":"h",
+        "amount":1,
+        "power":1,
+        "x":0,
+        "y":-320
+    }
+],
+"airship":{
+    "materials":[
+        {
+            "name":"Wood",
+            "weight":1,
+            "strength":0.5,
+            "power":0.5
+        },
+        {
+            "name":"Iron",
+            "weight":3,
+            "strength":2,
+            "power":1
+        },
+        {
+            "name":"Bronze",
+            "weight":4,
+            "strength":4,
+            "power":2
+        },
+        {
+            "name":"Mystium",
+            "weight":2,
+            "strength":8,
+            "power":4
+        }
+    ],
+    "propeller":{
+        "name":"-mat- propeller",
+        "description":"Upgrading the propeller will increase the speed you can travel at.",
+        "weight":"2",
+        "speed":"1",
+        "material":""
+    },
+    "balloon":{
+        "name":"Balloon",
+        "description":"Upgrading the balloon will increase the maximum weight your airship can carry.",
+        "lift":"10",
+    },
+    "hull":{
+        "name":"-mat- hull",
+        "description":"Upgrading the hull will increase the availabe space on your airship.",
+        "space":"10",
+        "weight":"3",
+        "material":"",
+    }
+}
 }

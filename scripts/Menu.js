@@ -1,6 +1,7 @@
 function viewMenu(screen) {
     'use strict';
     viewStats();
+    menuscreen = screen;
     switch (screen) {
         case "inventory":
             updateItems();
@@ -189,6 +190,7 @@ function updateTopics() {
     //Mouseover stats
     $("li.inv").hover(
 		function () {
+            $("li.inv").css("background-color", "transparent");
             $(this).css("background-color", "#DDD");
             viewTopic(book[this.id]);
         }
@@ -200,12 +202,17 @@ function updateTopics() {
 }
 function viewTopic(l) {
     'use strict';
-	var topic = l, list_text = " ";
-    for (var i in data.materials) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
+	var l, list_text = " ";
+    if (l.list === "true") {
+        for (var i in data.materials) {
+            list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + data.materials[i].x + " -32px'></div>: " + data.materials[i].name + "<li>" + data.materials[i].description + "</li></li><br>";
+        }
+        $("#menu_readout_top").html(l.description + "<br><b>Information on the material tiers:</b>");
+    } else {
+        list_text = l.list;
+        $("#menu_readout_top").html(l.description);
     }
-	$("#menu_list_right").html(list_text);
-	$("#menu_readout_top").html(topic.description + "<br><b>Information on the material tiers:</b>");
+    $("#menu_list_right").html(list_text);
 }
 function initLevels() {
     'use strict';
@@ -270,14 +277,14 @@ function viewUpgrade(l, n) {
                 "<li class='stats'><div class='inv_icon' style='background-position:-64px -64px'></div>: " + upgrades[n].count + " points invested</li>";
 	$("#menu_list_right").html(list_text);
 }
-function createPrompt(pt) {
+function createPrompt(pt, popup_heading, popup_info) {
     'use strict';
     switch (pt) {
         case "levelup":
             updateLevels();
             break;
-        default:
-            $("#megadiv").append("<div class='overlay'><div class='popup img_border_grey starfield'><div class='headerdiv'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
+        case 0:
+            $("#megadiv").append("<div class='overlay'><div class='popup img_border'><div class='headerdiv'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
             $(".close").on("click", function() {
                 closePrompt();
             });

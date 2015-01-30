@@ -51,10 +51,11 @@ function reset(t) {
         $.jStorage.flush();
         inventory = [];
         var newitem = {};
-        newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health Vial";	newitem.desc = "A glass vial containing some sort of red healing liquid";
-        newitem.count = 2;
+        newitem.listy = -128; newitem.type = "Consumable"; newitem.itemid = "c2"; newitem.listx = -32; newitem.heal = 10; newitem.gold = 5; newitem.name = "Health Vial"; newitem.desc = "A glass vial containing some sort of red healing liquid";
+        newitem.count = 2; newitem.magic = [];
         inventory.push(newitem);
-        inventory.push(shop_list[4]);
+        newitem = shop_list[4];
+        inventory.push(newitem);
         inventory[1].count = 1;
         stat_gold = 5;
         stat_level = 1;
@@ -67,7 +68,11 @@ function reset(t) {
             l_of[Math.floor(Math.random() * l_of.length)]
            ];
         eventTown();
+        eventQuest("main");
         viewStats();
         viewMenu("inventory");
+        if (t !== "nodialog") {
+            location.reload();
+        }
     }
 }

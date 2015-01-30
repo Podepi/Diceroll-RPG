@@ -93,13 +93,16 @@ function updateItems() {
     if (inv_sell === true) {
         $("li.inv").off("click").on("click",
             function () {
-                var item = inventory[this.id], info = $("#this.id").html(), i, a;
+                var item = inventory[this.id], info = $("#this.id").html(), i, a, s = true;
                 for (i = 0; i < equipped.length; i += 1) {
                     if (equipped[i] === item.itemid) {
                         a = i;
+                        if (item.count <= 1) {
+                            s = false;
+                        }
                     }
                 }
-                if (item.count > 1 || confirm("Really sell this item?") === true) {
+                if (s === true || confirm("Really sell this item?") === true) {
                     equipped[i] = "none";
                     stat_gold += Math.floor(item.gold / 2);
                     item.count -= 1;
@@ -114,6 +117,35 @@ function updateItems() {
             }
         );
     }
+}
+function viewItem(item) {
+    'use strict';
+    var list_text;
+    $("#menu_readout_top").html(item.desc);
+    list_text = "<li class='stats'><b>" + item.type + "</b></li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + item.gold + " gold</li>";
+    if (typeof item.damage === 'number' && item.damage > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + item.damage + " damage</li>";
+    }
+    if (typeof item.defence === 'number' && item.defence > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + item.defence + " armour</li>";
+    }
+    if (typeof item.heal === 'number' && item.heal > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + item.heal + " HP restored</li>";
+    } if (typeof item.rare === 'number' && item.rare > 0) {
+        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-128px 0px'></div>: " + Math.round(item.rare * 1000)/1000 + " rareness</li>";
+    }
+    $("#menu_list_right").html(list_text);
+    $("#menu_extended").hide();
+    try {
+        if (item.magic.length > 0) {
+            $("#menu_list_ext").show();
+            list_text = "<li><b>Enchantments</b></li>";
+            for (var m in item.magic) {
+                list_text += "<li class='stats'><div class='inv_icon' style='background-position:" + item.magic[m].x + "px " + item.magic[m].y + "px'></div>: " + item.magic[m].name + " " + item.magic[m].amount + " - " + item.magic[m].desc + "</li>"
+            }
+            $("#menu_list_ext").html(list_text);
+        }
+    } catch(e) {}
 }
 function createRareItem(t) {
 	"use strict";
@@ -161,6 +193,7 @@ function createItem() {
     newitem.gold    = data.items[i].gold    * data.materials[m].gold_mult;
     newitem.desc    = data.items[i].description.replace("-mat-", data.materials[m].name.toLowerCase());
     newitem.count   = 1;
+    newitem.magic   = [];
     for (i = 0; i < inventory.length; i += 1) {
         if(inventory[i].itemid === newitem.itemid) {
             inventory[i].count += 1;
@@ -172,23 +205,30 @@ function createItem() {
     viewMenu("inventory");
     return(newitem.name);
 }
-function viewItem(item) {
-    'use strict';
-    var list_text;
-    $("#menu_readout_top").html(item.desc);
-    list_text = "<li class='stats'><b>" + item.type + "</b></li><li class='stats'><div class='inv_icon' style='background-position:0px 0px'></div>: " + item.gold + " gold</li>";
-    if (typeof item.damage === 'number' && item.damage > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-32px 0px'></div>: " + item.damage + " damage</li>";
+function enchantItem(item, e) {
+    if (e === undefined) {e = 0;}
+    var b = false, new_enchantment = data.enchantments[e];
+    item = inventory[item];
+    for (var m in item.magic) {
+        loop:
+        if (item.magic[m].name === data.enchantments[e]) {
+            b = true;
+            item.magic[m].desc = data.enchantments[e].desc.replace("-amount-", item.magic[m].amount * data.enchantments[e].power);
+            item.magic[m].amount += 1;
+            break loop;
+        }
     }
-    if (typeof item.defence === 'number' && item.defence > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-64px 0px'></div>: " + item.defence + " armour</li>";
+    if (b === false) {
+        new_enchantment.desc = data.enchantments[e].desc.replace("-amount-", data.enchantments[e].amount * data.enchantments[e].power);
+        item.magic.push(new_enchantment);
     }
-    if (typeof item.heal === 'number' && item.heal > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-96px 0px'></div>: " + item.heal + " HP restored</li>";
-    } if (typeof item.rare === 'number' && item.rare > 0) {
-        list_text += "<li class='stats'><div class='inv_icon' style='background-position:-128px 0px'></div>: " + Math.round(item.rare * 1000)/1000 + " rareness</li>";
+}
+function getEquipped(id) {
+    var i;
+    for (i = 0; i < inventory.length; i += 1) {
+        if (equipped[id] === inventory[i].itemid) {
+            return (inventory[i]);
+        }
     }
-    $("#menu_list_right").html(list_text);
-    $("#menu_extended").hide();
-    $("#menu_list_ext").hide();
+    return("none");
 }
