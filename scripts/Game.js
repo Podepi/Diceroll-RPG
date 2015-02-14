@@ -213,7 +213,7 @@ function eventExploreArrival(w) {
 		eventExploreEnd();
 		return(" ");
 	}
-    updateHealth();
+    eventShop("hide");
 	btn1.show();
 	btn1.html("<div class='btn_icon' style='background-position:-128px, 0px; background-image:url(" + img_ui + ")'></div>Explore");
 	btn1.off('click').on("click", function () {
@@ -352,7 +352,6 @@ function eventTown(t) {
     btn3.off('click').on("click", function () {
         eventTownSquare();
     });
-    updateHealth();
     info.html("Welcome to the Town <br>Protip: Double click the travel button to travel here instantly!");
     if (t === "shop") {
         info.html("Welcome to the Town <br>Click the 'travel' button to explore!");
@@ -482,7 +481,9 @@ function eventShop(visible) {
         info.html('The shopkeeper ' + shopkeeper[Math.floor(Math.random() * shopkeeper.length)]);
         break;
     case "hide":
+        shop = false;
         $("#shop").hide();
+        updateHealth();
         break;
     }
 }
