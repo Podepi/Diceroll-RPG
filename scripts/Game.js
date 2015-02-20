@@ -482,6 +482,7 @@ function eventShop(visible) {
         break;
     case "hide":
         shop = false;
+        inv_sell = false;
         $("#shop").hide();
         updateHealth();
         break;
@@ -739,6 +740,7 @@ function viewStats(t) {
     for (a = 0; a < stats.length; a += 1) {
         stats[a] = 0;
     }
+    stat_next_level = stat_level * 100;
 	while (stat_experience >= stat_next_level) {
 		stat_level += 1;
 		stat_experience -= stat_next_level;
