@@ -198,30 +198,15 @@ function createItem() {
         if(inventory[i].itemid === newitem.itemid) {
             inventory[i].count += 1;
             viewMenu("inventory");
-            return(newitem.name);
+            return([newitem.name, newitem.listx, newitem.listy]);
         }
     }
     inventory.push(newitem);
     viewMenu("inventory");
-    return(newitem.name);
+    return([newitem.name, newitem.listx, newitem.listy]);
 }
-function enchantItem(item, e) {
-    if (e === undefined) {e = 0;}
-    var b = false, new_enchantment = data.enchantments[e];
-    item = inventory[item];
-    for (var m in item.magic) {
-        loop:
-        if (item.magic[m].name === data.enchantments[e]) {
-            b = true;
-            item.magic[m].desc = data.enchantments[e].desc.replace("-amount-", item.magic[m].amount * data.enchantments[e].power);
-            item.magic[m].amount += 1;
-            break loop;
-        }
-    }
-    if (b === false) {
-        new_enchantment.desc = data.enchantments[e].desc.replace("-amount-", data.enchantments[e].amount * data.enchantments[e].power);
-        item.magic.push(new_enchantment);
-    }
+function enchantItem(item, enchant) {
+    item.magic = enchant;
 }
 function getEquipped(id) {
     var i, obj = {"name":"none", "material":"none", "magic":0};

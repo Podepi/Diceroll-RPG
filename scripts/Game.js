@@ -10,12 +10,13 @@ var ico_list = "images/icon_list_16.png"; //16x16 icon spritesheet
 
 // Arrays
 var death_message = /* This array contains all the phrases which show up when you die */
-        ["The generic enemy attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
+        ["Your foe attacks and you fail to block, causing your hitpoints to drop below 0. You die.",
             "Your armour fails to relect the weapon aimed at your face.",
             "Your armour is less effective than the enemy's weapon.",
             "Blocking that attack is basic knowledge at the Warrior Training School...",
+            "As it turns out, you aren't that great of a warrior after all...",
             "You are sent to The Place Where All Beings Are Eternally Blessed."];
-var inventory = []; // This array contains the items the inventory has
+var inventory = []; // This array contains all pickup-able items both in the player inventory and on the ground
 var shop_list = []; // This array contains the items the shop has - all array work is done in the shop functions
 var map = []; // This array contains the locations known by the player
 var book = []; // This array contains the encyclopedia titles for information
@@ -24,7 +25,7 @@ var upgrades = []; // This array contains the level upgrades
 var enemy_list = /* This array contains all the different enemies you can can face - purely cosmetic at the moment - NOTE: Should change resistances and max health of each type in the near future, also area-dependant enemies */
         ["orc", "bandit", "golem", "spider", "bat", "wraith", "ghost", "troll", "ogre", "imp", "skeleton", "zombie", "wolf", "snake"];
 var adjective_list = /* This array contains all the adjectives an enemy can have - purely cosmetic */
-        ["stupid", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly disguised", "annoying", "idiotic", "armed", "armoured", "stereotyped", "ghostly", "orcish", "wraith-like", "trollish", "spidery", "golem-like"];
+        ["lucky", "stupid", "nasty", "terrible", "ugly", "mean", "frightening", "fearsome", "egotistical", "badly disguised", "annoying", "idiotic", "armed", "armoured", "stereotyped", "ghostly", "orcish", "wraith-like", "trollish", "spidery", "golem-like"];
 var shopkeeper = /* This array contains all the various phrases and actions the shopkeeper does */
         ["tells you about all the various bargains.",
             "complains about shoplifters.",
@@ -40,12 +41,12 @@ var magician_name = ["El Weirdo", "Sir Venture", "Bill", "Carl", "Fladnag", "Bob
 var magician_type = ["Magician", /*"Intelligent",*/ "Enchanter", "Alchemist", "Wizard", /*"Wise",*/ "One"];
 var magician_adj = ["Wandering", "Exploring", "Roaming", "Travelling", "Magical", "Enchanting"];
 var magician_show = ["Circus", "Show", "Magic Show", "Magic Collection", "Caravan", "Troupe", "Company"];
-var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Desert", "Cloudy",
-             "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous", "'Safe'", "Experimental", "Scientific", "Cold", "Shiny"];
+var l_adj = ["Northern", "Southern", "Western", "Eastern", "Snowy", "Scorching", "Rainy", "Freezing", "Sunny", "Depressing", "Desert", "Cloudy", "Lucky",
+             "Stormy", "Warm", "Harmless", "Stone", "Metallic", "Fertile", "Dangerous", "'Safe'", "Experimental", "Scientific", "Cold", "Shiny", "Unlucky"];
 var l_location = ["Mountain", "Lake", "Sea", "Ocean", "Town", "Village", "City", "Forest", "Hill", "Mine", "Cave", "Grove", "Desert", "Beach",
                   "Tower", "Hamlet", "Library", "Forest Trail", "Road", "Path", "Pyramid", "Grassland", "Swamp", "Marsh", "River", "Tomb", "Castle"];
-var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Clay",
-            "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers", "Science", "Safety"];
+var l_of = ["Hope", "Betrayal", "Inhospitability", "Water", "Earth", "Air", "Fire", "Mystium", "Steel", "Iron", "Stone", "Technology", "Clay", "Luck",
+            "Knowledge", "Power", "Magic", "Wisdom", "Death", "Sacrifice", "Danger", "Harm", "Warmth", "Sand", "Rivers", "Science", "Safety", "Unluck"];
 var rand = [l_adj[Math.floor(Math.random() * l_adj.length)],
             l_of[Math.floor(Math.random() * l_of.length)],
             l_of[Math.floor(Math.random() * l_of.length)]
@@ -226,6 +227,8 @@ function eventExploreEnd(n) {
     'use strict';
     var rand = Math.floor(Math.random() * 5);
     if (typeof n === "number") { rand = n }
+    viewStats();
+    if (player_hp < stat_maxhp) {player_hp += 1;}
     switch (rand) {
     case 0:
         info.html("You find a penny in the " + current_location.ground_type + ".<br>+1 gold.");
@@ -546,14 +549,14 @@ function updateFight() {
     var damage_info = battleText();
     info.html(damage_info);
     if (player_hp <= 0) {
-		var gold_loss = Math.floor(stat_gold / 4);
+		var gold_loss = Math.floor(stat_gold / 2);
         player_hp = 0;
         able_to_travel = true;
 		stat_gold -= gold_loss;
         if (enemy_hp <= 0) {
             enemy_hp = 0;
         }
-        info.html(damage_info + death_message[Math.floor(Math.random() * death_message.length)] + "<br>You lose " + gold_loss + " gold.");
+        createPrompt("Defeat!", death_message[Math.floor(Math.random() * death_message.length)] + "<br>You lose " + gold_loss + " gold.");
         btn1.show();
 		btn1.html('<div class="btn_icon"></div>Back to Town');
         btn1.off('click').on("click", function () {
@@ -565,9 +568,9 @@ function updateFight() {
 		enemy_hp = 0;
         var gold_inc = Math.ceil(Math.random() * 10 * current_location.difficulty), xp_inc = 20 + Math.round(tanh(current_location.difficulty - stat_level) * current_location.difficulty - stat_level), info_text = " ";
         if (xp_inc + stat_experience >= stat_next_level) {
-            info_text += "<br><span>You gained a level!</span>";
+            info_text += "<span>You gained a level!</span><br>";
         } if (boss === true) {
-            info_text += "<br>You acquired a <span style='color:" + rare_colour[stat_level] + "'>rare item!</span>";
+            info_text += "You acquired a <span style='color:" + rare_colour[stat_level] + "'>rare item!</span><br>";
             createRareItem();
             gold_inc += current_location.difficulty * 5;
             xp_inc += current_location.difficulty * 5;
@@ -578,7 +581,6 @@ function updateFight() {
         boss = false;
         able_to_travel = true;
         enemy_number -= 1;
-		info.html("You have won!<br>You gained " + gold_inc + " gold and " + xp_inc + " experience!" + info_text);
 		updateHealth();
         viewStats();
 		btn1.hide();
@@ -599,29 +601,29 @@ function updateFight() {
                 eventExploreStart();
             });
             if (enemy_number === 1) {
-                info.html(info.html() + "<br>There is " + enemy_number + " enemy left.");
+                info_text += "There is 1 enemy left.<br>";
+                info.html("There is 1 enemy left.<br>");
             } else {
-                info.html(info.html() + "<br>There are " + enemy_number + " enemies left.");
+                info_text += "There are " + enemy_number + " enemies left.<br>";
+                info.html("There are " + enemy_number + " enemies left.<br>");
             }
 			updateHealth();
 		} else if (dungeon === true) {
 			var dungeon_prize = Math.ceil(Math.random() * current_location.difficulty) + 10, i;
-            info_text = "You have defeated the last enemy!<br>You gain " + gold_inc + " gold and " + xp_inc + " experience!<br>The reward for defeating the dungeon is " + dungeon_prize + " gold";
+            info_text += "The reward for defeating the dungeon is " + dungeon_prize + " gold";
 			if (Math.random <= 0.05) {
                 createRareItem();
-                info_text += " and a <span style='color:" + rare_colour[stat_level] + "'>rare item!<span>";
+                info_text += " and a <span style='color:" + rare_colour[stat_level] + "'>rare item!<span><br>";
                 i = true;
+            } if (i !== true) {
+                info_text += ".<br>";
             } if (stat_experience >= stat_next_level) {
-                info_text += ".<br><span>You gained a level!</span>";
-                i = true
+                info_text += "<span>You gained a level!</span>";
             }
             dungeon = false;
 			stat_gold += dungeon_prize;
             able_to_travel = true;
-            if (i !== true) {
-                info_text += ".";
-            }
-			info.html(info_text);
+			createPrompt("Victory!", info_text);
 			btn1.hide();
 			btn2.show();
 			btn2.html('<div class="btn_icon" style="background-position:-128px 0px; background-image:url(' + img_ui + ')"></div>Explore');
@@ -629,11 +631,12 @@ function updateFight() {
 				eventExploreStart();
 			});
 		}
-        if (Math.random() <= 0.33) {
-            var vowel = /[aeiou]/i, aa = "a ", item_name = createItem();
-            if (item_name.search(vowel) === 0) {aa = "an "; }
-            info.html(info.html() + "<br>The enemy dropped " + aa + item_name.toLowerCase() + "!");
+        if (Math.random() <= 1) {
+            var vowel = /[aeiou]/i, aa = "a ", item_drop = createItem();
+            if (item_drop[0].search(vowel) === 0) {aa = "an "; }
+            info_text += "The enemy dropped " + aa + item_drop[0].toLowerCase() + "!<br><div class='inv_icon' style='float:none; margin: 0 auto; background-position:" + item_drop[1] + "px " + item_drop[2] + "px'></div>";
         }
+        createPrompt("Victory!", "You have won!<br>You gained " + gold_inc + " gold and " + xp_inc + " experience!<br>" + info_text);
     }
     updateHealth();
 	viewStats();
@@ -710,7 +713,7 @@ function playerDamage() {
         w_name = item.name.search(/dagger/i);
     }
     if (upgrades[1].count > 0 && w_name >= 0) {
-        if (Math.random() <= 0.2) {
+        if (Math.random() <= 0.05 * upgrades[1].count) {
             final_damage = stats[0] * 2;
             crit = true;
         }
@@ -740,11 +743,10 @@ function viewStats(t) {
     for (a = 0; a < stats.length; a += 1) {
         stats[a] = 0;
     }
-    stat_next_level = stat_level * 100;
 	while (stat_experience >= stat_next_level) {
 		stat_level += 1;
 		stat_experience -= stat_next_level;
-		stat_next_level = stat_level * 100;
+		stat_next_level = 100;
 	}
     level_icon = (Math.floor(stat_level / 10) * 32) * -1;
     stat_maxhp = stat_level * 5 + 15;
@@ -798,26 +800,22 @@ function updateStats() {
 
     // Upgrades
 
-    stat_maxhp += upgrades[0].count * 5;
+    stat_maxhp += upgrades[0].count * 2;
     if (upgrades[2].count > 0 && item_weapon.name.search(/sword/i) >= 0) {
-        stats[1] += 1;
+        stats[1] += 0.5;
     }
     if (upgrades[3].count > 0 && item_weapon.name.search(/hammer/i) >= 0) {
-        stats[0] += Math.round(stats[0] * 0.1);
+        stats[0] += Math.round(stats[0] * 0.05);
     }
     if (upgrades[4].count > 0) {
-        stats[1] *= 1 + upgrades[4].count * 0.1;
+        stats[1] *= 1 + upgrades[4].count * 0.05;
     }
 
     // Enchantments
 
-    for (var m in item_weapon.magic) {
-        if (typeof item_weapon.magic[m].stat === "number") {
-            if (item_weapon.magic[m].stat === "h") {
-                stat_maxhp += item_weapon.magic[m].amount * item_weapon.magic[m].power;
-            } else {
-                stats[item_weapon.magic[m].stat] += item_weapon.magic[m].amount * item_weapon.magic[m].power;
-            }
-        }
+    if (item_weapon.magic.stat === "h") {
+        stat_maxhp += item_weapon.magic.amount * item_weapon.magic.power;
+    } else {
+        stats[item_weapon.magic.stat] += item_weapon.magic.amount * item_weapon.magic.power;
     }
 }

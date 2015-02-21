@@ -118,6 +118,8 @@ function updateLocations() {
 	for (a = 0; a < map.length; a += 1) {
 		iconx = map[a].x;
 		t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div><p class='invlist'>" + map[a].name;
+        if (map[a] === current_location) {t += "<i> - You are here</i>";}
+        
 		t += "</li>";
 	}
     $("#menu_list_left").html(t);
@@ -277,18 +279,12 @@ function viewUpgrade(l, n) {
                 "<li class='stats'><div class='inv_icon' style='background-position:-64px -64px'></div>: " + upgrades[n].count + " points invested</li>";
 	$("#menu_list_right").html(list_text);
 }
-function createPrompt(pt, popup_heading, popup_info) {
+function createPrompt(p_heading, p_info) {
     'use strict';
-    switch (pt) {
-        case "levelup":
-            updateLevels();
-            break;
-        case 0:
-            $("#megadiv").append("<div class='overlay'><div class='popup img_border'><div class='headerdiv'>" + popup_heading + "<div class='close'></div></div>" + popup_info + "</div></div>");
-            $(".close").on("click", function() {
-                closePrompt();
-            });
-    }
+    $("#megadiv").append("<div class='overlay'><div class='popup img_border' style='text-align:center'><div class='headerdiv'>" + p_heading + "<div class='close'></div></div>" + p_info + "</div></div>");
+    $(".close").on("click", function() {
+        closePrompt();
+    });
 }
 function closePrompt() {
     'use strict';

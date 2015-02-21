@@ -28,7 +28,7 @@ function updateErrands() {
     for (a = 0; a < errands.length; a += 1) {
         //iconx = errands[a].listx;
         //icony = errands[a].listy;
-        t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + errands[a].name + "</li>";
+        //t += "<li id='" + a + "' class='inv'> <div class='inv_icon' style='background-position:" + iconx + "px " + icony + "px'></div>" + errands[a].name + "</li>";
     } if (t === " ") {
         t = "<li><i>You currently have no quests.</i></li>";
     }
